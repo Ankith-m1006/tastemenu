@@ -4,217 +4,282 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>TasteMenu</title>
-<meta name="description" content="Know what your diners love. A taste strategist for independent restaurants, powered by Qloo's cultural intelligence.">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><circle cx='32' cy='32' r='30' fill='%231f5135'/><path d='M18 38c4 8 24 8 28 0' stroke='%23f2b33d' stroke-width='5' fill='none' stroke-linecap='round'/><circle cx='24' cy='26' r='4' fill='%23f2b33d'/><circle cx='40' cy='26' r='4' fill='%23f2b33d'/></svg>">
+<meta name="description" content="Know what your diners love. A monthly taste plan for independent restaurants, built on Qloo's cultural-intelligence data.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='14' fill='%232f5d3a'/><path d='M16 22h32M16 32h22M16 42h28' stroke='%23f3e9d6' stroke-width='5' stroke-linecap='round'/></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,800&family=Manrope:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap">
 <style>
 :root {
-  --bg: #f7f3ea; --surface: #fffdf8; --ink: #1f2a22; --muted: #5f6b62; --line: #e4dccb;
-  --leaf: #1f5135; --leaf-soft: #e3efe6; --turmeric: #c98a12; --turmeric-soft: #fbf0d6;
-  --chili: #b2412b; --chili-soft: #f8e4de;
-  --display: "Fraunces", Georgia, serif; --body: "Manrope", system-ui, sans-serif;
+  --paper: #f5eee1; --card: #fbf7ef; --ink: #2a2119; --soft: #6c5f52; --rule: #ddd1bd;
+  --leaf: #2f5d3a; --tamarind: #9c3b1b; --turmeric: #b9790c; --tint: #efe4d0;
+  --serif: "Fraunces", Georgia, serif; --sans: "Instrument Sans", system-ui, sans-serif; --mono: "JetBrains Mono", ui-monospace, monospace;
   color-scheme: light;
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --bg: #121814; --surface: #1a221d; --ink: #e9efe9; --muted: #9eaba2; --line: #2c3830;
-    --leaf: #7cc49a; --leaf-soft: #1c3326; --turmeric: #f2b33d; --turmeric-soft: #3a2e12;
-    --chili: #f08a6e; --chili-soft: #3d1f17; color-scheme: dark;
+    --paper: #17130f; --card: #1f1a15; --ink: #f0e7d8; --soft: #ab9e8d; --rule: #3a3129;
+    --leaf: #8cc79a; --tamarind: #f09a73; --turmeric: #e8b04a; --tint: #2a231c; color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
-  --bg: #121814; --surface: #1a221d; --ink: #e9efe9; --muted: #9eaba2; --line: #2c3830;
-  --leaf: #7cc49a; --leaf-soft: #1c3326; --turmeric: #f2b33d; --turmeric-soft: #3a2e12;
-  --chili: #f08a6e; --chili-soft: #3d1f17; color-scheme: dark;
+  --paper: #17130f; --card: #1f1a15; --ink: #f0e7d8; --soft: #ab9e8d; --rule: #3a3129;
+  --leaf: #8cc79a; --tamarind: #f09a73; --turmeric: #e8b04a; --tint: #2a231c; color-scheme: dark;
 }
 * { box-sizing: border-box; }
 html, body { margin: 0; }
-body { background: var(--bg); color: var(--ink); font: 16px/1.55 var(--body); padding: 0 16px 120px; }
-.wrap { max-width: 980px; margin: 0 auto; display: grid; gap: 22px; }
-header { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 18px 0 6px; }
-.brand { display: flex; align-items: center; gap: 10px; text-decoration: none; color: inherit; }
-.brand b { font: 800 1.45rem/1 var(--display); letter-spacing: -0.01em; }
-.brand small { display: block; color: var(--muted); font-size: 12.5px; }
-.qloo-badge { font-size: 12px; color: var(--muted); border: 1px solid var(--line); border-radius: 999px; padding: 5px 10px; white-space: nowrap; }
-h1 { font: 800 clamp(1.9rem, 6vw, 2.9rem)/1.05 var(--display); margin: 8px 0 6px; letter-spacing: -0.02em; text-wrap: balance; }
-h2 { font: 700 1.25rem/1.2 var(--display); margin: 0; }
-p { margin: 0; }
-.lead { color: var(--muted); max-width: 60ch; }
-.panel { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 16px; }
-textarea, input[type=text] { width: 100%; font: inherit; color: inherit; background: var(--bg); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; resize: vertical; }
-textarea:focus-visible, input:focus-visible, button:focus-visible { outline: 2px solid var(--leaf); outline-offset: 2px; }
-.chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
-.chip { font: 600 13px/1.2 var(--body); border: 1px solid var(--line); background: var(--surface); color: var(--ink); padding: 8px 12px; border-radius: 999px; cursor: pointer; text-align: left; }
-.chip:hover { border-color: var(--leaf); }
-.btn { font: 700 15px/1 var(--body); border: 0; border-radius: 12px; padding: 13px 18px; cursor: pointer; background: var(--leaf); color: #fff; }
-:root[data-theme="dark"] .btn, .dark-btn { color: #0d1a12; }
-@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .btn { color: #0d1a12; } }
-.btn[disabled] { opacity: .55; cursor: wait; }
-.btn.ghost { background: transparent; color: var(--ink); border: 1px solid var(--line); }
-.row { display: flex; gap: 10px; align-items: center; margin-top: 12px; flex-wrap: wrap; }
-.thread { display: grid; gap: 12px; }
-.msg { padding: 12px 14px; border-radius: 14px; max-width: 92%; white-space: pre-wrap; }
-.msg.user { background: var(--leaf-soft); justify-self: end; }
-.msg.agent { background: var(--surface); border: 1px solid var(--line); }
-.progress { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
-.progress li { font-size: 14px; color: var(--muted); display: flex; gap: 8px; align-items: baseline; }
-.progress li::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--turmeric); flex: none; transform: translateY(-1px); }
-.progress li.done::before { background: var(--leaf); }
-.board-head { display: grid; gap: 6px; }
-.board-head .k { font: 700 12px/1 var(--body); text-transform: uppercase; letter-spacing: .08em; color: var(--leaf); }
-.cards { display: grid; gap: 14px; grid-template-columns: 1fr; }
-@media (min-width: 760px) { .cards { grid-template-columns: 1fr 1fr; } }
-.card { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 16px; display: grid; gap: 10px; align-content: start; }
-.card .kind { display: inline-flex; align-items: center; gap: 6px; font: 700 12px/1 var(--body); text-transform: uppercase; letter-spacing: .07em; padding: 6px 9px; border-radius: 999px; justify-self: start; }
-.kind.menu { background: var(--turmeric-soft); color: var(--turmeric); }
-.kind.music { background: var(--leaf-soft); color: var(--leaf); }
-.kind.event { background: var(--chili-soft); color: var(--chili); }
-.kind.partners { background: var(--leaf-soft); color: var(--leaf); }
-.card h3 { font: 700 1.12rem/1.25 var(--display); margin: 0; }
-.card .action { font-weight: 600; }
-.card .why { color: var(--muted); font-size: 14.5px; }
-.evidence { display: flex; flex-wrap: wrap; gap: 6px; }
-.ev { font-size: 12.5px; border: 1px solid var(--line); border-radius: 10px; padding: 6px 8px; display: grid; gap: 4px; min-width: 120px; }
-.ev b { font-weight: 600; }
-.ev span { color: var(--muted); font-size: 11.5px; }
-.bar { height: 4px; border-radius: 4px; background: var(--line); overflow: hidden; }
-.bar i { display: block; height: 100%; background: var(--leaf); }
-.caveat { font-size: 13px; color: var(--chili); background: var(--chili-soft); border-radius: 10px; padding: 8px 10px; }
-details { font-size: 14px; }
-details summary { cursor: pointer; font-weight: 600; }
-.trace { margin: 10px 0 0; padding-left: 18px; color: var(--muted); display: grid; gap: 4px; }
-.trace code { font-size: 12px; }
-.composer { position: fixed; left: 0; right: 0; bottom: 0; padding: 12px 16px calc(12px + env(safe-area-inset-bottom)); background: linear-gradient(to top, var(--bg) 70%, transparent); }
-.composer form { max-width: 980px; margin: 0 auto; display: flex; gap: 8px; }
-.composer input { flex: 1; }
+body { background: var(--paper); color: var(--ink); font: 16px/1.55 var(--sans); padding: 0 16px 48px; -webkit-font-smoothing: antialiased; }
+.wrap { max-width: 860px; margin: 0 auto; }
+a { color: inherit; }
+button, input, textarea { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--leaf); outline-offset: 2px; }
+.mono { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+
+/* Masthead */
+.mast { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; padding: 20px 0 14px; border-bottom: 2px solid var(--ink); }
+.logo { font: 700 1.5rem/1 var(--serif); letter-spacing: -0.02em; text-decoration: none; }
+.logo em { font-style: normal; color: var(--tamarind); }
+.byline { font-size: 12px; color: var(--soft); text-align: right; }
+
+/* Brief */
+.brief { padding: 30px 0 10px; }
+.brief h1 { font: 700 clamp(1.9rem, 6.5vw, 3rem)/1.04 var(--serif); letter-spacing: -0.025em; margin: 0 0 10px; max-width: 16ch; }
+.brief p.sub { color: var(--soft); max-width: 52ch; margin: 0 0 22px; }
+label.field { display: block; font-size: 12px; font-weight: 700; letter-spacing: .09em; text-transform: uppercase; color: var(--soft); margin-bottom: 6px; }
+textarea { width: 100%; min-height: 96px; border: 1.5px solid var(--rule); border-radius: 6px; background: var(--card); padding: 12px 14px; resize: vertical; }
+.try { display: flex; flex-wrap: wrap; gap: 6px 14px; margin: 10px 0 18px; font-size: 14px; color: var(--soft); }
+.try button { background: none; border: 0; padding: 0; color: var(--leaf); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; font-weight: 600; }
+.primary { background: var(--ink); color: var(--paper); border: 0; border-radius: 6px; padding: 14px 20px; font-weight: 700; cursor: pointer; }
+.primary[disabled] { opacity: .5; cursor: wait; }
+
+/* Working */
+.steps { list-style: none; margin: 26px 0 0; padding: 18px 0 0; border-top: 1px solid var(--rule); display: grid; gap: 10px; counter-reset: s; }
+.steps li { counter-increment: s; display: grid; grid-template-columns: 28px 1fr; gap: 10px; align-items: baseline; color: var(--soft); }
+.steps li::before { content: counter(s, decimal-leading-zero); font: 500 13px var(--mono); }
+.steps li.on { color: var(--ink); }
+.steps li.on::before { color: var(--turmeric); }
+.steps li.done { color: var(--ink); }
+.steps li.done::before { content: "✓"; color: var(--leaf); }
+.who { margin-top: 18px; font-size: 14px; color: var(--soft); }
+
+/* Sections */
+section.block { padding: 30px 0 4px; }
+.kicker { font-size: 12px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--tamarind); margin: 0 0 8px; }
+h2 { font: 700 clamp(1.4rem, 4.6vw, 2rem)/1.15 var(--serif); letter-spacing: -0.02em; margin: 0 0 18px; }
+h3 { font: 600 1.15rem/1.25 var(--serif); margin: 0; }
+
+/* Crowd */
+.places { display: flex; flex-wrap: wrap; gap: 6px 18px; margin: 0 0 20px; padding: 0; list-style: none; font-size: 15px; }
+.places li::after { content: "·"; margin-left: 18px; color: var(--rule); }
+.places li:last-child::after { content: ""; }
+.loves { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px 22px; border-top: 1px solid var(--rule); padding-top: 16px; }
+.loves h4 { margin: 0 0 6px; font-size: 12px; letter-spacing: .09em; text-transform: uppercase; color: var(--soft); }
+.loves ol { margin: 0; padding: 0; list-style: none; display: grid; gap: 4px; }
+.loves li { display: flex; justify-content: space-between; gap: 10px; font-size: 15px; border-bottom: 1px dotted var(--rule); padding-bottom: 3px; }
+.loves li span:last-child { color: var(--soft); font: 500 12.5px var(--mono); white-space: nowrap; }
+.lean { margin-top: 18px; display: grid; gap: 6px; font-size: 13.5px; }
+.lean .row { display: grid; grid-template-columns: 92px 1fr 46px; gap: 10px; align-items: center; }
+.lean .track { position: relative; height: 8px; background: var(--tint); border-radius: 2px; }
+.lean .track::after { content: ""; position: absolute; left: 50%; top: -3px; bottom: -3px; width: 1px; background: var(--soft); }
+.lean .fill { position: absolute; top: 0; bottom: 0; background: var(--leaf); border-radius: 2px; }
+.lean .fill.neg { background: var(--tamarind); }
+.lean .v { font: 500 12px var(--mono); color: var(--soft); text-align: right; }
+.note { font-size: 12.5px; color: var(--soft); margin-top: 8px; }
+
+/* Plan */
+.plan { border-top: 2px solid var(--ink); }
+.item { display: grid; grid-template-columns: 52px 1fr; gap: 6px 14px; padding: 20px 0; border-bottom: 1px solid var(--rule); }
+.num { font: 700 1.6rem/1 var(--serif); color: var(--turmeric); }
+.cat { font-size: 11.5px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--leaf); margin-bottom: 4px; }
+.item p { margin: 6px 0 0; }
+.item .act { font-weight: 500; }
+.item .why { color: var(--soft); font-size: 15px; }
+.item .ev { font-size: 13.5px; color: var(--soft); }
+.item .ev b { color: var(--ink); font-weight: 600; }
+.item .ev .mono { color: var(--leaf); }
+.item .warn { font-size: 14px; border-left: 3px solid var(--tamarind); padding-left: 10px; color: var(--ink); }
+.item .warn::before { content: "Watch out: "; font-weight: 700; color: var(--tamarind); }
+.actions { display: flex; flex-wrap: wrap; gap: 10px; margin: 18px 0 0; }
+.ghost { background: transparent; border: 1.5px solid var(--ink); border-radius: 6px; padding: 11px 16px; font-weight: 600; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; }
+
+/* Ask */
+.ask form { display: flex; gap: 8px; }
+.ask input { flex: 1; min-width: 0; border: 1.5px solid var(--rule); border-radius: 6px; background: var(--card); padding: 12px 14px; }
+.ideas { display: flex; flex-wrap: wrap; gap: 6px 14px; margin: 10px 0 0; font-size: 14px; }
+.ideas button { background: none; border: 0; padding: 0; color: var(--leaf); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; font-weight: 600; text-align: left; }
+.qa { margin-top: 18px; display: grid; gap: 16px; }
+.qa .q { font: 600 1.05rem/1.3 var(--serif); }
+.qa .a { margin-top: 6px; }
+.qa .a p { margin: 0 0 6px; }
+.qa .a ul { margin: 4px 0 0; padding-left: 20px; }
+.qa .pending { color: var(--soft); font-style: italic; }
+details.how { margin-top: 26px; border-top: 1px solid var(--rule); padding-top: 14px; font-size: 14px; color: var(--soft); }
+details.how summary { cursor: pointer; font-weight: 600; color: var(--ink); }
+details.how ol { padding-left: 20px; margin: 10px 0 0; display: grid; gap: 3px; }
+footer { margin-top: 34px; padding-top: 14px; border-top: 1px solid var(--rule); font-size: 12.5px; color: var(--soft); }
 .hidden { display: none !important; }
-footer { color: var(--muted); font-size: 13px; padding: 10px 0 30px; }
-footer a { color: inherit; }
+.err { color: var(--tamarind); margin-top: 12px; }
 @media print {
-  body { background: #fff; color: #000; padding: 0; }
-  header .qloo-badge, .composer, #intro, #thread, .row.actions, details, footer { display: none !important; }
-  .card { break-inside: avoid; border-color: #ccc; }
+  body { background: #fff; color: #000; }
+  .brief, .ask, .actions, details.how, #working, footer { display: none !important; }
+  .item { break-inside: avoid; }
 }
 </style>
 </head>
 <body>
 <div class="wrap">
-  <header>
-    <a class="brand" href="/">
-      <svg width="36" height="36" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="30" fill="var(--leaf)"/><path d="M18 38c4 8 24 8 28 0" stroke="#f2b33d" stroke-width="5" fill="none" stroke-linecap="round"/><circle cx="24" cy="26" r="4" fill="#f2b33d"/><circle cx="40" cy="26" r="4" fill="#f2b33d"/></svg>
-      <span><b>TasteMenu</b><small>Know what your diners love</small></span>
-    </a>
-    <span class="qloo-badge">Taste data by Qloo</span>
+  <header class="mast">
+    <a class="logo" href="/">Taste<em>Menu</em></a>
+    <span class="byline">A monthly taste plan for your restaurant<br>Audience data by Qloo</span>
   </header>
 
-  <section id="intro" class="panel">
-    <h1>Plan your month around what your diners actually love.</h1>
-    <p class="lead">Tell me about your restaurant. I'll find what people who love places like yours also love (films, music, brands, nearby spots) and turn it into four things to try this month.</p>
-    <form id="start" class="row" style="display:block">
-      <label for="first" class="hidden">Describe your restaurant</label>
-      <textarea id="first" rows="3" placeholder="e.g. A pure-veg Udupi restaurant in Jayanagar, Bengaluru. Office crowd at lunch, families on weekends."></textarea>
-      <div class="chips" id="samples">
-        <button type="button" class="chip">Pure-veg Udupi restaurant in Jayanagar, Bengaluru. Office lunches, families on weekends.</button>
-        <button type="button" class="chip">Small specialty coffee cafe in Indiranagar, Bengaluru. Students and remote workers.</button>
-        <button type="button" class="chip">Biryani cloud kitchen in Koramangala, Bengaluru. Delivery only, late-night orders.</button>
+  <section class="brief" id="brief">
+    <h1>Know what your diners love.</h1>
+    <p class="sub">Describe your restaurant. TasteMenu reads what people who eat at places like yours also love (films, shows, music, brands) and turns it into four things to try this month.</p>
+    <form id="start">
+      <label class="field" for="first">Your restaurant</label>
+      <textarea id="first" placeholder="Type, area and city, and who usually comes in"></textarea>
+      <div class="try"><span>Try:</span>
+        <button type="button" data-v="Pure-veg Udupi restaurant in Jayanagar, Bengaluru. Office crowd at lunch, families on weekends.">Udupi place in Jayanagar</button>
+        <button type="button" data-v="Small specialty coffee cafe in Indiranagar, Bengaluru. Students and remote workers.">Coffee cafe in Indiranagar</button>
+        <button type="button" data-v="Biryani cloud kitchen in Koramangala, Bengaluru. Delivery only, lots of late-night orders.">Biryani kitchen in Koramangala</button>
       </div>
-      <div class="row"><button class="btn" id="go" type="submit">Build my Taste Plan</button></div>
+      <button class="primary" id="go" type="submit">Make my plan</button>
     </form>
+    <div id="working" class="hidden">
+      <ol class="steps" id="steps">
+        <li data-k="read">Reading your brief</li>
+        <li data-k="places">Finding places like yours</li>
+        <li data-k="crowd">Reading what your crowd loves</li>
+        <li data-k="plan">Writing your plan</li>
+      </ol>
+      <p class="who" id="who"></p>
+      <p class="err hidden" id="err"></p>
+    </div>
   </section>
 
-  <section id="thread" class="thread" aria-live="polite"></section>
+  <section class="block hidden" id="crowd">
+    <p class="kicker">Your crowd</p>
+    <h2 id="headline"></h2>
+    <p class="note" style="margin:-8px 0 12px">Restaurants like yours in <span id="city"></span>, according to Qloo:</p>
+    <ul class="places" id="places"></ul>
+    <div class="loves" id="loves"></div>
+    <div class="lean" id="lean"></div>
+    <p class="note">Taste match is Qloo's affinity score (0–100): how much more this crowd likes something than people in general. Lean shows which groups over- or under-index. These are patterns across an audience, not facts about individual customers.</p>
+  </section>
 
-  <section id="board" class="hidden" aria-labelledby="board-title">
-    <div class="board-head">
-      <span class="k">Your Taste Plan</span>
-      <h2 id="board-title"></h2>
+  <section class="block hidden" id="planBlock">
+    <p class="kicker">This month's plan</p>
+    <div class="plan" id="plan"></div>
+    <div class="actions">
+      <a class="ghost" id="wa" href="#" target="_blank" rel="noopener">Share on WhatsApp</a>
+      <button class="ghost" id="pdf" type="button">Download PDF</button>
     </div>
-    <div class="cards" id="cards" style="margin-top:14px"></div>
-    <div class="row actions">
-      <button class="btn ghost" id="copy" type="button">Copy for WhatsApp</button>
-      <button class="btn ghost" id="print" type="button">Save as PDF</button>
+  </section>
+
+  <section class="block ask hidden" id="ask">
+    <p class="kicker">Thinking of a change?</p>
+    <form id="follow">
+      <input type="text" id="followInput" placeholder="Ask about a dish, an offer or an event" aria-label="Ask about a change">
+      <button class="primary" id="send" type="submit">Ask</button>
+    </form>
+    <div class="ideas">
+      <button type="button">What if I add a weekend biryani counter?</button>
+      <button type="button">Should I start a breakfast menu?</button>
+      <button type="button">Would a live music night work here?</button>
     </div>
-    <details class="panel" id="how" style="margin-top:14px">
-      <summary>How Qloo found this</summary>
-      <p class="lead" style="margin-top:8px">Every card is built from these Qloo calls. Results are aggregate taste affinities of an audience, not facts about individual customers.</p>
-      <ol class="trace" id="trace"></ol>
+    <div class="qa" id="qa"></div>
+    <details class="how">
+      <summary>How this plan was made</summary>
+      <ol id="trace"></ol>
     </details>
   </section>
 
-  <footer>TasteMenu uses <a href="https://www.qloo.com" target="_blank" rel="noopener">Qloo</a>'s cultural-intelligence API. No personal data about your customers is sent anywhere.</footer>
-</div>
-
-<div class="composer hidden" id="composer">
-  <form id="follow">
-    <input type="text" id="followInput" placeholder="What if I add a weekend biryani counter?" aria-label="Ask a follow-up">
-    <button class="btn" id="send" type="submit">Ask</button>
-  </form>
+  <footer>TasteMenu sends only a description of your restaurant type and area to Qloo. No customer data is used. Built for the Qloo Agentic Hackathon.</footer>
 </div>
 
 <script>
 const $ = (id) => document.getElementById(id);
-const ICON = { menu: "🍛", music: "🎵", event: "🎬", partners: "🤝" };
 const LABEL = { menu: "Menu", music: "Music", event: "Event", partners: "Partners" };
-let sessionId = null;
-let busy = false;
-let lastPlan = null;
+let sessionId = null, busy = false, plan = null, evidence = null;
 
-function esc(s) { return String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c])); }
+const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const pct = (a) => (typeof a === "number" ? Math.round(a * 100) : null);
 
-function addMsg(role, text) {
-  const div = document.createElement("div");
-  div.className = `msg ${role}`;
-  div.textContent = text;
-  $("thread").appendChild(div);
-  div.scrollIntoView({ behavior: "smooth", block: "end" });
-  return div;
+// Small, safe markdown subset for chat answers: paragraphs, "- " bullets and **bold**.
+function md(text) {
+  const lines = String(text || "").replace(/^#+\s*/gm, "").split(/\n/);
+  let html = "", list = false;
+  for (const raw of lines) {
+    const line = esc(raw.trim()).replace(/\*\*(.+?)\*\*/g, "<b>$1</b>").replace(/(^|\s)\*(\S.*?\S)\*(?=\s|$)/g, "$1<i>$2</i>");
+    if (/^[-*•]\s+/.test(raw.trim())) { if (!list) { html += "<ul>"; list = true; } html += `<li>${line.replace(/^[-*•]\s+/, "")}</li>`; continue; }
+    if (list) { html += "</ul>"; list = false; }
+    if (line && !/^-{2,}$/.test(line)) html += `<p>${line}</p>`;
+  }
+  return html + (list ? "</ul>" : "");
 }
 
-function progressBox() {
-  const ul = document.createElement("ul");
-  ul.className = "progress panel";
-  $("thread").appendChild(ul);
-  return ul;
+function setStep(k) {
+  let reached = false;
+  for (const li of $("steps").children) {
+    if (li.dataset.k === k) { li.className = "on"; reached = true; }
+    else li.className = reached ? "" : "done";
+  }
 }
 
-function renderPlan(plan) {
-  lastPlan = plan;
-  $("board").classList.remove("hidden");
-  $("board-title").textContent = plan.headline || "";
-  $("cards").innerHTML = (plan.cards || []).map((c) => `
-    <article class="card">
-      <span class="kind ${esc(c.kind)}">${ICON[c.kind] || ""} ${esc(LABEL[c.kind] || c.kind)}</span>
-      <h3>${esc(c.title)}</h3>
-      <p class="action">${esc(c.action)}</p>
-      <p class="why">${esc(c.why)}</p>
-      <div class="evidence">${(c.evidence || []).map((e) => `
-        <div class="ev"><b>${esc(e.name)}</b><span>${esc(e.type)}${typeof e.affinity === "number" ? ` · affinity ${e.affinity.toFixed(2)}` : ""}</span>
-        ${typeof e.affinity === "number" && e.affinity <= 1 ? `<div class="bar"><i style="width:${Math.round(Math.max(0, e.affinity) * 100)}%"></i></div>` : ""}</div>`).join("")}
+function renderCrowd(ev) {
+  evidence = ev;
+  $("crowd").classList.remove("hidden");
+  $("city").textContent = ev.neighbourhood ? `${ev.city} (near ${ev.neighbourhood})` : ev.city;
+  $("places").innerHTML = (ev.similar_places || []).slice(0, 6).map((p) => `<li>${esc(p.name)}</li>`).join("");
+  const col = (title, xs) => xs && xs.length ? `<div><h4>${title}</h4><ol>${xs.slice(0, 4).map((x) => `<li><span>${esc(x.name)}</span><span>${pct(x.affinity) ?? ""}</span></li>`).join("")}</ol></div>` : "";
+  const a = ev.audience || {};
+  $("loves").innerHTML = col("Films", a.films) + col("Shows", a.shows) + col("Music", a.music_artists) + col("Brands", a.brands);
+  const d = a.demographics_over_index || {};
+  const rows = [];
+  const AGE = { "24_and_younger": "Under 25", "25_to_29": "25–29", "30_to_34": "30–34", "35_to_44": "35–44", "45_to_54": "45–54", "55_and_older": "55+" };
+  for (const [k, v] of Object.entries(d.age || {})) rows.push([AGE[k] || k, v]);
+  for (const [k, v] of Object.entries(d.gender || {})) rows.push([k[0].toUpperCase() + k.slice(1), v]);
+  $("lean").innerHTML = rows.length ? `<h4 style="margin:0 0 4px;font-size:12px;letter-spacing:.09em;text-transform:uppercase;color:var(--soft)">Who leans in</h4>` + rows.map(([l, v]) => {
+    const w = Math.min(50, Math.abs(v) * 100);
+    const style = v >= 0 ? `left:50%;width:${w}%` : `right:50%;width:${w}%`;
+    return `<div class="row"><span>${esc(l)}</span><span class="track"><span class="fill ${v < 0 ? "neg" : ""}" style="${style}"></span></span><span class="v">${v > 0 ? "+" : ""}${Math.round(v * 100)}</span></div>`;
+  }).join("") : "";
+}
+
+function renderPlan(p) {
+  plan = p;
+  $("headline").textContent = p.headline || "";
+  $("crowd").classList.remove("hidden");
+  $("planBlock").classList.remove("hidden");
+  $("ask").classList.remove("hidden");
+  $("plan").innerHTML = (p.cards || []).map((c, i) => `
+    <article class="item">
+      <div class="num">${String(i + 1).padStart(2, "0")}</div>
+      <div>
+        <div class="cat">${esc(LABEL[c.kind] || c.kind)}</div>
+        <h3>${esc(c.title)}</h3>
+        <p class="act">${esc(c.action)}</p>
+        <p class="why">${esc(c.why)}</p>
+        ${(c.evidence || []).length ? `<p class="ev">Taste match: ${(c.evidence || []).map((e) => `<b>${esc(e.name)}</b>${pct(e.affinity) != null && e.affinity <= 1 ? ` <span class="mono">${pct(e.affinity)}</span>` : ""}`).join(" · ")}</p>` : ""}
+        ${c.caveat ? `<p class="warn">${esc(c.caveat)}</p>` : ""}
       </div>
-      ${c.caveat ? `<p class="caveat">${esc(c.caveat)}</p>` : ""}
     </article>`).join("");
-  $("board").scrollIntoView({ behavior: "smooth", block: "start" });
+  const text = [`*TasteMenu: this month's plan*`, p.headline, "", ...(p.cards || []).flatMap((c, i) => [`${i + 1}. *${c.title}*`, c.action, ""]), "Made with TasteMenu, audience data by Qloo"].join("\n");
+  $("wa").href = `https://wa.me/?text=${encodeURIComponent(text)}`;
 }
 
 function renderTrace(t) {
-  $("trace").innerHTML = (t.trace || []).map((s) => `<li>${esc(s.label)}: <code>${esc(s.tool)}</code> → ${esc(s.status)}${s.cached ? " (cached)" : ""}</li>`).join("");
+  $("trace").innerHTML = (t.trace || []).map((s) => `<li>${esc(s.label)} <span class="mono">(${esc(s.tool)}: ${esc(s.status)})</span></li>`).join("");
 }
 
-async function send(text) {
+async function run(text, { onReply, isFollow }) {
   if (busy || !text.trim()) return;
-  busy = true;
-  $("go").disabled = true; $("send").disabled = true;
-  addMsg("user", text);
-  const steps = progressBox();
-  const step = (txt) => { [...steps.children].forEach((li) => li.classList.add("done")); const li = document.createElement("li"); li.textContent = txt; steps.appendChild(li); };
-  step("Thinking about your restaurant…");
+  busy = true; $("go").disabled = true; $("send").disabled = true; $("err").classList.add("hidden");
   try {
     const res = await fetch("/api/chat", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ sessionId, message: text }) });
     if (!res.ok || !res.body) { const j = await res.json().catch(() => ({})); throw new Error(j.error || `HTTP ${res.status}`); }
-    const reader = res.body.getReader();
-    const dec = new TextDecoder();
+    const reader = res.body.getReader(), dec = new TextDecoder();
     let buf = "";
     for (;;) {
       const { value, done } = await reader.read();
@@ -223,38 +288,46 @@ async function send(text) {
       let i;
       while ((i = buf.indexOf("\n\n")) >= 0) {
         const chunk = buf.slice(0, i); buf = buf.slice(i + 2);
-        const ev = /^event: (.+)$/m.exec(chunk)?.[1];
-        const data = /^data: (.+)$/m.exec(chunk)?.[1];
+        const ev = /^event: (.+)$/m.exec(chunk)?.[1], data = /^data: (.+)$/m.exec(chunk)?.[1];
         if (!ev || !data) continue;
         const d = JSON.parse(data);
         if (ev === "session") sessionId = d.sessionId;
-        if (ev === "progress") step(d.text);
-        if (ev === "trace") renderTrace(d);
-        if (ev === "plan") { step("Writing your Taste Plan…"); renderPlan(d); }
-        if (ev === "reply") { [...steps.children].forEach((li) => li.classList.add("done")); if (d.text) addMsg("agent", d.text); }
-        if (ev === "error") addMsg("agent", d.message);
+        if (ev === "progress" && !isFollow) { setStep(/Reading the taste/.test(d.text) ? "places" : "crowd"); $("who").textContent = d.text; }
+        if (ev === "trace") { renderTrace(d); if (!isFollow) setStep("crowd"); }
+        if (ev === "evidence") { renderCrowd(d); if (!isFollow) setStep("plan"); }
+        if (ev === "plan") { renderPlan(d); if (!isFollow) { [...$("steps").children].forEach((li) => (li.className = "done")); $("working").classList.add("hidden"); $("crowd").scrollIntoView({ behavior: "smooth" }); } }
+        if (ev === "reply") onReply?.(d.text);
+        if (ev === "error") throw new Error(d.message);
       }
     }
   } catch (e) {
-    addMsg("agent", `Sorry, that didn't work (${e.message}). Please try again.`);
+    if (isFollow) onReply?.(`Sorry, that didn't work: ${e.message}`);
+    else { $("err").textContent = `Sorry, that didn't work: ${e.message}`; $("err").classList.remove("hidden"); $("start").classList.remove("hidden"); }
   } finally {
-    busy = false;
-    $("go").disabled = false; $("send").disabled = false;
-    $("composer").classList.remove("hidden");
+    busy = false; $("go").disabled = false; $("send").disabled = false;
   }
 }
 
-$("samples").addEventListener("click", (e) => { if (e.target.classList.contains("chip")) $("first").value = e.target.textContent; });
-$("start").addEventListener("submit", (e) => { e.preventDefault(); const t = $("first").value; if (t.trim()) { $("intro").classList.add("hidden"); send(t); } });
-$("follow").addEventListener("submit", (e) => { e.preventDefault(); const t = $("followInput").value; $("followInput").value = ""; send(t); });
-$("print").addEventListener("click", () => window.print());
-$("copy").addEventListener("click", async () => {
-  if (!lastPlan) return;
-  const lines = [`*TasteMenu plan*`, lastPlan.headline, ""];
-  for (const c of lastPlan.cards || []) lines.push(`${ICON[c.kind] || "•"} *${c.title}*`, c.action, "");
-  lines.push("Made with TasteMenu (taste data by Qloo)");
-  try { await navigator.clipboard.writeText(lines.join("\n")); $("copy").textContent = "Copied ✓"; setTimeout(() => ($("copy").textContent = "Copy for WhatsApp"), 2000); } catch { alert("Copy failed. Select the text and copy it manually."); }
+$("start").addEventListener("click", (e) => { if (e.target.dataset.v) $("first").value = e.target.dataset.v; });
+$("start").addEventListener("submit", (e) => {
+  e.preventDefault();
+  const t = $("first").value.trim();
+  if (!t) return;
+  $("start").classList.add("hidden");
+  $("working").classList.remove("hidden");
+  setStep("read");
+  $("who").textContent = t;
+  run(t, { onReply: (txt) => { if (!plan && txt) { $("err").innerHTML = md(txt); $("err").style.color = "var(--ink)"; $("err").classList.remove("hidden"); $("start").classList.remove("hidden"); } } });
 });
+function ask(q) {
+  const box = document.createElement("div");
+  box.innerHTML = `<div class="q">${esc(q)}</div><div class="a pending">Checking with Qloo…</div>`;
+  $("qa").prepend(box);
+  run(q, { isFollow: true, onReply: (txt) => { const a = box.querySelector(".a"); a.classList.remove("pending"); a.innerHTML = md(txt); } });
+}
+$("follow").addEventListener("submit", (e) => { e.preventDefault(); const q = $("followInput").value.trim(); if (q) { $("followInput").value = ""; ask(q); } });
+document.querySelector(".ideas").addEventListener("click", (e) => { if (e.target.tagName === "BUTTON") ask(e.target.textContent); });
+$("pdf").addEventListener("click", () => window.print());
 </script>
 </body>
 </html>
