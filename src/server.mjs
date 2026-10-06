@@ -3,7 +3,7 @@ import { createServer } from "node:http";
 import { readFile } from "node:fs/promises";
 import { randomUUID } from "node:crypto";
 import path from "node:path";
-import { compactEvidence, runAgent } from "./agent.mjs";
+import { compactEvidence, genericPlan, runAgent } from "./agent.mjs";
 import { analyzeSales, parseSales, sampleSales } from "./sales.mjs";
 import { gatherEvidence } from "./evidence.mjs";
 
@@ -67,6 +67,10 @@ async function chat(req, res) {
   send("session", { sessionId: id });
   const ping = setInterval(() => res.write(": ping\n\n"), 15000);
 
+  // First message only: build the no-Qloo baseline in parallel with the real run.
+  const baseline = s.history.length === 0
+    ? genericPlan(message).then((g) => g?.cards && send("generic", g)).catch((e) => console.error("[generic]", e.message))
+    : null;
   try {
     s.history.push({ role: "user", content: message });
     const out = await runAgent(s.history, {
@@ -88,6 +92,7 @@ async function chat(req, res) {
     });
     s.history = out.messages.filter((m) => m.role !== "system");
     if (out.plan) s.plan = out.plan;
+    await baseline;
     send("reply", { text: out.reply, model: out.model });
   } catch (e) {
     send("error", { message: "Something went wrong talking to the AI or Qloo. Please try again in a moment." });

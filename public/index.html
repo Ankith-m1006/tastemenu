@@ -154,6 +154,14 @@ details.kit[open] > summary::after { content: "Close"; }
 .salesSum { margin-top: 14px; }
 .salesSum p { margin: 0 0 6px; } .salesSum ul { margin: 4px 0 0; padding-left: 20px; }
 
+/* Generic baseline */
+.vsplan { display: grid; gap: 10px; margin-top: 10px; }
+.vsplan .g { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; border-bottom: 1px dotted var(--rule); padding-bottom: 8px; font-size: 14px; color: var(--ink); }
+.vsplan .g div:first-child { color: var(--soft); }
+.vsplan .g b { display: block; font-size: 11.5px; letter-spacing: .08em; text-transform: uppercase; margin-bottom: 2px; }
+.vsplan .g div:last-child b { color: var(--leaf); }
+@media (max-width: 520px) { .vsplan .g { grid-template-columns: 1fr; } }
+
 /* What-if and competitor tables */
 .tbl { width: 100%; border-collapse: collapse; margin: 10px 0 4px; font-size: 14.5px; }
 .tbl th { text-align: left; font-size: 11.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--soft); border-bottom: 1px solid var(--ink); padding: 4px 6px 4px 0; }
@@ -212,6 +220,11 @@ details.kit[open] > summary::after { content: "Close"; }
   <section class="block hidden" id="planBlock">
     <p class="kicker">This month's plan</p>
     <div class="plan" id="plan"></div>
+    <details class="how hidden" id="genericBox" style="margin-top:20px">
+      <summary>Why not just ask a chatbot? See what a generic AI suggests</summary>
+      <p class="note">Same AI, same question, but without Qloo's taste data. Compare it with the plan above.</p>
+      <div class="vsplan" id="generic"></div>
+    </details>
     <div class="actions">
       <a class="ghost" id="wa" href="#" target="_blank" rel="noopener">Share on WhatsApp</a>
       <button class="ghost" id="pdf" type="button">Download PDF</button>
@@ -321,11 +334,12 @@ function renderPlan(p) {
         <h3>${esc(c.title)}</h3>
         <p class="act">${esc(c.action)}</p>
         <p class="why">${esc(c.why)}</p>
-        ${(c.evidence || []).length ? `<p class="ev">Taste match: ${(c.evidence || []).map((e) => `<b>${esc(e.name)}</b>${pct(e.affinity) != null && e.affinity <= 1 ? ` <span class="mono">${pct(e.affinity)}</span>` : ""}`).join(" · ")}</p>` : ""}
+        ${(c.evidence || []).length ? `<p class="ev">Taste match: ${(c.evidence || []).filter((e) => e.verified !== false).map((e) => `<b>${esc(e.name)}</b>${pct(e.affinity) != null && e.affinity <= 1 ? ` <span class="mono">${pct(e.affinity)}</span>` : ""}`).join(" · ")}</p>` : ""}
         ${c.caveat ? `<p class="warn">${esc(c.caveat)}</p>` : ""}
         <p class="kitwait">Writing the messages and posts for this…</p>
       </div>
     </article>`).join("");
+  renderGeneric();
   const text = [`*TasteMenu: this month's plan*`, p.headline, "", ...(p.cards || []).flatMap((c, i) => [`${i + 1}. *${c.title}*`, c.action, ""]), "Made with TasteMenu, audience data by Qloo"].join("\n");
   $("wa").href = `https://wa.me/?text=${encodeURIComponent(text)}`;
 }
@@ -390,6 +404,18 @@ function renderSales(r) {
   $("salesOut").innerHTML = head + `<div class="dish" style="border:0;padding-bottom:0"><span></span><span class="sh">Sales</span><span class="sh" style="text-align:left">Crowd fit</span></div>` + `<div class="verdicts">${groups}${ideas}</div>`;
 }
 
+let generic = null;
+function renderGeneric() {
+  if (!generic || !plan) return;
+  $("genericBox").classList.remove("hidden");
+  $("generic").innerHTML = (plan.cards || []).map((c) => {
+    const g = (generic.cards || []).find((x) => x.kind === c.kind);
+    if (!g) return "";
+    const ev = (c.evidence || []).filter((e) => e.verified !== false).slice(0, 3).map((e) => esc(e.name)).join(", ");
+    return `<div class="g"><div><b>Generic AI · ${esc(LABEL[c.kind])}</b>${esc(g.title)}: ${esc(g.action)}</div><div><b>TasteMenu + Qloo</b>${esc(c.title)}${ev ? ` <span class="mono" style="font-size:12px">(${ev})</span>` : ""}</div></div>`;
+  }).join("");
+}
+
 function renderIdeas(r, box) {
   if (r.status !== "ok" || !box) return;
   box.querySelector(".extra").innerHTML += `<table class="tbl"><thead><tr><th>Idea</th><th>Qloo match</th><th style="text-align:right">Crowd fit</th></tr></thead><tbody>${r.ranking.map((x, i) => `<tr class="${i ? "" : "top"}"><td>${esc(x.option)}</td><td>${esc(x.qloo_tag ?? "no match")}</td><td class="n">${x.crowd_fit != null ? pct(x.crowd_fit) : "–"}</td></tr>`).join("")}</tbody></table><p class="note">Scores are comparable only within this table.</p>`;
@@ -427,6 +453,7 @@ async function run(text, { onReply, isFollow, box, onProgress }) {
         if (ev === "session") sessionId = d.sessionId;
         if (ev === "progress" && isFollow) onProgress?.(d.text);
         if (ev === "kit") renderKit(d);
+        if (ev === "generic") { generic = d; renderGeneric(); }
         if (ev === "sales") { renderSales(d); onProgress?.(""); }
         if (ev === "ideas") renderIdeas(d, box);
         if (ev === "compare") renderCompare(d, box);
