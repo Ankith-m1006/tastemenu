@@ -3,6 +3,7 @@
 import { gatherEvidence } from "./evidence.mjs";
 import { callQloo, listTools } from "./qloo.mjs";
 import { analyzeSales, compareCompetitor, rankIdeas, sampleSales } from "./sales.mjs";
+import { upcomingOccasions } from "./calendar.mjs";
 
 const GEMINI_URL = "https://generativelanguage.googleapis.com/v1beta/openai/chat/completions";
 const OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions";
@@ -19,9 +20,10 @@ The owner tells you about their restaurant. You find out what the people who lov
 How you work:
 1. If you do not know the restaurant's city and cuisine/style, ask one short question. Neighbourhood is optional.
 2. Call gather_taste_evidence(area, cuisine) once you know them. If it returns needs_input, show the candidates and ask the owner to pick. Never guess silently.
-3. Call publish_taste_plan with exactly four cards: menu (a dish, combo or special), music (what to play), event (a themed night or promotion), partners (local places or brands for a cross-promotion).
-4. Straight after that, call publish_action_kit: for each of the four cards, the ready-to-use material the owner needs to actually do it this week.
-5. Later questions:
+3. Time the plan. coming_up lists the real occasions in the next weeks for this city (verified dates). Tie the event card, and the menu card when it fits, to the most useful one for this crowd, naming the occasion and its date (for example "for Dussehra on Tue 20 Oct"), and combine it with what the crowd loves from Qloo. Pick occasions that suit the restaurant (a pure-veg family place and Diwali sweets, yes; Halloween at an Udupi place, no). Only use occasions and dates from coming_up; never invent one.
+4. Call publish_taste_plan with exactly four cards: menu (a dish, combo or special), music (what to play), event (a themed night or promotion), partners (local places or brands for a cross-promotion).
+5. Straight after that, call publish_action_kit: for each of the four cards, the ready-to-use material the owner needs to actually do it this week.
+6. Later questions:
    - "Check my menu / my sales": call analyze_sales, then explain in a few bullets which dishes to double down on, reposition or rethink, and which new dish idea fits the crowd best. Say clearly when it ran on the built-in sample month.
    - "What if I add X?" or "X or Y?": call rank_ideas with the owner's ideas (add one or two sensible alternatives if only one was given), then recommend one and say why.
    - "How am I different from <restaurant>?": call compare_competitor, then give two or three differences taken only from its tag lists, and one positioning idea that follows from them.
@@ -72,6 +74,7 @@ const PLAN_TOOL = {
                 },
               },
               caveat: { type: "string" },
+              occasion: { type: "string", description: "The coming_up occasion this card is timed to, exactly as named there, if any." },
             },
             required: ["kind", "title", "action", "why", "evidence"],
           },
@@ -205,6 +208,8 @@ export function compactEvidence(ev) {
       demographics_over_index: demo,
     },
     partner_places: top(ev.partners),
+    coming_up: upcomingOccasions(ev).map((o) => ({ name: o.name, date: o.date, end: o.end, days_away: o.days_away, ongoing: o.ongoing, note: o.note })),
+    today: new Date().toISOString().slice(0, 10),
     note: "Affinity is 0-1 (higher = this audience over-indexes more). Demographics are relative over/under-index, not shares.",
   };
 }
