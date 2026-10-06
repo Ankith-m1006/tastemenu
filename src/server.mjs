@@ -87,7 +87,7 @@ async function chat(req, res) {
         if (e.type === "sales") send("sales", e.sales);
         if (e.type === "ideas") send("ideas", e.ideas);
         if (e.type === "compare") send("compare", e.compare);
-        if (e.type === "retry") send("progress", { text: "The AI was busy, switching to a backup model…" });
+        if (e.type === "retry") send("progress", { text: "The model was busy, switching to a backup…" });
       },
     });
     s.history = out.messages.filter((m) => m.role !== "system");
@@ -95,7 +95,7 @@ async function chat(req, res) {
     await baseline;
     send("reply", { text: out.reply, model: out.model });
   } catch (e) {
-    send("error", { message: "Something went wrong talking to the AI or Qloo. Please try again in a moment." });
+    send("error", { message: "Something went wrong talking to the model or Qloo. Please try again in a moment." });
     console.error("[chat]", e);
   } finally {
     clearInterval(ping);

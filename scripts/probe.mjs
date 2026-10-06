@@ -1,5 +1,5 @@
 // Quick check: connect to qloo mcp, list the tools and run one Bengaluru query.
-import { callQloo, closeQloo, listTools } from "./qloo.mjs";
+import { callQloo, closeQloo, listTools } from "../src/qloo.mjs";
 
 try {
   const tools = await listTools();

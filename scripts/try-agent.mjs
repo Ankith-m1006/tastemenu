@@ -1,5 +1,5 @@
-import { runAgent } from "./agent.mjs";
-import { closeQloo } from "./qloo.mjs";
+import { runAgent } from "../src/agent.mjs";
+import { closeQloo } from "../src/qloo.mjs";
 import { writeFile } from "node:fs/promises";
 process.loadEnvFile(".env");
 try {
