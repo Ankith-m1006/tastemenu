@@ -1,0 +1,16 @@
+{
+  "name": "tastemenu",
+  "version": "0.1.0",
+  "private": true,
+  "description": "A taste strategist for independent restaurants, powered by Qloo's cultural intelligence.",
+  "type": "module",
+  "license": "MIT",
+  "engines": { "node": ">=22.19.0" },
+  "scripts": {
+    "start": "node src/server.mjs",
+    "probe": "node src/probe.mjs"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "1.30.1"
+  }
+}
