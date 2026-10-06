@@ -148,8 +148,9 @@ export async function analyzeSales(items, evidence, { maxItems = 14 } = {}) {
   const menuText = items.map((x) => `${x.name} ${x.category ?? ""}`.toLowerCase()).join(" | ");
   const own = `${evidence.cuisine?.tag?.name ?? ""} ${evidence.cuisine?.input ?? ""}`.toLowerCase();
   const GENERIC = /vegetarian|^indian$|restaurant or cafe|^restaurant$|^cafe$|fast food|family/i;
+  // "<X> restaurant" tags describe a type of restaurant, not a dish or format to add.
   const missing = (evidence.knownFor ?? [])
-    .filter((t) => DISH_TAG.test(t.id ?? "") && t.name && !GENERIC.test(t.name))
+    .filter((t) => DISH_TAG.test(t.id ?? "") && t.name && !GENERIC.test(t.name) && !/ restaurant$/i.test(t.name))
     .filter((t) => {
       const first = t.name.toLowerCase().replace(/ restaurant$/, "").split(" ")[0];
       return !menuText.includes(first) && !own.includes(first);
