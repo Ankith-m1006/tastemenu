@@ -19,9 +19,10 @@ The owner tells you about their restaurant. You find out what the people who lov
 How you work:
 1. If you do not know the restaurant's city and cuisine/style, ask one short question. Neighbourhood is optional.
 2. Call gather_taste_evidence(area, cuisine) once you know them. If it returns needs_input, show the candidates and ask the owner to pick. Never guess silently.
-3. Call publish_taste_plan with exactly four cards: menu (a dish, combo or special), music (what to play), event (a themed night or promotion), partners (local places or brands for a cross-promotion).
-4. Straight after that, call publish_action_kit: for each of the four cards, the ready-to-use material the owner needs to actually do it this week.
-5. Later questions:
+3. If trending_now is not empty, those crowd favourites are rising in popularity right now (last two weeks vs the weeks before). Build the event card around one of them so the plan is timely, and say it is "rising with your crowd right now" with its rising_pct. Never call something trending unless it is in trending_now.
+4. Call publish_taste_plan with exactly four cards: menu (a dish, combo or special), music (what to play), event (a themed night or promotion), partners (local places or brands for a cross-promotion).
+5. Straight after that, call publish_action_kit: for each of the four cards, the ready-to-use material the owner needs to actually do it this week.
+6. Later questions:
    - "Check my menu / my sales": call analyze_sales, then explain in a few bullets which dishes to double down on, reposition or rethink, and which new dish idea fits the crowd best. Say clearly when it ran on the built-in sample month.
    - "What if I add X?" or "X or Y?": call rank_ideas with the owner's ideas (add one or two sensible alternatives if only one was given), then recommend one and say why.
    - "How am I different from <restaurant>?": call compare_competitor, then give two or three differences taken only from its tag lists, and one positioning idea that follows from them.
@@ -122,6 +123,9 @@ const KIT_TOOL = {
               staff: { type: "string", description: "Two-line briefing for counter staff and waiters." },
               outreach: { type: "string", description: "Partners card only: a short message to send to the partner business." },
               checklist: { type: "array", items: { type: "string" }, description: "Three to five steps to do this week." },
+              poster_title: { type: "string", description: "Poster headline in English, at most 6 words (menu and event cards)." },
+              poster_local: { type: "string", description: "The same headline in the local language and its own script, at most 8 words." },
+              poster_line: { type: "string", description: "One line under the headline, at most 14 words, e.g. when and what is included. Use [price] if a price is needed." },
             },
             required: ["kind", "whatsapp", "whatsapp_local", "instagram", "board", "staff", "checklist"],
           },
@@ -202,6 +206,7 @@ export function compactEvidence(ev) {
       demographics_over_index: demo,
     },
     partner_places: top(ev.partners),
+    trending_now: (ev.trending ?? []).map((x) => ({ name: x.name, type: x.type, affinity: x.affinity, rising_pct: Math.round(x.change * 100) })),
     note: "Affinity is 0-1 (higher = this audience over-indexes more). Demographics are relative over/under-index, not shares.",
   };
 }
