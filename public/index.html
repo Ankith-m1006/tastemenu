@@ -184,6 +184,14 @@ svg.i { width: 20px; height: 20px; flex: none; }
 .trow small { grid-column: 1; color: var(--mute); font-size: 12px; }
 .poster-img { width: 100%; border-radius: 16px; border: 1px solid var(--line); display: block; }
 
+/* Coming up */
+.occ { flex: 0 0 auto; width: 136px; border: 1px solid var(--line); border-radius: 16px; padding: 11px 12px; scroll-snap-align: start; }
+.occ .d { font-size: 12px; font-weight: 800; color: var(--brand); text-transform: uppercase; letter-spacing: .04em; }
+.occ b { display: block; font-size: 14px; line-height: 1.25; margin: 3px 0 4px; }
+.occ small { color: var(--mute); font-size: 12px; font-weight: 600; }
+.occ-tag svg { width: 12px; height: 12px; }
+.occ-tag { display: inline-flex; align-items: center; gap: 5px; margin-left: 6px; font-size: 11px; font-weight: 800; color: var(--brand); background: var(--brand-soft); border-radius: 999px; padding: 2px 8px; vertical-align: middle; text-transform: none; letter-spacing: 0; }
+
 /* Crowd */
 .lean .r { display: grid; grid-template-columns: 70px 1fr 40px; gap: 10px; align-items: center; font-size: 13px; margin: 7px 0; }
 .lean .tr { position: relative; height: 8px; background: var(--chip); border-radius: 4px; }
@@ -359,6 +367,10 @@ svg.i { width: 20px; height: 20px; flex: none; }
           <div><div class="muted">This week</div><b id="weekCount">0 of 4 done</b></div>
         </div>
         <p class="muted" id="headline" style="margin:0 4px 12px"></p>
+        <div class="card hidden" id="upCard">
+          <div class="h2">Coming up</div>
+          <div class="hscroll" id="upList" style="margin-top:10px;padding-bottom:2px"></div>
+        </div>
         <div id="actions"></div>
         <button class="card vsbanner hidden noprint" id="vsBanner" type="button">
           <span class="big" id="vsNum">0</span>
@@ -576,10 +588,19 @@ function setStep(k) {
   $("prog").style.width = `${STEP_PROGRESS[k] ?? 10}%`;
 }
 
+// ---------- Coming up: real occasions for this city ----------
+function renderComing(list) {
+  const xs = list || [];
+  $("upCard").classList.toggle("hidden", !xs.length);
+  const fmt = (d) => new Date(`${d}T00:00:00`).toLocaleDateString("en-GB", { weekday: "short", day: "numeric", month: "short" });
+  $("upList").innerHTML = xs.map((o) => `<div class="occ"><span class="d">${o.ongoing ? "On now" : o.days_away === 0 ? "Today" : `In ${o.days_away} day${o.days_away === 1 ? "" : "s"}`}</span><b>${esc(o.name)}</b><small>${fmt(o.date)}${o.end ? ` – ${fmt(o.end)}` : ""}</small></div>`).join("");
+}
+
 // ---------- Crowd ----------
 let crowd = null;
 function renderCrowd(ev) {
   crowd = ev;
+  renderComing(ev.coming_up);
   $("crowdSub").textContent = `People who eat at places like yours in ${ev.city}${ev.neighbourhood ? ` (near ${ev.neighbourhood})` : ""}, according to Qloo.`;
   $("places").innerHTML = (ev.similar_places || []).slice(0, 8).map((p) => `<span>${esc(p.name)}</span>`).join("");
   const a = ev.audience || {};
@@ -614,7 +635,7 @@ function renderPlan(p) {
   $("actions").innerHTML = (p.cards || []).map((c, i) => {
     const ev = (c.evidence || []).filter((e) => e.verified !== false);
     return `<article class="card action" data-i="${i}">
-      <div class="top"><span class="kind ${esc(c.kind)}">${icon(ICON[c.kind] || "i-bulb")}</span><div><div class="k">${esc(LABEL[c.kind] || c.kind)}</div><h3>${esc(c.title)}</h3></div>
+      <div class="top"><span class="kind ${esc(c.kind)}">${icon(ICON[c.kind] || "i-bulb")}</span><div><div class="k">${esc(LABEL[c.kind] || c.kind)}${c.occasion ? `<span class="occ-tag">${icon("i-cal")}${esc(c.occasion)}</span>` : ""}</div><h3>${esc(c.title)}</h3></div>
         <button class="done-tick" type="button" data-done="${i}" aria-label="Mark as done">${icon("i-tick")}</button></div>
       <p class="do">${esc(c.action)}</p>
       ${c.caveat ? `<div class="watch">${icon("i-alert")}<span>${esc(c.caveat)}</span></div>` : ""}
@@ -712,7 +733,8 @@ async function makePoster(c, k, lang) {
   g.fillStyle = "#0e1116"; g.font = F(800, 46); g.fillText(restaurant?.name || "This week", 80, 140);
   g.fillStyle = "#8a8f98"; g.font = F(600, 30); g.fillText(restaurant?.area || "", 80, 186);
   g.fillStyle = "#f0532a"; g.font = F(800, 30);
-  const kicker = c.kind === "event" ? "THIS WEEKEND" : c.kind === "menu" ? "THIS WEEK'S SPECIAL" : "NEW THIS WEEK";
+  const occ = c.occasion && (crowd?.coming_up || []).find((o) => o.name === c.occasion);
+  const kicker = occ ? `FOR ${occ.name.split(" (")[0].toUpperCase()} · ${new Date(`${occ.date}T00:00:00`).toLocaleDateString("en-GB", { day: "numeric", month: "short" }).toUpperCase()}` : c.kind === "event" ? "THIS WEEKEND" : c.kind === "menu" ? "THIS WEEK'S SPECIAL" : "NEW THIS WEEK";
   g.fillText(kicker.split("").join(String.fromCharCode(8202)), 80, 470);
   g.fillStyle = "#0e1116"; g.font = F(800, 98);
   let y = wrap(g, k.poster_title || c.title, 80, 585, 920, 108, 3);
