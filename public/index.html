@@ -3,287 +3,463 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#f3f1ee">
 <title>TasteMenu</title>
-<meta name="description" content="Know what your diners love. A monthly taste plan for independent restaurants, built on Qloo's cultural-intelligence data.">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='14' fill='%232f5d3a'/><path d='M16 22h32M16 32h22M16 42h28' stroke='%23f3e9d6' stroke-width='5' stroke-linecap='round'/></svg>">
+<meta name="description" content="Grow your restaurant with what your diners love. Four things to do this week, the messages to send, and which dishes to push, built on Qloo's taste data.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='16' fill='%23E8501F'/><path d='M14 30h36a18 18 0 0 1-36 0z' fill='white'/><path d='M24 22c0-3 2-3 2-6M32 22c0-3 2-3 2-6M40 22c0-3 2-3 2-6' stroke='white' stroke-width='3' stroke-linecap='round' fill='none'/></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
 <style>
 :root {
-  --paper: #f5eee1; --card: #fbf7ef; --ink: #2a2119; --soft: #6c5f52; --rule: #ddd1bd;
-  --leaf: #2f5d3a; --tamarind: #9c3b1b; --turmeric: #b9790c; --tint: #efe4d0;
-  --serif: "Fraunces", Georgia, serif; --sans: "Instrument Sans", system-ui, sans-serif; --mono: "JetBrains Mono", ui-monospace, monospace;
+  --bg: #f3f1ee; --surface: #ffffff; --ink: #16181d; --ink2: #4b4f58; --mute: #868b95; --line: #e7e4df; --chip: #f2f0ec;
+  --brand: #e8501f; --brand-ink: #ffffff; --brand-soft: #fdeee8;
+  --good: #12945a; --good-soft: #e3f4eb; --warn: #a96d10; --warn-soft: #fbf0dc; --bad: #cc3636; --bad-soft: #fbe8e8;
+  --k-menu: #e8501f; --k-music: #7a4fd6; --k-event: #2f6fdb; --k-partners: #12945a;
+  --shadow: 0 1px 2px rgba(22,24,29,.05), 0 6px 18px rgba(22,24,29,.06);
+  --r: 20px;
+  --font: "Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
   color-scheme: light;
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --paper: #17130f; --card: #1f1a15; --ink: #f0e7d8; --soft: #ab9e8d; --rule: #3a3129;
-    --leaf: #8cc79a; --tamarind: #f09a73; --turmeric: #e8b04a; --tint: #2a231c; color-scheme: dark;
+    --bg: #0f1012; --surface: #1b1d21; --ink: #f3f3f4; --ink2: #c3c6cc; --mute: #8b9099; --line: #2c2f35; --chip: #25282d;
+    --brand: #ff6a3d; --brand-soft: #3a2018; --good: #3ccf8e; --good-soft: #15302a; --warn: #f0b44c; --warn-soft: #33291a; --bad: #ff7171; --bad-soft: #3a1d1d;
+    --k-menu: #ff6a3d; --k-music: #a888ff; --k-event: #6ea2ff; --k-partners: #3ccf8e; --shadow: 0 1px 2px rgba(0,0,0,.4); color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
-  --paper: #17130f; --card: #1f1a15; --ink: #f0e7d8; --soft: #ab9e8d; --rule: #3a3129;
-  --leaf: #8cc79a; --tamarind: #f09a73; --turmeric: #e8b04a; --tint: #2a231c; color-scheme: dark;
+  --bg: #0f1012; --surface: #1b1d21; --ink: #f3f3f4; --ink2: #c3c6cc; --mute: #8b9099; --line: #2c2f35; --chip: #25282d;
+  --brand: #ff6a3d; --brand-soft: #3a2018; --good: #3ccf8e; --good-soft: #15302a; --warn: #f0b44c; --warn-soft: #33291a; --bad: #ff7171; --bad-soft: #3a1d1d;
+  --k-menu: #ff6a3d; --k-music: #a888ff; --k-event: #6ea2ff; --k-partners: #3ccf8e; --shadow: 0 1px 2px rgba(0,0,0,.4); color-scheme: dark;
 }
-* { box-sizing: border-box; }
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 html, body { margin: 0; }
-body { background: var(--paper); color: var(--ink); font: 16px/1.55 var(--sans); padding: 0 16px 48px; -webkit-font-smoothing: antialiased; }
-.wrap { max-width: 860px; margin: 0 auto; }
-a { color: inherit; }
+body { background: var(--bg); color: var(--ink); font: 15px/1.5 var(--font); -webkit-font-smoothing: antialiased; }
 button, input, textarea { font: inherit; color: inherit; }
-:focus-visible { outline: 2px solid var(--leaf); outline-offset: 2px; }
-.mono { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+button { cursor: pointer; }
+:focus-visible { outline: 2.5px solid var(--brand); outline-offset: 2px; }
+.hidden { display: none !important; }
+svg.i { width: 20px; height: 20px; flex: none; }
 
-/* Masthead */
-.mast { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; padding: 20px 0 14px; border-bottom: 2px solid var(--ink); }
-.logo { font: 700 1.5rem/1 var(--serif); letter-spacing: -0.02em; text-decoration: none; }
-.logo em { font-style: normal; color: var(--tamarind); }
-.byline { font-size: 12px; color: var(--soft); text-align: right; }
+/* Page: a short pitch on the left on desktop, the app itself on the right */
+.page { min-height: 100vh; display: flex; justify-content: center; gap: 64px; }
+.pitch { display: none; }
+.app { width: 100%; max-width: 480px; min-height: 100vh; position: relative; background: var(--bg); }
+@media (min-width: 980px) {
+  body { background: radial-gradient(1200px 600px at 20% 0%, var(--brand-soft), transparent 60%), var(--bg); }
+  .page { align-items: center; padding: 36px 32px; min-height: 100vh; }
+  .pitch { display: block; max-width: 410px; }
+  .app { height: min(860px, calc(100vh - 72px)); min-height: 0; border-radius: 40px; box-shadow: 0 30px 80px rgba(22,24,29,.22), 0 0 0 11px #16181d; overflow: hidden; width: 410px; }
+  .scroller { height: 100%; overflow-y: auto; scrollbar-width: none; }
+  .scroller::-webkit-scrollbar { display: none; }
+}
+.pitch .logo { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 20px; }
+.pitch h1 { font-size: 42px; line-height: 1.06; letter-spacing: -0.035em; margin: 26px 0 14px; }
+.pitch p { color: var(--ink2); font-size: 16.5px; margin: 0 0 24px; }
+.pitch ol { list-style: none; padding: 0; margin: 0 0 26px; display: grid; gap: 14px; }
+.pitch li { display: grid; grid-template-columns: 36px 1fr; gap: 12px; align-items: start; color: var(--ink2); }
+.pitch li b { color: var(--ink); display: block; }
+.pitch .n { width: 36px; height: 36px; border-radius: 11px; background: var(--surface); box-shadow: var(--shadow); color: var(--brand); display: grid; place-items: center; font-weight: 800; }
+.pitch small { color: var(--mute); }
+.mark { width: 34px; height: 34px; border-radius: 11px; background: var(--brand); display: grid; place-items: center; color: #fff; flex: none; }
+.mark svg { width: 21px; height: 21px; }
 
-/* Brief */
-.brief { padding: 30px 0 10px; }
-.brief h1 { font: 700 clamp(1.9rem, 6.5vw, 3rem)/1.04 var(--serif); letter-spacing: -0.025em; margin: 0 0 10px; max-width: 16ch; }
-.brief p.sub { color: var(--soft); max-width: 52ch; margin: 0 0 22px; }
-label.field { display: block; font-size: 12px; font-weight: 700; letter-spacing: .09em; text-transform: uppercase; color: var(--soft); margin-bottom: 6px; }
-textarea { width: 100%; min-height: 96px; border: 1.5px solid var(--rule); border-radius: 6px; background: var(--card); padding: 12px 14px; resize: vertical; }
-.try { display: flex; flex-wrap: wrap; gap: 6px 14px; margin: 10px 0 18px; font-size: 14px; color: var(--soft); }
-.try button { background: none; border: 0; padding: 0; color: var(--leaf); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; font-weight: 600; }
-.primary { background: var(--ink); color: var(--paper); border: 0; border-radius: 6px; padding: 14px 20px; font-weight: 700; cursor: pointer; }
-.primary[disabled] { opacity: .5; cursor: wait; }
+/* App chrome */
+.topbar { position: sticky; top: 0; z-index: 20; display: flex; align-items: center; gap: 10px; padding: 14px 18px 10px; background: color-mix(in srgb, var(--bg) 90%, transparent); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); }
+.topbar .name { font-weight: 800; font-size: 17px; letter-spacing: -0.015em; }
+.topbar .place { margin-left: auto; font-size: 12.5px; font-weight: 600; color: var(--ink2); background: var(--surface); border-radius: 999px; padding: 6px 11px; max-width: 58%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; box-shadow: var(--shadow); }
+.screen { padding: 4px 16px 112px; }
+.tabbar { position: fixed; left: 50%; transform: translateX(-50%); bottom: 0; width: 100%; max-width: 480px; z-index: 30; display: grid; grid-template-columns: repeat(4, 1fr); background: color-mix(in srgb, var(--surface) 94%, transparent); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border-top: 1px solid var(--line); padding: 6px 8px calc(8px + env(safe-area-inset-bottom)); }
+@media (min-width: 980px) { .tabbar { position: absolute; left: 0; transform: none; padding-bottom: 16px; } }
+.tabbar button { border: 0; background: none; display: grid; justify-items: center; gap: 3px; padding: 7px 0 4px; color: var(--mute); font-size: 11.5px; font-weight: 700; border-radius: 14px; }
+.tabbar button svg { width: 23px; height: 23px; }
+.tabbar button.on { color: var(--brand); }
 
-/* Working */
-.steps { list-style: none; margin: 26px 0 0; padding: 18px 0 0; border-top: 1px solid var(--rule); display: grid; gap: 10px; counter-reset: s; }
-.steps li { counter-increment: s; display: grid; grid-template-columns: 28px 1fr; gap: 10px; align-items: baseline; color: var(--soft); }
-.steps li::before { content: counter(s, decimal-leading-zero); font: 500 13px var(--mono); }
+/* Building blocks */
+.card { background: var(--surface); border-radius: var(--r); box-shadow: var(--shadow); padding: 16px; margin-bottom: 12px; }
+.h1 { font-size: 27px; line-height: 1.12; letter-spacing: -0.03em; font-weight: 800; margin: 10px 2px 8px; }
+.h2 { font-size: 16px; font-weight: 800; letter-spacing: -0.01em; margin: 0; }
+.sub { color: var(--ink2); margin: 0 2px 16px; }
+.label { font-size: 12px; font-weight: 800; color: var(--mute); text-transform: uppercase; letter-spacing: .07em; margin: 22px 4px 10px; }
+.muted { color: var(--mute); font-size: 13px; }
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; border: 0; border-radius: 15px; padding: 14px 18px; font-weight: 700; background: var(--brand); color: var(--brand-ink); text-decoration: none; transition: transform .1s; }
+.btn:active { transform: scale(.98); }
+.btn[disabled] { opacity: .5; cursor: wait; }
+.btn.block { width: 100%; }
+.btn.soft { background: var(--chip); color: var(--ink); }
+.btn.line { background: transparent; color: var(--ink2); border: 1.5px solid var(--line); }
+.btn.sm { padding: 10px 14px; font-size: 14px; border-radius: 13px; }
+.btn svg { width: 18px; height: 18px; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip { border: 1.5px solid var(--line); background: var(--surface); border-radius: 999px; padding: 8px 13px; font-size: 14px; font-weight: 600; color: var(--ink2); text-align: left; }
+.chip.on { border-color: var(--brand); background: var(--brand-soft); color: var(--brand); }
+.field { display: block; margin-bottom: 16px; }
+.field > span { display: block; font-size: 13.5px; font-weight: 700; margin-bottom: 7px; }
+.field input { width: 100%; border: 1.5px solid var(--line); border-radius: 14px; background: var(--surface); padding: 13px 14px; outline: none; }
+.field input:focus { border-color: var(--brand); }
+.hscroll { display: flex; gap: 10px; overflow-x: auto; scroll-snap-type: x mandatory; margin: 0 -16px; padding: 2px 16px 10px; scrollbar-width: none; }
+.hscroll::-webkit-scrollbar { display: none; }
+.tile { flex: 0 0 auto; width: 148px; scroll-snap-align: start; background: var(--surface); border-radius: 18px; box-shadow: var(--shadow); padding: 13px; display: flex; flex-direction: column; }
+.tile .t { font-weight: 700; font-size: 14px; line-height: 1.3; flex: 1; }
+.match { display: flex; align-items: center; gap: 8px; margin-top: 10px; font-size: 12.5px; font-weight: 800; color: var(--good); }
+.match .bar { flex: 1; height: 5px; border-radius: 3px; background: var(--good-soft); overflow: hidden; }
+.match .bar i { display: block; height: 100%; background: var(--good); border-radius: 3px; }
+.pill { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 800; padding: 4px 10px; border-radius: 999px; white-space: nowrap; }
+.toast { position: fixed; left: 50%; bottom: 100px; transform: translateX(-50%); background: var(--ink); color: var(--bg); padding: 11px 16px; border-radius: 14px; font-weight: 700; font-size: 14px; z-index: 90; opacity: 0; transition: opacity .2s; pointer-events: none; }
+.toast.show { opacity: 1; }
+
+/* Onboarding */
+.how3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 4px 0 6px; }
+.how3 div { background: var(--surface); border-radius: 16px; padding: 11px; box-shadow: var(--shadow); font-size: 12.5px; font-weight: 700; color: var(--ink2); line-height: 1.3; }
+.how3 svg { color: var(--brand); display: block; margin-bottom: 8px; }
+.samples { display: grid; gap: 10px; }
+.sample { display: flex; align-items: center; gap: 12px; text-align: left; border: 0; background: var(--surface); border-radius: 18px; padding: 12px; box-shadow: var(--shadow); width: 100%; }
+.sample .em { width: 44px; height: 44px; border-radius: 14px; display: grid; place-items: center; flex: none; }
+.sample b { display: block; font-size: 15px; }
+.sample small { color: var(--mute); font-size: 12.5px; }
+.sample svg.go { margin-left: auto; color: var(--mute); }
+
+/* Building */
+.steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 14px; }
+.steps li { display: flex; align-items: center; gap: 12px; color: var(--mute); font-weight: 600; }
+.steps .s { width: 26px; height: 26px; border-radius: 50%; border: 2.5px solid var(--line); display: grid; place-items: center; flex: none; }
+.steps .s svg { width: 14px; height: 14px; }
 .steps li.on { color: var(--ink); }
-.steps li.on::before { color: var(--turmeric); }
+.steps li.on .s { border-color: var(--brand); border-top-color: transparent; animation: spin .8s linear infinite; }
 .steps li.done { color: var(--ink); }
-.steps li.done::before { content: "✓"; color: var(--leaf); }
-.who { margin-top: 18px; font-size: 14px; color: var(--soft); }
+.steps li.done .s { background: var(--good); border-color: var(--good); color: #fff; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.progress { height: 6px; background: var(--chip); border-radius: 3px; overflow: hidden; margin: 18px 0 2px; }
+.progress i { display: block; height: 100%; width: 8%; background: var(--brand); border-radius: 3px; transition: width .8s ease; }
+.skel { background: linear-gradient(90deg, var(--chip) 25%, var(--line) 37%, var(--chip) 63%); background-size: 400% 100%; animation: sk 1.4s ease infinite; border-radius: 12px; }
+@keyframes sk { 0% { background-position: 100% 50%; } 100% { background-position: 0 50%; } }
 
-/* Sections */
-section.block { padding: 30px 0 4px; }
-.kicker { font-size: 12px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--tamarind); margin: 0 0 8px; }
-h2 { font: 700 clamp(1.4rem, 4.6vw, 2rem)/1.15 var(--serif); letter-spacing: -0.02em; margin: 0 0 18px; }
-h3 { font: 600 1.15rem/1.25 var(--serif); margin: 0; }
+/* This week */
+.week { display: flex; align-items: center; gap: 14px; }
+.ring { width: 60px; height: 60px; flex: none; }
+.ring circle { fill: none; stroke-width: 7; }
+.ring .bg { stroke: var(--chip); }
+.ring .fg { stroke: var(--good); stroke-linecap: round; transform: rotate(-90deg); transform-origin: 50% 50%; transition: stroke-dashoffset .4s; }
+.week b { font-size: 18px; letter-spacing: -0.01em; }
+.action .top { display: flex; align-items: center; gap: 11px; }
+.kind { width: 40px; height: 40px; border-radius: 13px; display: grid; place-items: center; flex: none; }
+.kind.menu { background: color-mix(in srgb, var(--k-menu) 13%, transparent); color: var(--k-menu); }
+.kind.music { background: color-mix(in srgb, var(--k-music) 13%, transparent); color: var(--k-music); }
+.kind.event { background: color-mix(in srgb, var(--k-event) 13%, transparent); color: var(--k-event); }
+.kind.partners { background: color-mix(in srgb, var(--k-partners) 13%, transparent); color: var(--k-partners); }
+.action .k { font-size: 11.5px; font-weight: 800; color: var(--mute); text-transform: uppercase; letter-spacing: .06em; }
+.action h3 { font-size: 16.5px; line-height: 1.25; margin: 1px 0 0; letter-spacing: -0.01em; }
+.action p.do { margin: 12px 0 0; color: var(--ink2); }
+.done-tick { margin-left: auto; width: 32px; height: 32px; border-radius: 50%; border: 2px solid var(--line); background: none; display: grid; place-items: center; color: transparent; flex: none; }
+.done-tick svg { width: 16px; height: 16px; }
+.action.isdone .done-tick { background: var(--good); border-color: var(--good); color: #fff; }
+.action.isdone h3 { text-decoration: line-through; text-decoration-color: var(--mute); color: var(--ink2); }
+.why { margin-top: 12px; border-top: 1px solid var(--line); padding-top: 11px; }
+.why summary { list-style: none; font-size: 13.5px; font-weight: 700; color: var(--ink2); display: flex; align-items: center; gap: 6px; cursor: pointer; }
+.why summary::-webkit-details-marker { display: none; }
+.why summary svg { width: 16px; height: 16px; transition: transform .2s; margin-left: auto; }
+.why[open] summary svg { transform: rotate(90deg); }
+.why p { margin: 8px 0 10px; color: var(--ink2); font-size: 14px; }
+.evid { display: flex; flex-wrap: wrap; gap: 6px; }
+.evid span { background: var(--chip); border-radius: 999px; padding: 5px 10px; font-size: 12.5px; font-weight: 600; }
+.evid span b { color: var(--good); margin-left: 5px; }
+.watch { margin-top: 12px; background: var(--warn-soft); border-radius: 13px; padding: 10px 12px; font-size: 13px; display: flex; gap: 8px; color: var(--ink); }
+.watch svg { color: var(--warn); width: 17px; height: 17px; margin-top: 1px; }
+.row { display: flex; gap: 8px; margin-top: 12px; }
+.row > * { flex: 1; }
+.vsbanner { display: flex; align-items: center; gap: 14px; text-align: left; width: 100%; border: 0; }
+.vsbanner .big { width: 50px; height: 50px; border-radius: 16px; background: var(--good-soft); color: var(--good); display: grid; place-items: center; font-size: 21px; font-weight: 800; flex: none; }
 
 /* Crowd */
-.places { display: flex; flex-wrap: wrap; gap: 6px 18px; margin: 0 0 20px; padding: 0; list-style: none; font-size: 15px; }
-.places li::after { content: "·"; margin-left: 18px; color: var(--rule); }
-.places li:last-child::after { content: ""; }
-.loves { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px 22px; border-top: 1px solid var(--rule); padding-top: 16px; }
-.loves h4 { margin: 0 0 6px; font-size: 12px; letter-spacing: .09em; text-transform: uppercase; color: var(--soft); }
-.loves ol { margin: 0; padding: 0; list-style: none; display: grid; gap: 4px; }
-.loves li { display: flex; justify-content: space-between; gap: 10px; font-size: 15px; border-bottom: 1px dotted var(--rule); padding-bottom: 3px; }
-.loves li span:last-child { color: var(--soft); font: 500 12.5px var(--mono); white-space: nowrap; }
-.lean { margin-top: 18px; display: grid; gap: 6px; font-size: 13.5px; }
-.lean .row { display: grid; grid-template-columns: 92px 1fr 46px; gap: 10px; align-items: center; }
-.lean .track { position: relative; height: 8px; background: var(--tint); border-radius: 2px; }
-.lean .track::after { content: ""; position: absolute; left: 50%; top: -3px; bottom: -3px; width: 1px; background: var(--soft); }
-.lean .fill { position: absolute; top: 0; bottom: 0; background: var(--leaf); border-radius: 2px; }
-.lean .fill.neg { background: var(--tamarind); }
-.lean .v { font: 500 12px var(--mono); color: var(--soft); text-align: right; }
-.note { font-size: 12.5px; color: var(--soft); margin-top: 8px; }
+.lean .r { display: grid; grid-template-columns: 70px 1fr 40px; gap: 10px; align-items: center; font-size: 13px; margin: 7px 0; }
+.lean .tr { position: relative; height: 8px; background: var(--chip); border-radius: 4px; }
+.lean .tr::after { content: ""; position: absolute; left: 50%; top: -3px; bottom: -3px; width: 1.5px; background: var(--mute); }
+.lean .f { position: absolute; top: 0; bottom: 0; background: var(--good); border-radius: 4px; }
+.lean .f.neg { background: var(--bad); }
+.lean .v { text-align: right; font-weight: 800; font-size: 12px; color: var(--ink2); }
+.places { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.places span { background: var(--chip); border-radius: 11px; padding: 6px 10px; font-size: 13px; font-weight: 600; }
 
-/* Plan */
-.plan { border-top: 2px solid var(--ink); }
-.item { display: grid; grid-template-columns: 52px 1fr; gap: 6px 14px; padding: 20px 0; border-bottom: 1px solid var(--rule); }
-.num { font: 700 1.6rem/1 var(--serif); color: var(--turmeric); }
-.cat { font-size: 11.5px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--leaf); margin-bottom: 4px; }
-.item p { margin: 6px 0 0; }
-.item .act { font-weight: 500; }
-.item .why { color: var(--soft); font-size: 15px; }
-.item .ev { font-size: 13.5px; color: var(--soft); }
-.item .ev b { color: var(--ink); font-weight: 600; }
-.item .ev .mono { color: var(--leaf); }
-.item .warn { font-size: 14px; border-left: 3px solid var(--tamarind); padding-left: 10px; color: var(--ink); }
-.item .warn::before { content: "Watch out: "; font-weight: 700; color: var(--tamarind); }
-.actions { display: flex; flex-wrap: wrap; gap: 10px; margin: 18px 0 0; }
-.ghost { background: transparent; border: 1.5px solid var(--ink); border-radius: 6px; padding: 11px 16px; font-weight: 600; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; }
+/* Menu */
+.sum3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 12px; }
+.sum3 div { border-radius: 18px; padding: 13px; }
+.sum3 b { display: block; font-size: 26px; font-weight: 800; line-height: 1; }
+.sum3 span { font-size: 12.5px; font-weight: 800; }
+.sum3 .g { background: var(--good-soft); color: var(--good); }
+.sum3 .w { background: var(--warn-soft); color: var(--warn); }
+.sum3 .b { background: var(--bad-soft); color: var(--bad); }
+.dish { display: grid; grid-template-columns: 1fr auto; gap: 5px 10px; padding: 12px 0; border-bottom: 1px solid var(--line); align-items: center; }
+.dish:first-child { padding-top: 2px; }
+.dish:last-child { border-bottom: 0; padding-bottom: 2px; }
+.dish b { font-size: 14.5px; }
+.dish .meta { grid-column: 1 / -1; display: flex; align-items: center; gap: 10px; font-size: 12px; color: var(--mute); }
+.dish .meta .bar { flex: 0 0 80px; height: 5px; border-radius: 3px; background: var(--chip); overflow: hidden; }
+.dish .meta .bar i { display: block; height: 100%; background: var(--good); }
+.v-Double { background: var(--good-soft); color: var(--good); }
+.v-Reposition { background: var(--warn-soft); color: var(--warn); }
+.v-Rethink { background: var(--bad-soft); color: var(--bad); }
+.v-Core, .v-Keep, .v-No { background: var(--chip); color: var(--ink2); }
+.prose p { margin: 0 0 8px; } .prose p:last-child { margin-bottom: 0; } .prose ul { margin: 4px 0 0; padding-left: 18px; } .prose li { margin-bottom: 6px; }
+.upload { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 
-/* Ask */
-.ask form { display: flex; gap: 8px; }
-.ask input { flex: 1; min-width: 0; border: 1.5px solid var(--rule); border-radius: 6px; background: var(--card); padding: 12px 14px; }
-.ideas { display: flex; flex-wrap: wrap; gap: 6px 14px; margin: 10px 0 0; font-size: 14px; }
-.ideas button { background: none; border: 0; padding: 0; color: var(--leaf); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; font-weight: 600; text-align: left; }
-.qa { margin-top: 18px; display: grid; gap: 16px; }
-.qa .q { font: 600 1.05rem/1.3 var(--serif); }
-.qa .a { margin-top: 6px; }
-.qa .a p { margin: 0 0 6px; }
-.qa .a ul { margin: 4px 0 0; padding-left: 20px; }
-.qa .pending { color: var(--soft); font-style: italic; }
-details.how { margin-top: 26px; border-top: 1px solid var(--rule); padding-top: 14px; font-size: 14px; color: var(--soft); }
-details.how summary { cursor: pointer; font-weight: 600; color: var(--ink); }
-details.how ol { padding-left: 20px; margin: 10px 0 0; display: grid; gap: 3px; }
-footer { margin-top: 34px; padding-top: 14px; border-top: 1px solid var(--rule); font-size: 12.5px; color: var(--soft); }
-.hidden { display: none !important; }
-.err { color: var(--tamarind); margin-top: 12px; }
+/* Ideas */
+.ask-in { display: flex; gap: 8px; }
+.ask-in input { flex: 1; min-width: 0; border: 1.5px solid var(--line); border-radius: 14px; background: var(--surface); padding: 12px 14px; outline: none; }
+.ask-in input:focus { border-color: var(--brand); }
+.qa .q { font-weight: 800; font-size: 15px; display: flex; gap: 8px; align-items: flex-start; }
+.qa .q svg { color: var(--brand); margin-top: 1px; }
+.qa .a { margin-top: 10px; color: var(--ink2); font-size: 14.5px; }
+.qa .pending { color: var(--mute); }
+.rank { margin-top: 12px; display: grid; gap: 6px; }
+.rank div { display: grid; grid-template-columns: 22px 1fr auto; gap: 8px; align-items: center; background: var(--chip); border-radius: 13px; padding: 9px 11px; font-size: 14px; font-weight: 600; }
+.rank div:first-child { background: var(--good-soft); }
+.rank i { font-style: normal; font-weight: 800; color: var(--mute); }
+.rank em { font-style: normal; font-weight: 800; color: var(--good); font-size: 13px; }
+.rank small { font-weight: 500; }
+.vs3 { display: grid; gap: 8px; margin-top: 12px; }
+.vs3 div { border-radius: 13px; padding: 10px 12px; background: var(--chip); font-size: 13.5px; }
+.vs3 b { display: block; font-size: 11.5px; text-transform: uppercase; letter-spacing: .06em; margin-bottom: 3px; color: var(--mute); }
+
+/* Bottom sheet */
+.scrim { position: fixed; inset: 0; background: rgba(10,10,12,.45); z-index: 60; opacity: 0; pointer-events: none; transition: opacity .2s; }
+.scrim.open { opacity: 1; pointer-events: auto; }
+.sheet { position: fixed; left: 50%; bottom: 0; transform: translate(-50%, 105%); width: 100%; max-width: 480px; max-height: 88vh; overflow-y: auto; background: var(--surface); border-radius: 26px 26px 0 0; z-index: 70; padding: 8px 16px calc(22px + env(safe-area-inset-bottom)); transition: transform .3s cubic-bezier(.2,.8,.2,1); }
+.sheet.open { transform: translate(-50%, 0); }
+.sheet .grab { width: 40px; height: 5px; border-radius: 3px; background: var(--line); margin: 4px auto 14px; }
+.sheet .head { display: flex; align-items: center; gap: 11px; margin-bottom: 14px; }
+.sheet .head .x { margin-left: auto; border: 0; background: var(--chip); width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center; color: var(--ink2); flex: none; }
+.seg { display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; margin: 0 -16px 14px; padding: 0 16px; }
+.seg::-webkit-scrollbar { display: none; }
+.seg button { flex: none; border: 0; background: var(--chip); border-radius: 999px; padding: 8px 14px; font-weight: 700; font-size: 13.5px; color: var(--ink2); }
+.seg button.on { background: var(--ink); color: var(--surface); }
+.msg { white-space: pre-wrap; background: #dcf8c6; color: #111; border-radius: 18px 18px 18px 5px; padding: 12px 14px; font-size: 15px; line-height: 1.45; }
+.msg.plain { background: var(--chip); color: var(--ink); border-radius: 16px; }
+.checklist { margin: 0; padding: 0; list-style: none; display: grid; gap: 9px; }
+.checklist li { display: flex; gap: 10px; font-size: 14px; color: var(--ink2); }
+.checklist li::before { content: ""; width: 18px; height: 18px; border: 2px solid var(--line); border-radius: 6px; flex: none; margin-top: 1px; }
+.cmp { display: grid; gap: 10px; }
+.cmp .pair { border: 1px solid var(--line); border-radius: 18px; overflow: hidden; }
+.cmp .pair div { padding: 11px 13px; font-size: 13.5px; }
+.cmp .pair div:first-child { background: var(--chip); color: var(--ink2); }
+.cmp .pair small { display: block; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: .06em; margin-bottom: 3px; color: var(--mute); }
+.cmp .pair div:last-child small { color: var(--good); }
+.err { background: var(--bad-soft); color: var(--bad); border-radius: 16px; padding: 14px; font-weight: 600; margin-top: 12px; }
+.err .btn { margin-top: 10px; }
 @media print {
-  body { background: #fff; color: #000; }
-  .brief, .ask, .actions, details.how, #working, footer, .tabs, .panel .row, #menuTools { display: none !important; }
-  details.kit { border: 0; } details.kit > summary::after { content: ""; }
-  .item { break-inside: avoid; }
+  .tabbar, .topbar, .sheet, .scrim, .pitch, .noprint, .why summary svg { display: none !important; }
+  body, .app { background: #fff !important; box-shadow: none !important; height: auto !important; }
+  .scroller { height: auto !important; overflow: visible !important; }
+  .card { box-shadow: none; border: 1px solid #ddd; break-inside: avoid; }
+  .why { display: block; } .why > *:not(summary) { display: block !important; }
 }
-
-/* Action kit */
-details.kit { margin-top: 12px; border: 1px solid var(--rule); border-radius: 6px; background: var(--card); }
-details.kit > summary { cursor: pointer; padding: 10px 12px; font-weight: 600; font-size: 14.5px; list-style: none; display: flex; justify-content: space-between; }
-details.kit > summary::after { content: "Open"; color: var(--leaf); font-weight: 600; }
-details.kit[open] > summary::after { content: "Close"; }
-.tabs { display: flex; flex-wrap: wrap; gap: 6px; padding: 0 12px; }
-.tabs button { border: 1px solid var(--rule); background: transparent; border-radius: 999px; padding: 4px 11px; font-size: 13px; cursor: pointer; }
-.tabs button.on { background: var(--ink); color: var(--paper); border-color: var(--ink); }
-.panel { padding: 10px 12px 12px; }
-.panel .txt { white-space: pre-wrap; font-size: 15px; background: var(--tint); border-radius: 4px; padding: 10px 12px; margin: 0 0 8px; }
-.panel .row { display: flex; gap: 8px; flex-wrap: wrap; }
-.mini { border: 1.5px solid var(--ink); background: transparent; border-radius: 6px; padding: 6px 12px; font-size: 13.5px; font-weight: 600; cursor: pointer; text-decoration: none; }
-.check { margin: 10px 12px 12px; padding-left: 18px; font-size: 14px; }
-.kitwait { font-size: 13.5px; color: var(--soft); font-style: italic; margin-top: 10px; }
-
-/* Menu vs crowd */
-.verdicts { display: grid; gap: 18px; margin-top: 14px; }
-.verdict h3 { font-size: 1.05rem; display: flex; gap: 8px; align-items: baseline; }
-.verdict h3 small { font: 500 12.5px var(--sans); color: var(--soft); }
-.dish { display: grid; grid-template-columns: 1fr 58px 96px; gap: 10px; align-items: center; padding: 7px 0; border-bottom: 1px dotted var(--rule); font-size: 15px; }
-.dish .sh { font: 500 12.5px var(--mono); color: var(--soft); text-align: right; }
-.bar { display: block; width: 100%; height: 7px; background: var(--tint); border-radius: 2px; position: relative; }
-.dish > span:last-child { display: block; }
-.bar i { position: absolute; left: 0; top: 0; bottom: 0; background: var(--leaf); border-radius: 2px; }
-.dish small { display: block; color: var(--soft); font-size: 12.5px; }
-.badge { display: inline-block; font-size: 11.5px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--turmeric); border: 1px solid var(--turmeric); border-radius: 3px; padding: 1px 6px; }
-.salesSum { margin-top: 14px; }
-.salesSum p { margin: 0 0 6px; } .salesSum ul { margin: 4px 0 0; padding-left: 20px; }
-
-/* Generic baseline */
-.vsplan { display: grid; gap: 10px; margin-top: 10px; }
-.vsplan .g { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; border-bottom: 1px dotted var(--rule); padding-bottom: 8px; font-size: 14px; color: var(--ink); }
-.vsplan .g div:first-child { color: var(--soft); }
-.vsplan .g b { display: block; font-size: 11.5px; letter-spacing: .08em; text-transform: uppercase; margin-bottom: 2px; }
-.vsplan .g div:last-child b { color: var(--leaf); }
-.vsplan .g small { display: block; margin-top: 4px; font-size: 12.5px; color: var(--soft); }
-.vsplan .g small .mono { color: var(--leaf); }
-#genericBox { border: 1.5px solid var(--leaf); border-radius: 6px; padding: 12px 14px; }
-#genericBox summary { color: var(--leaf); }
-@media (max-width: 520px) { .vsplan .g { grid-template-columns: 1fr; } }
-
-/* What-if and competitor tables */
-.tbl { width: 100%; border-collapse: collapse; margin: 10px 0 4px; font-size: 14.5px; }
-.tbl th { text-align: left; font-size: 11.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--soft); border-bottom: 1px solid var(--ink); padding: 4px 6px 4px 0; }
-.tbl td { border-bottom: 1px dotted var(--rule); padding: 6px 6px 6px 0; vertical-align: top; }
-.tbl td.n { font: 500 13px var(--mono); text-align: right; white-space: nowrap; }
-.tbl tr.top td:first-child { font-weight: 700; }
-.vs { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; }
-.vs h4 { margin: 8px 0 2px; font-size: 12px; letter-spacing: .09em; text-transform: uppercase; color: var(--soft); }
-.compete { display: flex; gap: 8px; margin-top: 16px; }
-.compete input { flex: 1; min-width: 0; border: 1.5px solid var(--rule); border-radius: 6px; background: var(--card); padding: 10px 12px; }
-.progressline { font-size: 13.5px; color: var(--soft); font-style: italic; }
 </style>
 </head>
 <body>
-<div class="wrap">
-  <header class="mast">
-    <a class="logo" href="/">Taste<em>Menu</em></a>
-    <span class="byline">A monthly taste plan for your restaurant<br>Audience data by Qloo</span>
-  </header>
+<div class="page">
+  <aside class="pitch">
+    <div class="logo"><span class="mark"><svg viewBox="0 0 24 24"><use href="#i-bowl"/></svg></span>TasteMenu</div>
+    <h1>Grow your restaurant with what your diners love.</h1>
+    <p>A weekly growth coach for independent restaurants. It reads what people who eat at places like yours also love, from Qloo's taste graph, and tells you exactly what to do this week.</p>
+    <ol>
+      <li><span class="n">1</span><span><b>Tell it about your place</b>Type of food, area, who comes in.</span></li>
+      <li><span class="n">2</span><span><b>See who your diners are</b>The films, music, brands and places your crowd loves.</span></li>
+      <li><span class="n">3</span><span><b>Do 4 things this week</b>With the WhatsApp message, Instagram post and staff briefing ready to send.</span></li>
+      <li><span class="n">4</span><span><b>Fix your menu</b>Upload your sales to see which dishes to push, fix or drop.</span></li>
+    </ol>
+    <small>Taste data by Qloo. Only your type of restaurant and area are sent; never customer data.</small>
+  </aside>
 
-  <section class="brief" id="brief">
-    <h1>Know what your diners love.</h1>
-    <p class="sub">Describe your restaurant. TasteMenu reads what people who eat at places like yours also love (films, shows, music, brands) and turns it into four things to try this month.</p>
-    <form id="start">
-      <label class="field" for="first">Your restaurant</label>
-      <textarea id="first" placeholder="Type, area and city, and who usually comes in"></textarea>
-      <div class="try"><span>Try:</span>
-        <button type="button" data-v="Pure-veg Udupi restaurant in Jayanagar, Bengaluru. Office crowd at lunch, families on weekends.">Udupi place in Jayanagar</button>
-        <button type="button" data-v="Small specialty coffee cafe in Indiranagar, Bengaluru. Students and remote workers.">Coffee cafe in Indiranagar</button>
-        <button type="button" data-v="Biryani cloud kitchen in Koramangala, Bengaluru. Delivery only, lots of late-night orders.">Biryani kitchen in Koramangala</button>
-      </div>
-      <button class="primary" id="go" type="submit">Make my plan</button>
-    </form>
-    <div id="working" class="hidden">
-      <ol class="steps" id="steps">
-        <li data-k="read">Reading your brief</li>
-        <li data-k="places">Finding places like yours</li>
-        <li data-k="crowd">Reading what your crowd loves</li>
-        <li data-k="plan">Writing your plan</li>
-      </ol>
-      <p class="who" id="who"></p>
-      <p class="err hidden" id="err"></p>
+  <main class="app">
+    <div class="scroller" id="scroller">
+      <header class="topbar">
+        <span class="mark"><svg viewBox="0 0 24 24"><use href="#i-bowl"/></svg></span>
+        <span class="name">TasteMenu</span>
+        <span class="place hidden" id="placeChip"></span>
+      </header>
+
+      <!-- Onboarding -->
+      <section class="screen" id="onboard">
+        <div class="h1">Know what your diners love. Act on it this week.</div>
+        <p class="sub">Your restaurant's weekly growth coach, built on real taste data.</p>
+        <div class="how3">
+          <div><svg class="i" viewBox="0 0 24 24"><use href="#i-store"/></svg>Tell us about your place</div>
+          <div><svg class="i" viewBox="0 0 24 24"><use href="#i-users"/></svg>See what your crowd loves</div>
+          <div><svg class="i" viewBox="0 0 24 24"><use href="#i-check"/></svg>Get 4 actions and the messages</div>
+        </div>
+
+        <div class="label">Try a sample restaurant</div>
+        <div class="samples" id="samples">
+          <button class="sample" type="button" data-name="Sri Krishna Udupi" data-type="Pure-veg Udupi" data-area="Jayanagar, Bengaluru" data-crowd="Office crowd at lunch, families on weekends.">
+            <span class="em" style="background:color-mix(in srgb,var(--k-menu) 13%,transparent);color:var(--k-menu)"><svg class="i" viewBox="0 0 24 24"><use href="#i-bowl"/></svg></span><span><b>Sri Krishna Udupi</b><small>Pure-veg Udupi · Jayanagar, Bengaluru</small></span><svg class="i go" viewBox="0 0 24 24"><use href="#i-right"/></svg>
+          </button>
+          <button class="sample" type="button" data-name="Third Wave Corner" data-type="Specialty coffee cafe" data-area="Indiranagar, Bengaluru" data-crowd="Students and remote workers.">
+            <span class="em" style="background:color-mix(in srgb,var(--k-music) 13%,transparent);color:var(--k-music)"><svg class="i" viewBox="0 0 24 24"><use href="#i-cup"/></svg></span><span><b>Third Wave Corner</b><small>Specialty coffee · Indiranagar, Bengaluru</small></span><svg class="i go" viewBox="0 0 24 24"><use href="#i-right"/></svg>
+          </button>
+          <button class="sample" type="button" data-name="Nonna's Table" data-type="Neighborhood Italian trattoria" data-area="West Village, New York" data-crowd="Date nights and weekend brunch.">
+            <span class="em" style="background:color-mix(in srgb,var(--k-event) 13%,transparent);color:var(--k-event)"><svg class="i" viewBox="0 0 24 24"><use href="#i-wine"/></svg></span><span><b>Nonna's Table</b><small>Italian trattoria · West Village, New York</small></span><svg class="i go" viewBox="0 0 24 24"><use href="#i-right"/></svg>
+          </button>
+        </div>
+
+        <div class="label">Or set up your own</div>
+        <form class="card" id="start" novalidate>
+          <label class="field"><span>Restaurant name <span class="muted">(optional)</span></span><input id="fName" placeholder="e.g. Hotel Annapoorna" autocomplete="off"></label>
+          <div class="field"><span>What kind of place?</span>
+            <div class="chips" id="fType">
+              <button type="button" class="chip">South Indian</button><button type="button" class="chip">Udupi</button><button type="button" class="chip">Biryani</button>
+              <button type="button" class="chip">North Indian</button><button type="button" class="chip">Cafe</button><button type="button" class="chip">Bakery</button>
+              <button type="button" class="chip">Chinese</button><button type="button" class="chip">Italian</button><button type="button" class="chip">Other…</button>
+            </div>
+            <input id="fTypeOther" class="hidden" style="margin-top:8px" placeholder="Type of food or place" autocomplete="off">
+          </div>
+          <label class="field"><span>Area and city</span><input id="fArea" placeholder="e.g. Koramangala, Bengaluru" autocomplete="off"></label>
+          <label class="field"><span>Who usually comes in? <span class="muted">(optional)</span></span><input id="fCrowd" placeholder="e.g. Students, families, late-night delivery" autocomplete="off"></label>
+          <button class="btn block" id="go" type="submit">Build my plan<svg class="i" viewBox="0 0 24 24"><use href="#i-right"/></svg></button>
+          <p class="muted" style="margin:12px 2px 0">Only the type of place and area are sent to Qloo. Never customer data.</p>
+        </form>
+      </section>
+
+      <!-- Building -->
+      <section class="screen hidden" id="building">
+        <div class="h1" id="bTitle">Building your plan</div>
+        <p class="sub">Usually 15–40 seconds.</p>
+        <div class="card">
+          <ol class="steps" id="steps">
+            <li data-k="places"><span class="s"></span>Finding restaurants like yours</li>
+            <li data-k="crowd"><span class="s"></span>Reading what their diners love</li>
+            <li data-k="plan"><span class="s"></span>Writing this week's plan</li>
+            <li data-k="kit"><span class="s"></span>Drafting your messages</li>
+          </ol>
+          <div class="progress"><i id="prog"></i></div>
+        </div>
+        <div class="card" id="peek"><div class="skel" style="height:16px;width:55%"></div><div class="skel" style="height:64px;margin-top:12px"></div></div>
+        <div class="err hidden" id="err"></div>
+      </section>
+
+      <!-- Tab: This week -->
+      <section class="screen hidden" data-tab="week">
+        <div class="card week">
+          <svg class="ring" viewBox="0 0 60 60"><circle class="bg" cx="30" cy="30" r="25"/><circle class="fg" id="ringFg" cx="30" cy="30" r="25" stroke-dasharray="157.1" stroke-dashoffset="157.1"/></svg>
+          <div><div class="muted">This week</div><b id="weekCount">0 of 4 done</b></div>
+        </div>
+        <p class="muted" id="headline" style="margin:0 4px 12px"></p>
+        <div id="actions"></div>
+        <button class="card vsbanner hidden noprint" id="vsBanner" type="button">
+          <span class="big" id="vsNum">0</span>
+          <span><b>real taste signals behind this plan</b><br><span class="muted">A plain chatbot has none. See the difference</span></span>
+          <svg class="i" viewBox="0 0 24 24" style="margin-left:auto;color:var(--mute)"><use href="#i-right"/></svg>
+        </button>
+        <div class="row noprint">
+          <a class="btn soft" id="wa" href="#" target="_blank" rel="noopener"><svg class="i" viewBox="0 0 24 24"><use href="#i-msg"/></svg>Share plan</a>
+          <button class="btn soft" id="pdf" type="button"><svg class="i" viewBox="0 0 24 24"><use href="#i-down"/></svg>Save PDF</button>
+        </div>
+        <button class="btn line block noprint" id="restart" type="button" style="margin-top:10px">Try another restaurant</button>
+      </section>
+
+      <!-- Tab: Crowd -->
+      <section class="screen hidden" data-tab="crowd">
+        <div class="h1" style="font-size:23px">Who eats at places like yours</div>
+        <p class="sub" id="crowdSub"></p>
+        <div class="card"><div class="h2">Restaurants like yours</div><div class="places" id="places"></div></div>
+        <div id="loves"></div>
+        <div class="card lean hidden" id="leanCard"><div class="h2">Who leans in</div><p class="muted" style="margin:2px 0 8px">More (green) or less (red) likely than average.</p><div id="lean"></div></div>
+        <p class="muted" style="margin:6px 4px">Match is Qloo's affinity score (0–100): how much more this crowd likes something than people in general. Patterns across an audience, not facts about individual customers.</p>
+      </section>
+
+      <!-- Tab: Menu -->
+      <section class="screen hidden" data-tab="menu">
+        <div class="h1" style="font-size:23px">Your menu vs your crowd</div>
+        <p class="sub">Match your sales with what your crowd loves, and see which dishes to push, fix or drop.</p>
+        <div class="upload noprint">
+          <label class="btn" for="csv" style="cursor:pointer"><svg class="i" viewBox="0 0 24 24"><use href="#i-up"/></svg>Upload sales</label>
+          <input type="file" id="csv" accept=".csv,text/csv" hidden>
+          <button class="btn soft" id="sampleBtn" type="button">Use sample month</button>
+        </div>
+        <p class="muted noprint" style="margin:10px 4px 0">A CSV export from Petpooja or any POS (item, quantity, amount). It stays in this session and is never saved.</p>
+        <div class="card hidden" id="salesWait" style="margin-top:14px"><ol class="steps"><li class="on"><span class="s"></span><span id="salesStatus">Matching every dish to what your crowd loves…</span></li></ol></div>
+        <div id="salesOut" style="margin-top:14px"></div>
+      </section>
+
+      <!-- Tab: Ideas -->
+      <section class="screen hidden" data-tab="ask">
+        <div class="h1" style="font-size:23px">Thinking of a change?</div>
+        <p class="sub">Test an idea against your crowd before you spend money on it.</p>
+        <div class="card">
+          <div class="h2">Try an idea</div>
+          <form class="ask-in" id="follow" style="margin-top:12px"><input id="followInput" placeholder="e.g. Breakfast menu or live music?" aria-label="Your idea" autocomplete="off"><button class="btn" type="submit" id="send">Ask</button></form>
+          <div class="chips" id="ideas" style="margin-top:12px">
+            <button type="button" class="chip">Weekend biryani counter or a breakfast menu?</button>
+            <button type="button" class="chip">Would a live music night work?</button>
+            <button type="button" class="chip">Evening filter coffee and snacks?</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="h2">Compare with a competitor</div>
+          <form class="ask-in" id="compete" style="margin-top:12px"><input id="rival" placeholder="e.g. Vidyarthi Bhavan" aria-label="Competitor name" autocomplete="off"><button class="btn soft" type="submit">Compare</button></form>
+        </div>
+        <div id="qa"></div>
+        <details class="card noprint"><summary style="font-weight:700;cursor:pointer">How this plan was made</summary><ol id="trace" class="muted" style="padding-left:18px;margin:10px 0 0"></ol></details>
+      </section>
     </div>
-  </section>
 
-  <section class="block hidden" id="crowd">
-    <p class="kicker">Your crowd</p>
-    <h2 id="headline"></h2>
-    <p class="note" style="margin:-8px 0 12px">Restaurants like yours in <span id="city"></span>, according to Qloo:</p>
-    <ul class="places" id="places"></ul>
-    <div class="loves" id="loves"></div>
-    <div class="lean" id="lean"></div>
-    <p class="note">Taste match is Qloo's affinity score (0–100): how much more this crowd likes something than people in general. Lean shows which groups over- or under-index. These are patterns across an audience, not facts about individual customers.</p>
-  </section>
-
-  <section class="block hidden" id="planBlock">
-    <p class="kicker">This month's plan</p>
-    <div class="plan" id="plan"></div>
-    <details class="how hidden" id="genericBox" style="margin-top:20px">
-      <summary id="genericSum">Why not just ask a chatbot? See what a generic chatbot suggests</summary>
-      <p class="note">Same model, same question, but without Qloo's taste data. Compare it with the plan above.</p>
-      <div class="vsplan" id="generic"></div>
-    </details>
-    <div class="actions">
-      <a class="ghost" id="wa" href="#" target="_blank" rel="noopener">Share on WhatsApp</a>
-      <button class="ghost" id="pdf" type="button">Download PDF</button>
-    </div>
-  </section>
-
-  <section class="block hidden" id="menuBlock">
-    <p class="kicker">Your menu vs your crowd</p>
-    <h2>Which dishes to push, fix or drop</h2>
-    <p class="note" style="margin:-8px 0 12px">Upload last month's item-wise sales (an export from Petpooja or any POS, as CSV), or try it on a sample month. Your file stays in this session and isn't saved.</p>
-    <div class="actions" id="menuTools" style="margin-top:0">
-      <label class="ghost" for="csv" style="cursor:pointer">Upload sales CSV</label>
-      <input type="file" id="csv" accept=".csv,text/csv" hidden>
-      <button class="ghost" id="sampleBtn" type="button">Try the sample month</button>
-    </div>
-    <p class="progressline" id="salesStatus"></p>
-    <div id="salesOut"></div>
-    <div class="salesSum" id="salesSum"></div>
-  </section>
-
-  <section class="block ask hidden" id="ask">
-    <p class="kicker">Thinking of a change?</p>
-    <form id="follow">
-      <input type="text" id="followInput" placeholder="Ask about a dish, an offer or an event" aria-label="Ask about a change">
-      <button class="primary" id="send" type="submit">Ask</button>
-    </form>
-    <div class="ideas">
-      <button type="button">Weekend biryani counter or a breakfast menu?</button>
-      <button type="button">Would a live music night work here?</button>
-      <button type="button">Should I add filter coffee and snacks in the evening?</button>
-    </div>
-    <form class="compete" id="compete">
-      <input type="text" id="rival" placeholder="Compare with a restaurant nearby, e.g. Brahmin's Coffee Bar" aria-label="Competitor restaurant">
-      <button class="ghost" type="submit">Compare</button>
-    </form>
-    <div class="qa" id="qa"></div>
-    <details class="how">
-      <summary>How this plan was made</summary>
-      <ol id="trace"></ol>
-    </details>
-  </section>
-
-  <footer>TasteMenu sends only a description of your restaurant type and area to Qloo. No customer data is used. Built for the Qloo Agentic Hackathon.</footer>
+    <nav class="tabbar hidden" id="tabbar">
+      <button type="button" data-go="week" class="on"><svg class="i" viewBox="0 0 24 24"><use href="#i-check"/></svg>This week</button>
+      <button type="button" data-go="crowd"><svg class="i" viewBox="0 0 24 24"><use href="#i-users"/></svg>Crowd</button>
+      <button type="button" data-go="menu"><svg class="i" viewBox="0 0 24 24"><use href="#i-bowl"/></svg>Menu</button>
+      <button type="button" data-go="ask"><svg class="i" viewBox="0 0 24 24"><use href="#i-bulb"/></svg>Ideas</button>
+    </nav>
+  </main>
 </div>
+
+<div class="scrim" id="scrim"></div>
+<div class="sheet" id="sheet" role="dialog" aria-modal="true"><div class="grab"></div><div id="sheetBody"></div></div>
+<div class="toast" id="toast" role="status"></div>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs><style>.st{fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}</style></defs>
+  <symbol id="i-bowl" viewBox="0 0 24 24"><path class="st" d="M3 11h18a9 9 0 0 1-18 0zM8 7c0-1.5 1-2 1-3.5M12 7c0-1.5 1-2 1-3.5M16 7c0-1.5 1-2 1-3.5"/></symbol>
+  <symbol id="i-users" viewBox="0 0 24 24"><circle class="st" cx="9" cy="8" r="3.5"/><path class="st" d="M2.5 20c.8-3.5 3.4-5.5 6.5-5.5s5.7 2 6.5 5.5M16 4.6a3.5 3.5 0 0 1 0 6.8M18.5 14.8c1.6.8 2.6 2.6 3 5.2"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><rect class="st" x="3.5" y="3.5" width="17" height="17" rx="5"/><path class="st" d="m8 12 3 3 5-6"/></symbol>
+  <symbol id="i-tick" viewBox="0 0 24 24"><path d="m5.5 12.5 4 4 9-9.5" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-bulb" viewBox="0 0 24 24"><path class="st" d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2V16h5v-.1c0-.8.4-1.5 1-2A6 6 0 0 0 12 3z"/></symbol>
+  <symbol id="i-right" viewBox="0 0 24 24"><path class="st" d="m9 6 6 6-6 6"/></symbol>
+  <symbol id="i-store" viewBox="0 0 24 24"><path class="st" d="M4 9.5 5.5 4h13L20 9.5M4 9.5V20h16V9.5M4 9.5c0 1.5 1.3 2.5 2.7 2.5S9.3 11 9.3 9.5c0 1.5 1.3 2.5 2.7 2.5s2.7-1 2.7-2.5c0 1.5 1.2 2.5 2.6 2.5S20 11 20 9.5M10 20v-5h4v5"/></symbol>
+  <symbol id="i-cup" viewBox="0 0 24 24"><path class="st" d="M4 8h13v6a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5zM17 10h1.5a2.5 2.5 0 0 1 0 5H17M8 2.5c0 1 1 1.5 1 2.5M12 2.5c0 1 1 1.5 1 2.5"/></symbol>
+  <symbol id="i-wine" viewBox="0 0 24 24"><path class="st" d="M8 3h8l-.5 6a3.5 3.5 0 0 1-7 0zM12 12.5V20M8.5 20h7"/></symbol>
+  <symbol id="i-music" viewBox="0 0 24 24"><path class="st" d="M9 18V5l11-2v13"/><circle class="st" cx="6.5" cy="18" r="2.5"/><circle class="st" cx="17.5" cy="16" r="2.5"/></symbol>
+  <symbol id="i-cal" viewBox="0 0 24 24"><rect class="st" x="3.5" y="5" width="17" height="15" rx="3"/><path class="st" d="M8 3v4M16 3v4M3.5 10h17"/></symbol>
+  <symbol id="i-link" viewBox="0 0 24 24"><path class="st" d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></symbol>
+  <symbol id="i-msg" viewBox="0 0 24 24"><path class="st" d="M21 12a8 8 0 0 1-11.6 7.1L4 20.5l1.4-4.9A8 8 0 1 1 21 12z"/></symbol>
+  <symbol id="i-down" viewBox="0 0 24 24"><path class="st" d="M12 4v11m-5-5 5 5 5-5M5 20h14"/></symbol>
+  <symbol id="i-up" viewBox="0 0 24 24"><path class="st" d="M12 20V9m-5 5 5-5 5 5M5 4h14"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24"><path class="st" d="M6 6l12 12M18 6 6 18"/></symbol>
+  <symbol id="i-alert" viewBox="0 0 24 24"><path class="st" d="M12 3 2 20h20zM12 10v4M12 17h.01"/></symbol>
+  <symbol id="i-copy" viewBox="0 0 24 24"><rect class="st" x="8" y="8" width="12" height="12" rx="3"/><path class="st" d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/></symbol>
+</svg>
 
 <script>
 const $ = (id) => document.getElementById(id);
 const LABEL = { menu: "Menu", music: "Music", event: "Event", partners: "Partners" };
-let sessionId = null, busy = false, plan = null, evidence = null, pending = null;
+const ICON = { menu: "i-bowl", music: "i-music", event: "i-cal", partners: "i-link" };
+const icon = (id) => `<svg class="i" viewBox="0 0 24 24"><use href="#${id}"/></svg>`;
+let sessionId = null, busy = false, plan = null, kit = null, generic = null, pending = null, restaurant = null;
 
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 const pct = (a) => (typeof a === "number" ? Math.round(a * 100) : null);
+const store = {
+  get(k) { try { return JSON.parse(localStorage.getItem(k)); } catch { return null; } },
+  set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} },
+};
 
-// Small, safe markdown subset for chat answers: paragraphs, "- " bullets and **bold**.
+function toast(text) {
+  const t = $("toast");
+  t.textContent = text;
+  t.classList.add("show");
+  clearTimeout(toast.timer);
+  toast.timer = setTimeout(() => t.classList.remove("show"), 1700);
+}
+
+// Small, safe subset of markdown for answers: paragraphs, "- " bullets and **bold**.
 function md(text) {
   const lines = String(text || "").replace(/^#+\s*/gm, "").split(/\n/);
   let html = "", list = false;
@@ -293,160 +469,270 @@ function md(text) {
     if (list) { html += "</ul>"; list = false; }
     if (line && !/^-{2,}$/.test(line)) html += `<p>${line}</p>`;
   }
-  return html + (list ? "</ul>" : "");
+  return `<div class="prose">${html}${list ? "</ul>" : ""}</div>`;
 }
 
+// ---------- Navigation ----------
+function scrollTop() { $("scroller").scrollTop = 0; window.scrollTo({ top: 0 }); }
+function show(id) { ["onboard", "building"].forEach((s) => $(s).classList.toggle("hidden", s !== id)); scrollTop(); }
+function go(tab) {
+  ["onboard", "building"].forEach((s) => $(s).classList.add("hidden"));
+  document.querySelectorAll("[data-tab]").forEach((s) => s.classList.toggle("hidden", s.dataset.tab !== tab));
+  document.querySelectorAll(".tabbar button").forEach((b) => b.classList.toggle("on", b.dataset.go === tab));
+  $("tabbar").classList.remove("hidden");
+  scrollTop();
+}
+$("tabbar").addEventListener("click", (e) => { const b = e.target.closest("button"); if (b) go(b.dataset.go); });
+
+// ---------- Bottom sheet ----------
+function openSheet(html) { $("sheetBody").innerHTML = html; $("sheet").scrollTop = 0; $("sheet").classList.add("open"); $("scrim").classList.add("open"); }
+function closeSheet() { $("sheet").classList.remove("open"); $("scrim").classList.remove("open"); }
+$("scrim").addEventListener("click", closeSheet);
+document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeSheet(); });
+$("sheet").addEventListener("click", (e) => { if (e.target.closest("[data-close]")) closeSheet(); });
+
+async function copy(text) {
+  try { await navigator.clipboard.writeText(text); }
+  catch { const t = document.createElement("textarea"); t.value = text; document.body.appendChild(t); t.select(); document.execCommand("copy"); t.remove(); }
+  toast("Copied");
+}
+
+// ---------- Onboarding ----------
+let chosenType = null;
+$("fType").addEventListener("click", (e) => {
+  const b = e.target.closest(".chip");
+  if (!b) return;
+  const other = b.textContent === "Other…";
+  document.querySelectorAll("#fType .chip").forEach((c) => c.classList.toggle("on", c === b));
+  chosenType = other ? null : b.textContent;
+  $("fTypeOther").classList.toggle("hidden", !other);
+  if (other) $("fTypeOther").focus();
+});
+function begin(r) {
+  restaurant = r;
+  const message = `${r.name ? `${r.name}: ` : ""}${r.type} restaurant in ${r.area}.${r.crowd ? ` ${r.crowd}` : ""}`;
+  $("placeChip").textContent = `${r.name || r.type} · ${r.area.split(",")[0]}`;
+  $("placeChip").classList.remove("hidden");
+  $("bTitle").textContent = r.name ? `Building the plan for ${r.name}` : "Building your plan";
+  show("building");
+  setStep("places");
+  run(message, {
+    onReply: (txt) => {
+      if (plan || !txt) return;
+      $("err").innerHTML = `${md(txt)}<button class="btn sm" type="button" onclick="location.reload()">Start again</button>`;
+      $("err").classList.remove("hidden");
+    },
+  });
+}
+$("samples").addEventListener("click", (e) => {
+  const b = e.target.closest(".sample");
+  if (b && !busy) begin({ name: b.dataset.name, type: b.dataset.type, area: b.dataset.area, crowd: b.dataset.crowd });
+});
+$("start").addEventListener("submit", (e) => {
+  e.preventDefault();
+  const type = chosenType || $("fTypeOther").value.trim();
+  const area = $("fArea").value.trim();
+  if (!type) return toast("Pick what kind of place it is");
+  if (!area) return toast("Add the area and city");
+  begin({ name: $("fName").value.trim(), type, area, crowd: $("fCrowd").value.trim() });
+});
+$("restart").addEventListener("click", () => location.reload());
+
+// ---------- Building progress ----------
+const STEP_PROGRESS = { places: 18, crowd: 42, plan: 68, kit: 90 };
 function setStep(k) {
   let reached = false;
   for (const li of $("steps").children) {
-    if (li.dataset.k === k) { li.className = "on"; reached = true; }
-    else li.className = reached ? "" : "done";
+    const s = li.querySelector(".s");
+    if (li.dataset.k === k) { li.className = "on"; s.innerHTML = ""; reached = true; }
+    else if (!reached) { li.className = "done"; s.innerHTML = icon("i-tick"); }
+    else { li.className = ""; s.innerHTML = ""; }
   }
+  $("prog").style.width = `${STEP_PROGRESS[k] ?? 10}%`;
 }
 
+// ---------- Crowd ----------
 function renderCrowd(ev) {
-  evidence = ev;
-  $("crowd").classList.remove("hidden");
-  $("city").textContent = ev.neighbourhood ? `${ev.city} (near ${ev.neighbourhood})` : ev.city;
-  $("places").innerHTML = (ev.similar_places || []).slice(0, 6).map((p) => `<li>${esc(p.name)}</li>`).join("");
-  const col = (title, xs) => xs && xs.length ? `<div><h4>${title}</h4><ol>${xs.slice(0, 4).map((x) => `<li><span>${esc(x.name)}</span><span>${pct(x.affinity) ?? ""}</span></li>`).join("")}</ol></div>` : "";
+  $("crowdSub").textContent = `People who eat at places like yours in ${ev.city}${ev.neighbourhood ? ` (near ${ev.neighbourhood})` : ""}, according to Qloo.`;
+  $("places").innerHTML = (ev.similar_places || []).slice(0, 8).map((p) => `<span>${esc(p.name)}</span>`).join("");
   const a = ev.audience || {};
-  $("loves").innerHTML = col("Films", a.films) + col("Shows", a.shows) + col("Music", a.music_artists) + col("Brands", a.brands);
+  const row = (title, xs, kind) => xs?.length ? `<div class="label">${title}</div><div class="hscroll">${xs.slice(0, 8).map((x) => `<div class="tile"><div class="t">${esc(x.name)}</div><div class="muted" style="font-size:12px;margin-top:4px">${kind}</div><div class="match"><span class="bar"><i style="width:${pct(x.affinity) ?? 0}%"></i></span>${pct(x.affinity) ?? ""}</div></div>`).join("")}</div>` : "";
+  $("loves").innerHTML = row("Films they love", a.films, "Film") + row("Shows they watch", a.shows, "TV show") + row("Music they play", a.music_artists, "Artist") + row("Brands they buy", a.brands, "Brand");
   const d = a.demographics_over_index || {};
-  const rows = [];
   const AGE = { "24_and_younger": "Under 25", "25_to_29": "25–29", "30_to_34": "30–34", "35_to_44": "35–44", "45_to_54": "45–54", "55_and_older": "55+" };
-  for (const [k, v] of Object.entries(d.age || {})) rows.push([AGE[k] || k, v]);
-  for (const [k, v] of Object.entries(d.gender || {})) rows.push([k[0].toUpperCase() + k.slice(1), v]);
-  $("lean").innerHTML = rows.length ? `<h4 style="margin:0 0 4px;font-size:12px;letter-spacing:.09em;text-transform:uppercase;color:var(--soft)">Who leans in</h4>` + rows.map(([l, v]) => {
+  const rows = [...Object.entries(d.age || {}).map(([k, v]) => [AGE[k] || k, v]), ...Object.entries(d.gender || {}).map(([k, v]) => [k[0].toUpperCase() + k.slice(1), v])];
+  $("leanCard").classList.toggle("hidden", !rows.length);
+  $("lean").innerHTML = rows.map(([l, v]) => {
     const w = Math.min(50, Math.abs(v) * 100);
-    const style = v >= 0 ? `left:50%;width:${w}%` : `right:50%;width:${w}%`;
-    return `<div class="row"><span>${esc(l)}</span><span class="track"><span class="fill ${v < 0 ? "neg" : ""}" style="${style}"></span></span><span class="v">${v > 0 ? "+" : ""}${Math.round(v * 100)}</span></div>`;
-  }).join("") : "";
+    return `<div class="r"><span>${esc(l)}</span><span class="tr"><span class="f ${v < 0 ? "neg" : ""}" style="${v >= 0 ? `left:50%;width:${w}%` : `right:50%;width:${w}%`}"></span></span><span class="v">${v > 0 ? "+" : ""}${Math.round(v * 100)}</span></div>`;
+  }).join("");
+  // A first glimpse of the crowd while the plan is being written.
+  const peek = [(a.films || [])[0], (a.music_artists || [])[0], (a.brands || [])[0], (a.shows || [])[0]].filter(Boolean);
+  $("peek").innerHTML = `<div class="muted">While we write your plan, your crowd loves</div><div class="evid" style="margin-top:10px">${peek.map((x) => `<span>${esc(x.name)}<b>${pct(x.affinity)}</b></span>`).join("")}</div>`;
 }
 
+// ---------- This week ----------
+const doneKey = () => `tm-done-${restaurant?.name || ""}-${restaurant?.area || ""}-${plan?.headline?.length || 0}`;
+function updateWeek() {
+  const done = store.get(doneKey()) || [];
+  const n = (plan?.cards || []).length || 4;
+  const count = done.filter((i) => i < n).length;
+  $("weekCount").textContent = count === n ? "All done this week" : `${count} of ${n} done`;
+  $("ringFg").style.strokeDashoffset = String(157.1 * (1 - count / n));
+  document.querySelectorAll(".action").forEach((el, i) => el.classList.toggle("isdone", done.includes(i)));
+}
 function renderPlan(p) {
   plan = p;
   $("headline").textContent = p.headline || "";
-  $("crowd").classList.remove("hidden");
-  $("planBlock").classList.remove("hidden");
-  $("ask").classList.remove("hidden");
-  $("menuBlock").classList.remove("hidden");
-  $("plan").innerHTML = (p.cards || []).map((c, i) => `
-    <article class="item">
-      <div class="num">${String(i + 1).padStart(2, "0")}</div>
-      <div class="body">
-        <div class="cat">${esc(LABEL[c.kind] || c.kind)}</div>
-        <h3>${esc(c.title)}</h3>
-        <p class="act">${esc(c.action)}</p>
-        <p class="why">${esc(c.why)}</p>
-        ${(c.evidence || []).length ? `<p class="ev">Taste match: ${(c.evidence || []).filter((e) => e.verified !== false).map((e) => `<b>${esc(e.name)}</b>${pct(e.affinity) != null && e.affinity <= 1 ? ` <span class="mono">${pct(e.affinity)}</span>` : ""}`).join(" · ")}</p>` : ""}
-        ${c.caveat ? `<p class="warn">${esc(c.caveat)}</p>` : ""}
-        <p class="kitwait">Writing the messages and posts for this…</p>
-      </div>
-    </article>`).join("");
-  renderGeneric();
-  const text = [`*TasteMenu: this month's plan*`, p.headline, "", ...(p.cards || []).flatMap((c, i) => [`${i + 1}. *${c.title}*`, c.action, ""]), "Made with TasteMenu, audience data by Qloo"].join("\n");
-  $("wa").href = `https://wa.me/?text=${encodeURIComponent(text)}`;
-}
-
-async function copy(text, btn) {
-  try { await navigator.clipboard.writeText(text); }
-  catch { const t = document.createElement("textarea"); t.value = text; document.body.appendChild(t); t.select(); document.execCommand("copy"); t.remove(); }
-  const old = btn.textContent; btn.textContent = "Copied"; setTimeout(() => (btn.textContent = old), 1400);
-}
-
-// The Action Kit: ready-to-send material for each card, in English and the local language.
-function renderKit(kit) {
-  const lang = kit.local_language || "Local language";
-  const items = $("plan").querySelectorAll(".item");
-  (plan?.cards || []).forEach((c, i) => {
-    const k = (kit.items || []).find((x) => x.kind === c.kind) || (kit.items || [])[i];
-    const host = items[i]?.querySelector(".body");
-    if (!k || !host) return;
-    host.querySelector(".kitwait")?.remove();
-    const tabs = [
-      ["WhatsApp", k.whatsapp, true], [lang, k.whatsapp_local, true], ["Instagram", k.instagram], ["Specials board", k.board], ["Staff briefing", k.staff],
-      ...(k.outreach ? [["Message to partner", k.outreach, true]] : []),
-    ].filter((t) => t[1]);
-    const det = document.createElement("details");
-    det.className = "kit";
-    det.innerHTML = `<summary>Ready-to-send kit</summary><div class="tabs">${tabs.map((t, j) => `<button type="button" class="${j ? "" : "on"}" data-j="${j}">${esc(t[0])}</button>`).join("")}</div><div class="panel"></div>${(k.checklist || []).length ? `<ol class="check">${k.checklist.map((x) => `<li>${esc(x)}</li>`).join("")}</ol>` : ""}`;
-    const show = (j) => {
-      const [, text, wa] = tabs[j];
-      det.querySelector(".panel").innerHTML = `<p class="txt">${esc(text)}</p><div class="row"><button class="mini" type="button" data-copy>Copy</button>${wa ? `<a class="mini" target="_blank" rel="noopener" href="https://wa.me/?text=${encodeURIComponent(text)}">Send on WhatsApp</a>` : ""}</div>`;
-      det.querySelector("[data-copy]").onclick = (e) => copy(text, e.target);
-      det.querySelectorAll(".tabs button").forEach((b) => b.classList.toggle("on", Number(b.dataset.j) === j));
-    };
-    det.querySelector(".tabs").onclick = (e) => { if (e.target.dataset.j != null) show(Number(e.target.dataset.j)); };
-    show(0);
-    host.appendChild(det);
-  });
-}
-
-const VERDICTS = [
-  ["Double down", "Sells well and your crowd loves it. Feature it."],
-  ["Reposition", "Your crowd loves it but it sells less. Fix the name, price, photo or menu spot."],
-  ["Rethink", "Sells little and fits your crowd less. Replace or drop."],
-  ["Core staple", "Sells well even though the crowd signal is weaker. Keep it, don't promote it."],
-  ["Keep", "Steady. No change needed."],
-  ["No Qloo signal", "Qloo has no clear data for this dish."],
-];
-
-function renderSales(r) {
-  $("menuBlock").classList.remove("hidden");
-  if (r.status !== "ok") { $("salesOut").innerHTML = `<p class="err">${esc(r.message || r.question || "Couldn't analyse the sales.")}</p>`; return; }
-  const total = r.revenue_total || 1;
-  // Qloo affinities for one crowd sit close together (0.95–0.99), so bars are scaled from
-  // the lowest to the highest score on this menu to make the differences visible.
-  const fits = [...(r.rows || []).map((x) => x.crowd_fit), ...(r.new_ideas || []).map((x) => x.fit)].filter((x) => typeof x === "number");
-  const lo = Math.min(...fits), hi = Math.max(...fits);
-  const w = (x) => (typeof x !== "number" ? 0 : hi > lo ? Math.round(12 + 88 * ((x - lo) / (hi - lo))) : 100);
-  const head = `<p class="note">${r.sample ? `<span class="badge">Sample data</span> ` : ""}${esc(r.source)} · ${r.items_total} items · ₹${Math.round(total).toLocaleString("en-IN")} · crowd fit for people who love places like yours in ${esc(r.city)}</p>`;
-  const groups = VERDICTS.map(([v, hint]) => {
-    const rows = (r.rows || []).filter((x) => x.verdict === v);
-    if (!rows.length) return "";
-    return `<div class="verdict"><h3>${esc(v)} <small>${esc(hint)}</small></h3>${rows.map((x) => `
-      <div class="dish"><span>${esc(x.item)}<small>${x.qloo_tag ? `Qloo: ${esc(x.qloo_tag)}` : "no Qloo match"}${x.fit_examples?.length ? ` · e.g. ${esc(x.fit_examples.join(", "))}` : ""}</small></span>
-      <span class="sh">${(x.share * 100).toFixed(1)}%</span>
-      <span title="Crowd fit ${pct(x.crowd_fit) ?? "–"}"><span class="bar"><i style="width:${w(x.crowd_fit)}%"></i></span></span></div>`).join("")}</div>`;
+  $("actions").innerHTML = (p.cards || []).map((c, i) => {
+    const ev = (c.evidence || []).filter((e) => e.verified !== false);
+    return `<article class="card action" data-i="${i}">
+      <div class="top"><span class="kind ${esc(c.kind)}">${icon(ICON[c.kind] || "i-bulb")}</span><div><div class="k">${esc(LABEL[c.kind] || c.kind)}</div><h3>${esc(c.title)}</h3></div>
+        <button class="done-tick" type="button" data-done="${i}" aria-label="Mark as done">${icon("i-tick")}</button></div>
+      <p class="do">${esc(c.action)}</p>
+      ${c.caveat ? `<div class="watch">${icon("i-alert")}<span>${esc(c.caveat)}</span></div>` : ""}
+      <details class="why"><summary>Why this will work${icon("i-right")}</summary><p>${esc(c.why)}</p>${ev.length ? `<div class="evid">${ev.map((e) => `<span>${esc(e.name)}${typeof e.affinity === "number" ? `<b>${pct(e.affinity)}</b>` : ""}</span>`).join("")}</div>` : ""}</details>
+      <div class="row noprint"><button class="btn sm" type="button" data-kit="${i}" ${kit ? "" : "disabled"}>${icon("i-msg")}<span>${kit ? "Get the messages" : "Writing messages…"}</span></button></div>
+    </article>`;
   }).join("");
-  const ideas = (r.new_ideas || []).length ? `<div class="verdict"><h3>Worth adding <small>Your crowd's favourite places are known for these, and your menu doesn't have them.</small></h3>${r.new_ideas.map((x) => `<div class="dish"><span>${esc(x.name)}<small>${x.examples?.length ? `e.g. ${esc(x.examples.join(", "))}` : ""}</small></span><span class="sh"></span><span><span class="bar"><i style="width:${w(x.fit)}%"></i></span></span></div>`).join("")}</div>` : "";
-  $("salesOut").innerHTML = head + `<div class="dish" style="border:0;padding-bottom:0"><span></span><span class="sh">Sales</span><span class="sh" style="text-align:left">Crowd fit (relative)</span></div>` + `<div class="verdicts">${groups}${ideas}</div>`;
+  updateWeek();
+  $("vsNum").textContent = (p.cards || []).flatMap((c) => c.evidence || []).filter((e) => e.verified).length;
+  const text = [`*${restaurant?.name || "Our"} plan for this week*`, p.headline, "", ...(p.cards || []).flatMap((c, i) => [`${i + 1}. *${c.title}*`, c.action, ""]), "Made with TasteMenu (taste data by Qloo)"].join("\n");
+  $("wa").href = `https://wa.me/?text=${encodeURIComponent(text)}`;
+  renderGeneric();
+}
+$("actions").addEventListener("click", (e) => {
+  const d = e.target.closest("[data-done]");
+  if (d) {
+    const i = Number(d.dataset.done), done = new Set(store.get(doneKey()) || []);
+    done.has(i) ? done.delete(i) : done.add(i);
+    store.set(doneKey(), [...done]);
+    updateWeek();
+    if (done.has(i)) toast("Marked as done");
+    return;
+  }
+  const k = e.target.closest("[data-kit]");
+  if (k && kit) openKit(Number(k.dataset.kit));
+});
+
+// ---------- Ready-to-send messages (bottom sheet) ----------
+function openKit(i) {
+  const c = plan.cards[i];
+  const k = (kit.items || []).find((x) => x.kind === c.kind) || (kit.items || [])[i];
+  if (!k) return;
+  const lang = kit.local_language || "Local";
+  const tabs = [["WhatsApp", k.whatsapp, true], [lang, k.whatsapp_local, true], ["Instagram", k.instagram], ["Specials board", k.board], ["Staff", k.staff], ["To partner", k.outreach, true]].filter((t) => t[1]);
+  openSheet(`<div class="head"><span class="kind ${esc(c.kind)}">${icon(ICON[c.kind])}</span><div><div class="muted">Ready to send</div><b>${esc(c.title)}</b></div><button class="x" type="button" data-close aria-label="Close">${icon("i-x")}</button></div>
+    <div class="seg" id="seg">${tabs.map((t, j) => `<button type="button" data-j="${j}" class="${j ? "" : "on"}">${esc(t[0])}</button>`).join("")}</div>
+    <div id="segBody"></div>
+    ${(k.checklist || []).length ? `<div class="label" style="margin-left:0">This week's to-do</div><ul class="checklist">${k.checklist.map((x) => `<li>${esc(x)}</li>`).join("")}</ul>` : ""}`);
+  const showTab = (j) => {
+    const [, text, wa] = tabs[j];
+    $("segBody").innerHTML = `<div class="msg ${wa ? "" : "plain"}">${esc(text)}</div><div class="row"><button class="btn soft" type="button" id="cp">${icon("i-copy")}Copy</button>${wa ? `<a class="btn" target="_blank" rel="noopener" href="https://wa.me/?text=${encodeURIComponent(text)}">${icon("i-msg")}WhatsApp</a>` : ""}</div>`;
+    $("cp").onclick = () => copy(text);
+    document.querySelectorAll("#seg button").forEach((b) => b.classList.toggle("on", Number(b.dataset.j) === j));
+  };
+  $("seg").onclick = (e) => { const b = e.target.closest("button"); if (b) showTab(Number(b.dataset.j)); };
+  showTab(0);
+}
+function renderKit(k) {
+  kit = k;
+  document.querySelectorAll("[data-kit]").forEach((b) => { b.disabled = false; b.querySelector("span").textContent = "Get the messages"; });
 }
 
-let generic = null;
-function renderGeneric() {
-  if (!generic || !plan) return;
-  $("genericBox").classList.remove("hidden");
-  $("generic").innerHTML = (plan.cards || []).map((c) => {
+// ---------- Plain chatbot vs TasteMenu ----------
+function renderGeneric() { if (generic && plan) $("vsBanner").classList.remove("hidden"); }
+$("vsBanner").addEventListener("click", () => {
+  const pairs = (plan.cards || []).map((c) => {
     const g = (generic.cards || []).find((x) => x.kind === c.kind);
     if (!g) return "";
-    const ev = (c.evidence || []).filter((e) => e.verified !== false).slice(0, 3).map((e) => `${esc(e.name)}${typeof e.affinity === "number" ? ` <span class="mono">${pct(e.affinity)}</span>` : ""}`).join(" · ");
-    return `<div class="g"><div><b>Generic chatbot · ${esc(LABEL[c.kind])}</b>${esc(g.title)}: ${esc(g.action)}<br><small>Based on: general knowledge</small></div><div><b>TasteMenu · ${esc(LABEL[c.kind])}</b>${esc(c.title)}: ${esc(c.action)}<br><small>Based on Qloo: ${ev || "Qloo tags"}</small></div></div>`;
+    const ev = (c.evidence || []).filter((e) => e.verified).slice(0, 3).map((e) => `${esc(e.name)}${typeof e.affinity === "number" ? ` ${pct(e.affinity)}` : ""}`).join(", ");
+    return `<div class="pair"><div><small>Plain chatbot · ${esc(LABEL[c.kind])}</small>${esc(g.title)}: ${esc(g.action)}</div><div><small>TasteMenu · from ${ev || "Qloo tags"}</small>${esc(c.title)}: ${esc(c.action)}</div></div>`;
   }).join("");
-  const signals = (plan.cards || []).flatMap((c) => c.evidence || []).filter((e) => e.verified).length;
-  $("genericSum").textContent = `Generic chatbot: 0 real data points · TasteMenu: ${signals} Qloo signals. Compare them`;
-}
+  openSheet(`<div class="head"><div><div class="muted">Same question, same model</div><b>Without Qloo vs with Qloo</b></div><button class="x" type="button" data-close aria-label="Close">${icon("i-x")}</button></div>
+    <p class="muted" style="margin-top:0">The plain chatbot answers from general knowledge. TasteMenu's plan is built on what your crowd actually loves.</p><div class="cmp">${pairs}</div>`);
+});
 
+// ---------- Menu vs crowd ----------
+const VERDICTS = { "Double down": "Push", Reposition: "Fix", Rethink: "Drop?", "Core staple": "Staple", Keep: "Keep", "No Qloo signal": "No data" };
+function renderSales(r) {
+  $("salesWait").classList.add("hidden");
+  if (r.status !== "ok") { $("salesOut").innerHTML = `<div class="err">${esc(r.message || r.question || "Couldn't analyse the sales.")}</div>`; return; }
+  const rows = r.rows || [];
+  const n = (v) => rows.filter((x) => x.verdict === v).length;
+  // Affinities for one crowd sit close together, so bars are scaled within this menu.
+  const fits = [...rows.map((x) => x.crowd_fit), ...(r.new_ideas || []).map((x) => x.fit)].filter((x) => typeof x === "number");
+  const lo = Math.min(...fits), hi = Math.max(...fits);
+  const w = (x) => (typeof x !== "number" ? 0 : hi > lo ? Math.round(12 + 88 * ((x - lo) / (hi - lo))) : 100);
+  const order = Object.keys(VERDICTS);
+  const sorted = [...rows].sort((a, b) => order.indexOf(a.verdict) - order.indexOf(b.verdict) || a.sales_rank - b.sales_rank);
+  $("salesOut").innerHTML = `
+    ${r.sample ? `<span class="pill" style="background:var(--warn-soft);color:var(--warn);margin:0 0 12px 2px">Sample month · fictional restaurant</span>` : `<span class="pill" style="background:var(--good-soft);color:var(--good);margin:0 0 12px 2px">${esc(r.source)}</span>`}
+    <div class="sum3"><div class="g"><b>${n("Double down")}</b><span>Push</span></div><div class="w"><b>${n("Reposition")}</b><span>Fix</span></div><div class="b"><b>${n("Rethink")}</b><span>Drop?</span></div></div>
+    <div class="card" id="salesSum"><div class="skel" style="height:56px"></div></div>
+    <div class="card">${sorted.map((x) => `<div class="dish"><b>${esc(x.item)}</b><span class="pill v-${esc(x.verdict.split(" ")[0])}">${esc(VERDICTS[x.verdict] || x.verdict)}</span>
+      <div class="meta"><span>${(x.share * 100).toFixed(1)}% of sales</span>${x.crowd_fit != null ? `<span class="bar"><i style="width:${w(x.crowd_fit)}%"></i></span><span>crowd fit</span>` : `<span>${x.qloo_tag ? "no Qloo places for this dish here" : "no Qloo match"}</span>`}</div></div>`).join("")}</div>
+    ${(r.new_ideas || []).length ? `<div class="label">Worth adding</div><div class="hscroll">${r.new_ideas.map((x) => `<div class="tile"><div class="t">${esc(x.name)}</div><div class="muted" style="font-size:12px;margin-top:4px">${esc((x.examples || []).join(", "))}</div><div class="match"><span class="bar"><i style="width:${w(x.fit)}%"></i></span></div></div>`).join("")}</div>` : ""}
+    <p class="muted" style="margin:4px 4px 0">Crowd fit is relative within your menu: how strongly people who love places like yours go for places known for that dish in ${esc(r.city)}.</p>`;
+}
+function checkMenu(message) {
+  $("salesWait").classList.remove("hidden");
+  if (busy) { pending = () => checkMenu(message); $("salesStatus").textContent = "Queued. Starting as soon as the current step finishes…"; return; }
+  $("salesStatus").textContent = "Matching every dish to what your crowd loves…";
+  $("salesOut").innerHTML = "";
+  run(message, {
+    isFollow: true,
+    onProgress: (t) => { if (t) $("salesStatus").textContent = t; },
+    onReply: (txt) => { $("salesWait").classList.add("hidden"); const s = $("salesSum"); if (s) s.innerHTML = md(txt); else $("salesOut").insertAdjacentHTML("beforeend", `<div class="card">${md(txt)}</div>`); },
+  });
+}
+$("sampleBtn").addEventListener("click", () => checkMenu("Check my menu against my crowd. I haven't uploaded sales, so use the sample month."));
+$("csv").addEventListener("change", async (e) => {
+  const f = e.target.files?.[0];
+  if (!f) return;
+  e.target.value = "";
+  if (f.size > 500000) return toast("That file is too big. Export one month of item-wise sales.");
+  const res = await fetch("/api/sales", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ sessionId, csv: await f.text(), name: f.name }) });
+  const j = await res.json().catch(() => ({}));
+  if (j.sessionId) sessionId = j.sessionId;
+  if (!res.ok) return toast(`Couldn't read that file: ${j.error || res.status}`);
+  toast(`Read ${j.items} dishes`);
+  checkMenu(`Check my menu against my crowd using my uploaded sales (${j.items} items; top sellers ${j.top.join(", ")}).`);
+});
+
+// ---------- Ideas and competitor ----------
 function renderIdeas(r, box) {
   if (r.status !== "ok" || !box) return;
-  box.querySelector(".extra").innerHTML += `<table class="tbl"><thead><tr><th>Idea</th><th>Qloo match</th><th style="text-align:right">Crowd fit</th></tr></thead><tbody>${r.ranking.map((x, i) => `<tr class="${i ? "" : "top"}"><td>${esc(x.option)}</td><td>${esc(x.qloo_tag ?? "no match")}</td><td class="n">${x.crowd_fit != null ? pct(x.crowd_fit) : "–"}</td></tr>`).join("")}</tbody></table><p class="note">Scores are comparable only within this table.</p>`;
+  box.querySelector(".extra").innerHTML += `<div class="rank">${r.ranking.map((x, i) => `<div><i>${i + 1}</i><span>${esc(x.option)}<br><small class="muted">${esc(x.qloo_tag ? `Qloo: ${x.qloo_tag}${x.examples?.length ? ` · e.g. ${x.examples.join(", ")}` : ""}` : "no Qloo match")}</small></span><em>${x.crowd_fit != null ? pct(x.crowd_fit) : "–"}</em></div>`).join("")}</div>`;
 }
-
 function renderCompare(r, box) {
   if (!box) return;
-  if (r.status !== "ok") { box.querySelector(".extra").innerHTML += `<p class="note">${esc(r.question || "Couldn't compare.")}</p>`; return; }
-  const col = (title, xs) => xs?.length ? `<div><h4>${title}</h4><ol style="margin:0;padding-left:18px">${xs.slice(0, 6).map((x) => `<li>${esc(x)}</li>`).join("")}</ol></div>` : "";
-  box.querySelector(".extra").innerHTML += `<p class="note">Places like yours vs ${esc(r.competitor?.name)}${r.competitor?.address ? ` (${esc(r.competitor.address)})` : ""}, by Qloo taste tags:</p><div class="vs">${col("Only places like yours", r.only_places_like_yours)}${col(`Only ${esc(r.competitor?.name)}`, r.only_competitor)}${col("Both", r.shared)}</div>`;
+  if (r.status !== "ok") { box.querySelector(".extra").innerHTML += `<p class="muted">${esc(r.question || "Couldn't compare.")}</p>`; return; }
+  const col = (t, xs) => xs?.length ? `<div><b>${t}</b>${xs.slice(0, 6).map(esc).join(" · ")}</div>` : "";
+  box.querySelector(".extra").innerHTML += `<div class="vs3">${col("Only places like yours", r.only_places_like_yours)}${col(`Only ${esc(r.competitor?.name)}`, r.only_competitor)}${col("Both", r.shared)}</div>`;
 }
+function ask(q) {
+  if (busy) { pending = () => ask(q); toast("Queued. It starts in a moment"); return; }
+  const box = document.createElement("div");
+  box.className = "card qa";
+  box.innerHTML = `<div class="q">${icon("i-bulb")}<span>${esc(q)}</span></div><div class="extra"></div><div class="a pending">Checking with Qloo…</div>`;
+  $("qa").prepend(box);
+  const a = box.querySelector(".a");
+  run(q, { isFollow: true, box, onProgress: (t) => { if (t && a.classList.contains("pending")) a.textContent = t; }, onReply: (txt) => { a.classList.remove("pending"); a.innerHTML = md(txt); } });
+}
+$("follow").addEventListener("submit", (e) => { e.preventDefault(); const q = $("followInput").value.trim(); if (q) { $("followInput").value = ""; ask(q); } });
+$("ideas").addEventListener("click", (e) => { const b = e.target.closest(".chip"); if (b) ask(b.textContent); });
+$("compete").addEventListener("submit", (e) => { e.preventDefault(); const r = $("rival").value.trim(); if (r) { $("rival").value = ""; ask(`How is my crowd different from the crowd at ${r}?`); } });
+$("pdf").addEventListener("click", () => window.print());
 
 function renderTrace(t) {
-  $("trace").innerHTML = (t.trace || []).map((s) => `<li>${esc(s.label)} <span class="mono">(${esc(s.tool)}: ${esc(s.status)})</span></li>`).join("");
+  $("trace").innerHTML = (t.trace || []).map((s) => `<li>${esc(s.label)} <span>(${esc(s.tool)}: ${esc(s.status)})</span></li>`).join("");
 }
 
+// ---------- Streaming client ----------
 async function run(text, { onReply, isFollow, box, onProgress }) {
   if (busy || !text.trim()) return;
-  busy = true; $("go").disabled = true; $("send").disabled = true; $("err").classList.add("hidden");
+  busy = true; $("go").disabled = true; $("send").disabled = true;
   try {
     const res = await fetch("/api/chat", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ sessionId, message: text }) });
     if (!res.ok || !res.body) { const j = await res.json().catch(() => ({})); throw new Error(j.error || `HTTP ${res.status}`); }
@@ -464,72 +750,27 @@ async function run(text, { onReply, isFollow, box, onProgress }) {
         const d = JSON.parse(data);
         if (ev === "session") sessionId = d.sessionId;
         if (ev === "progress" && isFollow) onProgress?.(d.text);
-        if (ev === "kit") renderKit(d);
-        if (ev === "generic") { generic = d; renderGeneric(); }
-        if (ev === "sales") { renderSales(d); onProgress?.(""); }
-        if (ev === "ideas") renderIdeas(d, box);
-        if (ev === "compare") renderCompare(d, box);
-        if (ev === "progress" && !isFollow) { setStep(/Reading the taste/.test(d.text) ? "places" : "crowd"); $("who").textContent = d.text; }
         if (ev === "trace") { renderTrace(d); if (!isFollow) setStep("crowd"); }
         if (ev === "evidence") { renderCrowd(d); if (!isFollow) setStep("plan"); }
-        if (ev === "plan") { renderPlan(d); if (!isFollow) { [...$("steps").children].forEach((li) => (li.className = "done")); $("working").classList.add("hidden"); $("crowd").scrollIntoView({ behavior: "smooth" }); } }
+        if (ev === "plan") { renderPlan(d); if (!isFollow) { setStep("kit"); go("week"); } }
+        if (ev === "kit") renderKit(d);
+        if (ev === "generic") { generic = d; renderGeneric(); }
+        if (ev === "sales") renderSales(d);
+        if (ev === "ideas") renderIdeas(d, box);
+        if (ev === "compare") renderCompare(d, box);
         if (ev === "reply") onReply?.(d.text);
         if (ev === "error") throw new Error(d.message);
       }
     }
   } catch (e) {
     if (isFollow) onReply?.(`Sorry, that didn't work: ${e.message}`);
-    else { $("err").textContent = `Sorry, that didn't work: ${e.message}`; $("err").classList.remove("hidden"); $("start").classList.remove("hidden"); }
+    else { $("err").innerHTML = `Sorry, that didn't work: ${esc(e.message)}<br><button class="btn sm" type="button" onclick="location.reload()">Start again</button>`; $("err").classList.remove("hidden"); }
   } finally {
     busy = false; $("go").disabled = false; $("send").disabled = false;
-    document.querySelectorAll(".kitwait").forEach((x) => x.remove());
     // A request made while the agent was busy runs next instead of being dropped.
     if (pending) { const next = pending; pending = null; setTimeout(next, 0); }
   }
 }
-
-$("start").addEventListener("click", (e) => { if (e.target.dataset.v) $("first").value = e.target.dataset.v; });
-$("start").addEventListener("submit", (e) => {
-  e.preventDefault();
-  const t = $("first").value.trim();
-  if (!t) return;
-  $("start").classList.add("hidden");
-  $("working").classList.remove("hidden");
-  setStep("read");
-  $("who").textContent = t;
-  run(t, { onReply: (txt) => { if (!plan && txt) { $("err").innerHTML = md(txt); $("err").style.color = "var(--ink)"; $("err").classList.remove("hidden"); $("start").classList.remove("hidden"); } } });
-});
-function ask(q) {
-  if (busy) { pending = () => ask(q); $("qa").insertAdjacentHTML("afterbegin", `<p class="note queued">Queued: “${esc(q)}”. It starts as soon as the current step finishes.</p>`); return; }
-  document.querySelectorAll(".queued").forEach((x) => x.remove());
-  const box = document.createElement("div");
-  box.innerHTML = `<div class="q">${esc(q)}</div><div class="extra"></div><div class="a pending">Checking with Qloo…</div>`;
-  $("qa").prepend(box);
-  const a = box.querySelector(".a");
-  run(q, { isFollow: true, box, onProgress: (t) => { if (t && a.classList.contains("pending")) a.textContent = t; }, onReply: (txt) => { a.classList.remove("pending"); a.innerHTML = md(txt); } });
-}
-function checkMenu(message) {
-  if (busy) { pending = () => checkMenu(message); $("salesStatus").textContent = "Queued. It starts as soon as the current step finishes…"; return; }
-  $("salesStatus").textContent = "Matching every dish to what your crowd loves. This takes about a minute…";
-  $("salesSum").innerHTML = "";
-  run(message, { isFollow: true, onProgress: (t) => { if (t) $("salesStatus").textContent = t; }, onReply: (txt) => { $("salesStatus").textContent = ""; $("salesSum").innerHTML = md(txt); } });
-}
-$("sampleBtn").addEventListener("click", () => checkMenu("Check my menu against my crowd. I haven't uploaded sales, so use the sample month."));
-$("csv").addEventListener("change", async (e) => {
-  const f = e.target.files?.[0];
-  if (!f || busy) return;
-  if (f.size > 500000) { $("salesStatus").textContent = "That file is too big. Export one month of item-wise sales."; return; }
-  const res = await fetch("/api/sales", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ sessionId, csv: await f.text(), name: f.name }) });
-  const j = await res.json().catch(() => ({}));
-  if (j.sessionId) sessionId = j.sessionId;
-  if (!res.ok) { $("salesStatus").textContent = `Couldn't read that file: ${j.error || res.status}`; return; }
-  checkMenu(`Check my menu against my crowd using my uploaded sales (${j.items} items; top sellers ${j.top.join(", ")}).`);
-  e.target.value = "";
-});
-$("compete").addEventListener("submit", (e) => { e.preventDefault(); const r = $("rival").value.trim(); if (r) { $("rival").value = ""; ask(`How is my crowd different from the crowd at ${r}?`); } });
-$("follow").addEventListener("submit", (e) => { e.preventDefault(); const q = $("followInput").value.trim(); if (q) { $("followInput").value = ""; ask(q); } });
-document.querySelector(".ideas").addEventListener("click", (e) => { if (e.target.tagName === "BUTTON") ask(e.target.textContent); });
-$("pdf").addEventListener("click", () => window.print());
 </script>
 </body>
 </html>

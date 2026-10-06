@@ -162,6 +162,7 @@ const SAMPLES = [
   { area: "Jayanagar, Bengaluru", cuisine: "Udupi", sales: true },
   { area: "Indiranagar, Bengaluru", cuisine: "cafe" },
   { area: "Koramangala, Bengaluru", cuisine: "biryani" },
+  { area: "West Village, New York", cuisine: "Italian" },
 ];
 let warming = null;
 function prewarm() {
