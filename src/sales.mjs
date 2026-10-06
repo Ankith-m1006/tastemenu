@@ -77,16 +77,28 @@ const DISH_TAG = /^urn:tag:(specialty_dish|cuisine|genre:place:restaurant|catego
 const IDEA_TAG = /^urn:tag:(specialty_dish|cuisine|genre:place|category:place|amenity|good_for|setting|offerings|decor)/;
 const STOP = new Set(["and", "the", "with", "for", "add", "menu", "special", "counter", "night", "weekend", "meal", "meals"]);
 
-async function matchTag(name, pattern = DISH_TAG) {
-  const env = await callQloo("find_tags", { query: name, limit: 8 });
-  if (!ok(env)) return null;
-  const tags = list(env).map((t) => ({ id: t.id ?? t.tag_id, name: t.name })).filter((t) => pattern.test(t.id ?? ""));
+// Candidate Qloo tags for a dish or idea, best first: tags sharing a word with the name
+// ("Neer Dosa" → a dosa tag), dishes before cuisines and place types.
+async function matchTags(name, pattern) {
   const words = name.toLowerCase().split(/[^a-z]+/).filter((w) => w.length > 2 && !STOP.has(w));
-  // Prefer a tag that shares a word with the name ("Neer Dosa" → a dosa tag), dishes first.
+  const query = words.join(" ") || name;
+  const env = await callQloo("find_tags", { query, limit: 8 });
+  if (!ok(env)) return [];
+  const tags = list(env).map((t) => ({ id: t.id ?? t.tag_id, name: t.name })).filter((t) => pattern.test(t.id ?? ""));
   const named = tags.filter((t) => words.some((w) => t.name?.toLowerCase().includes(w)));
-  return named.find((t) => /specialty_dish/.test(t.id)) ?? named[0] ?? null;
+  return [...named.filter((t) => /specialty_dish/.test(t.id)), ...named.filter((t) => !/specialty_dish/.test(t.id))].slice(0, 3);
 }
-const dishTag = (name) => matchTag(name, DISH_TAG);
+
+// Tries the candidate tags in order until Qloo has places for one of them in this city,
+// so a thin dish tag ("Biryani") falls back to a broader one ("Biryani restaurant").
+async function fitFor(name, pattern, signals, city) {
+  const tags = await matchTags(name, pattern);
+  for (const tag of tags) {
+    const fit = await crowdFit(tag.id, signals, city);
+    if (fit) return { tag, fit };
+  }
+  return { tag: tags[0] ?? null, fit: null };
+}
 
 async function crowdFit(tagId, signals, city) {
   const env = await callQloo("recommend", { target_type: "place", signals, signal_location: city, filter_location: city, include_tags: [tagId], limit: 3 });
@@ -108,8 +120,7 @@ export async function analyzeSales(items, evidence, { maxItems = 14 } = {}) {
 
   const rows = [];
   for (const it of picked) {
-    const tag = await dishTag(it.name);
-    const fit = tag ? await crowdFit(tag.id, signals, city) : null;
+    const { tag, fit } = await fitFor(it.name, DISH_TAG, signals, city);
     rows.push({ ...it, share: it.amount / total, rank: sorted.indexOf(it) + 1, tag, fit });
   }
 
@@ -133,9 +144,16 @@ export async function analyzeSales(items, evidence, { maxItems = 14 } = {}) {
   }
 
   // Dishes/cuisines the crowd's favourite places are known for, that the menu lacks.
-  const menuText = items.map((x) => x.name.toLowerCase()).join(" | ");
+  // Diet labels and the restaurant's own cuisine describe what it already is, so they are skipped.
+  const menuText = items.map((x) => `${x.name} ${x.category ?? ""}`.toLowerCase()).join(" | ");
+  const own = `${evidence.cuisine?.tag?.name ?? ""} ${evidence.cuisine?.input ?? ""}`.toLowerCase();
+  const GENERIC = /vegetarian|^indian$|restaurant or cafe|^restaurant$|^cafe$|fast food|family/i;
   const missing = (evidence.knownFor ?? [])
-    .filter((t) => DISH_TAG.test(t.id ?? "") && t.name && !menuText.includes(t.name.toLowerCase().split(" ")[0]))
+    .filter((t) => DISH_TAG.test(t.id ?? "") && t.name && !GENERIC.test(t.name))
+    .filter((t) => {
+      const first = t.name.toLowerCase().replace(/ restaurant$/, "").split(" ")[0];
+      return !menuText.includes(first) && !own.includes(first);
+    })
     .slice(0, 6);
   const ideas = [];
   for (const t of missing) {
@@ -168,8 +186,7 @@ export async function rankIdeas(options, evidence) {
   const signals = evidence.peers.slice(0, 5).map((p) => p.id).filter(Boolean);
   const out = [];
   for (const option of options.slice(0, 6)) {
-    const tag = await matchTag(option, IDEA_TAG);
-    const fit = tag ? await crowdFit(tag.id, signals, evidence.city) : null;
+    const { tag, fit } = await fitFor(option, IDEA_TAG, signals, evidence.city);
     out.push({ option, qloo_tag: tag?.name ?? null, crowd_fit: fit ? Number(fit.score.toFixed(3)) : null, examples: fit?.examples ?? [] });
   }
   out.sort((a, b) => (b.crowd_fit ?? -1) - (a.crowd_fit ?? -1));
@@ -200,7 +217,11 @@ export async function compareCompetitor(competitor, evidence) {
   const sides = {};
   for (const target_type of ["movie", "artist", "brand"]) {
     const env = await callQloo("compare_audiences", { group_a: ours, group_b: [theirs], target_type, limit: 8 });
-    sides[target_type] = ok(env) ? { summary: env.summary ?? null, results: list(env).slice(0, 8).map(pick) } : { status: env.status, summary: env.summary ?? null };
+    // The comparison envelope may hold its rows under results directly or in named groups.
+    const rows = Array.isArray(env.results) ? env.results
+      : env.results && typeof env.results === "object" ? Object.values(env.results).filter(Array.isArray).flat() : [];
+    if (!rows.length) console.log("[compare] envelope", JSON.stringify(env).slice(0, 1500));
+    sides[target_type] = ok(env) ? { summary: env.summary ?? null, results: rows.slice(0, 8).map(pick), raw: Array.isArray(env.results) ? undefined : env.results } : { status: env.status, summary: env.summary ?? null };
   }
   return {
     status: "ok",

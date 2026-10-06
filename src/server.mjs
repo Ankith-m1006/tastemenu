@@ -4,7 +4,8 @@ import { readFile } from "node:fs/promises";
 import { randomUUID } from "node:crypto";
 import path from "node:path";
 import { compactEvidence, runAgent } from "./agent.mjs";
-import { parseSales } from "./sales.mjs";
+import { analyzeSales, parseSales, sampleSales } from "./sales.mjs";
+import { gatherEvidence } from "./evidence.mjs";
 
 try { process.loadEnvFile(".env"); } catch {}
 
@@ -137,10 +138,43 @@ createServer(async (req, res) => {
     if (req.method === "POST" && req.url === "/api/chat") return await chat(req, res);
     if (req.method === "POST" && req.url === "/api/sales") return await uploadSales(req, res);
     if (req.method === "GET" && req.url === "/api/health") return json(res, 200, { ok: true });
+    if (req.method === "GET" && req.url === "/api/warm") return json(res, 200, { warmed: await prewarm() });
     if (req.method === "GET") return await serveStatic(req, res);
     json(res, 405, { error: "Method not allowed" });
   } catch (e) {
     console.error("[server]", e);
     if (!res.headersSent) json(res, 500, { error: "Server error" });
   }
-}).listen(PORT, () => console.log(`TasteMenu running on http://localhost:${PORT}`));
+}).listen(PORT, () => {
+  console.log(`TasteMenu running on http://localhost:${PORT}`);
+  if (process.env.PREWARM !== "0") prewarm();
+});
+
+// Fills the Qloo cache for the sample restaurants on the start page (and the sample sales
+// check), so the first person to try them doesn't wait for a cold run. Repeats every 12 h,
+// inside the 24 h cache lifetime.
+const SAMPLES = [
+  { area: "Jayanagar, Bengaluru", cuisine: "Udupi", sales: true },
+  { area: "Indiranagar, Bengaluru", cuisine: "cafe" },
+  { area: "Koramangala, Bengaluru", cuisine: "biryani" },
+];
+let warming = null;
+function prewarm() {
+  warming ??= warmAll().finally(() => { warming = null; });
+  return warming;
+}
+async function warmAll() {
+  const report = [];
+  for (const x of SAMPLES) {
+    const t0 = Date.now();
+    try {
+      const ev = await gatherEvidence(x);
+      if (x.sales && ev.status === "ok") await analyzeSales(await sampleSales(), ev);
+      report.push({ ...x, status: ev.status, ms: Date.now() - t0 });
+    } catch (e) {
+      report.push({ ...x, status: "error", error: e.message });
+    }
+  }
+  console.log("[prewarm]", JSON.stringify(report));
+  return report;
+}
