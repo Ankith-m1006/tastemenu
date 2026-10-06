@@ -4,7 +4,7 @@
 const OCCASIONS = [
   { name: "World Food Day", date: "2026-10-16", where: ["ALL"], note: "UN day for food; easy hook for a menu story" },
   { name: "Durga Puja", major: true, date: "2026-10-16", end: "2026-10-20", where: ["WB", "IN"], note: "five days of pandal-hopping; biggest in Bengali communities" },
-  { name: "Dussehra (Mysuru Dasara in Karnataka)", major: true, date: "2026-10-20", where: ["IN"], note: "Vijayadashami, a public holiday; families eat out" },
+  { name: "Dussehra / Dasara", major: true, date: "2026-10-20", where: ["IN"], note: "Vijayadashami, a public holiday (Mysuru Dasara in Karnataka); families eat out" },
   { name: "Halloween", date: "2026-10-31", where: ["US"], note: "costume nights and themed specials" },
   { name: "Karnataka Rajyotsava", date: "2026-11-01", where: ["KA"], note: "Karnataka formation day; Kannada pride" },
   { name: "Kerala Piravi", date: "2026-11-01", where: ["KL"], note: "Kerala formation day" },
@@ -35,7 +35,9 @@ export function regionOf(evidence) {
 
 export function upcomingOccasions(evidence, { days = 45, now = new Date() } = {}) {
   const regions = regionOf(evidence);
-  const today = new Date(now.toISOString().slice(0, 10));
+  // "Today" in the restaurant's own time zone, so "in 9 days" is right for the owner.
+  const tz = regions.has("IN") ? "Asia/Kolkata" : regions.has("US") ? "America/New_York" : "UTC";
+  const today = new Date(now.toLocaleDateString("en-CA", { timeZone: tz }));
   return OCCASIONS
     .filter((o) => o.where.some((w) => regions.has(w)))
     .map((o) => {
