@@ -3,7 +3,7 @@ import { createServer } from "node:http";
 import { readFile } from "node:fs/promises";
 import { randomUUID } from "node:crypto";
 import path from "node:path";
-import { runAgent } from "./agent.mjs";
+import { compactEvidence, runAgent } from "./agent.mjs";
 
 try { process.loadEnvFile(".env"); } catch {}
 
@@ -67,7 +67,10 @@ async function chat(req, res) {
       onEvent: (e) => {
         const line = progressLine(e);
         if (line) send("progress", { text: line, tool: e.name });
-        if (e.type === "evidence" && e.evidence?.trace) send("trace", { trace: e.evidence.trace, city: e.evidence.city, neighbourhood: e.evidence.neighbourhood, cuisine: e.evidence.cuisine?.tag ?? null });
+        if (e.type === "evidence" && e.evidence?.trace) {
+          send("trace", { trace: e.evidence.trace, city: e.evidence.city, neighbourhood: e.evidence.neighbourhood, cuisine: e.evidence.cuisine?.tag ?? null });
+          if (e.evidence.status === "ok") send("evidence", compactEvidence(e.evidence));
+        }
         if (e.type === "plan") send("plan", e.plan);
         if (e.type === "retry") send("progress", { text: "The AI was busy, switching to a backup model…" });
       },

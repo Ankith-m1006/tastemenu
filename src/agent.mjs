@@ -26,7 +26,9 @@ Rules:
 - Qloo results describe aggregate taste affinities of an audience, not facts about individual customers. Phrase them that way ("people who love places like yours over-index on ...").
 - Make the actions concrete, cheap and doable this month by a small restaurant in that city. Mention prices in rupees only if the owner gave them.
 - If a Qloo signal looks off for the context (for example an unexpected music genre), say so honestly in the card's caveat instead of hiding it.
-- Keep chat replies short and friendly, in simple English. The plan carries the detail.`;
+- Chat replies are plain text for a phone screen: no headings, no tables, no markdown symbols except **bold** and "- " bullets.
+- After publish_taste_plan, reply with one or two short sentences only (for example what to try first). Never repeat the plan in the chat: the board already shows it.
+- For follow-up or what-if questions, answer in at most five short sentences or bullets, grounded in Qloo results, and say clearly if Qloo has no signal for it.`;
 
 const PLAN_TOOL = {
   type: "function",
@@ -102,7 +104,7 @@ async function tools() {
 }
 
 // Keeps tool results small enough for the model while preserving the numbers it must cite.
-function compactEvidence(ev) {
+export function compactEvidence(ev) {
   if (ev.status !== "ok") return ev;
   const top = (xs, n = 6) => (xs ?? []).slice(0, n).map((x) => ({ name: x.name, affinity: x.affinity }));
   const demo = ev.audience.demographics?.[0]?.query ?? null;
