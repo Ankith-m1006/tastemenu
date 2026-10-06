@@ -147,7 +147,8 @@ details.kit[open] > summary::after { content: "Close"; }
 .verdict h3 small { font: 500 12.5px var(--sans); color: var(--soft); }
 .dish { display: grid; grid-template-columns: 1fr 58px 96px; gap: 10px; align-items: center; padding: 7px 0; border-bottom: 1px dotted var(--rule); font-size: 15px; }
 .dish .sh { font: 500 12.5px var(--mono); color: var(--soft); text-align: right; }
-.bar { height: 7px; background: var(--tint); border-radius: 2px; position: relative; }
+.bar { display: block; width: 100%; height: 7px; background: var(--tint); border-radius: 2px; position: relative; }
+.dish > span:last-child { display: block; }
 .bar i { position: absolute; left: 0; top: 0; bottom: 0; background: var(--leaf); border-radius: 2px; }
 .dish small { display: block; color: var(--soft); font-size: 12.5px; }
 .badge { display: inline-block; font-size: 11.5px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--turmeric); border: 1px solid var(--turmeric); border-radius: 3px; padding: 1px 6px; }
@@ -160,6 +161,10 @@ details.kit[open] > summary::after { content: "Close"; }
 .vsplan .g div:first-child { color: var(--soft); }
 .vsplan .g b { display: block; font-size: 11.5px; letter-spacing: .08em; text-transform: uppercase; margin-bottom: 2px; }
 .vsplan .g div:last-child b { color: var(--leaf); }
+.vsplan .g small { display: block; margin-top: 4px; font-size: 12.5px; color: var(--soft); }
+.vsplan .g small .mono { color: var(--leaf); }
+#genericBox { border: 1.5px solid var(--leaf); border-radius: 6px; padding: 12px 14px; }
+#genericBox summary { color: var(--leaf); }
 @media (max-width: 520px) { .vsplan .g { grid-template-columns: 1fr; } }
 
 /* What-if and competitor tables */
@@ -221,7 +226,7 @@ details.kit[open] > summary::after { content: "Close"; }
     <p class="kicker">This month's plan</p>
     <div class="plan" id="plan"></div>
     <details class="how hidden" id="genericBox" style="margin-top:20px">
-      <summary>Why not just ask a chatbot? See what a generic AI suggests</summary>
+      <summary id="genericSum">Why not just ask a chatbot? See what a generic AI suggests</summary>
       <p class="note">Same AI, same question, but without Qloo's taste data. Compare it with the plan above.</p>
       <div class="vsplan" id="generic"></div>
     </details>
@@ -411,9 +416,11 @@ function renderGeneric() {
   $("generic").innerHTML = (plan.cards || []).map((c) => {
     const g = (generic.cards || []).find((x) => x.kind === c.kind);
     if (!g) return "";
-    const ev = (c.evidence || []).filter((e) => e.verified !== false).slice(0, 3).map((e) => esc(e.name)).join(", ");
-    return `<div class="g"><div><b>Generic AI · ${esc(LABEL[c.kind])}</b>${esc(g.title)}: ${esc(g.action)}</div><div><b>TasteMenu + Qloo</b>${esc(c.title)}${ev ? ` <span class="mono" style="font-size:12px">(${ev})</span>` : ""}</div></div>`;
+    const ev = (c.evidence || []).filter((e) => e.verified !== false).slice(0, 3).map((e) => `${esc(e.name)}${typeof e.affinity === "number" ? ` <span class="mono">${pct(e.affinity)}</span>` : ""}`).join(" · ");
+    return `<div class="g"><div><b>Generic AI · ${esc(LABEL[c.kind])}</b>${esc(g.title)}: ${esc(g.action)}<br><small>Based on: general knowledge</small></div><div><b>TasteMenu · ${esc(LABEL[c.kind])}</b>${esc(c.title)}: ${esc(c.action)}<br><small>Based on Qloo: ${ev || "Qloo tags"}</small></div></div>`;
   }).join("");
+  const signals = (plan.cards || []).flatMap((c) => c.evidence || []).filter((e) => e.verified).length;
+  $("genericSum").textContent = `Generic AI: 0 real data points · TasteMenu: ${signals} Qloo signals. Compare them`;
 }
 
 function renderIdeas(r, box) {
