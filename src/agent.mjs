@@ -206,6 +206,30 @@ export function compactEvidence(ev) {
   };
 }
 
+// Every number on the owner's board must come from a Qloo response. Evidence items are
+// matched by name to what Qloo returned in this session; a matching item gets Qloo's own
+// affinity, an unmatched number is dropped, and each item records whether it was verified.
+export function verifyPlan(plan, ctx) {
+  const known = new Map();
+  const add = (x) => { if (x?.name) known.set(x.name.toLowerCase(), typeof x.affinity === "number" ? x.affinity : null); };
+  const ev = ctx.evidence;
+  if (ev) {
+    [ev.peers, ev.partners, ev.audience?.artists, ev.audience?.movies, ev.audience?.tvShows, ev.audience?.brands].forEach((xs) => (xs ?? []).forEach(add));
+    (ev.knownFor ?? []).forEach((t) => known.has(t.name?.toLowerCase()) || known.set(t.name?.toLowerCase(), null));
+  }
+  for (const r of ctx.qlooSeen ?? []) add(r);
+  for (const card of plan.cards ?? []) {
+    card.evidence = (card.evidence ?? []).map((e) => {
+      const key = String(e.name ?? "").toLowerCase();
+      if (!known.has(key)) { const { affinity, ...rest } = e; return { ...rest, verified: false }; }
+      const real = known.get(key);
+      const { affinity, ...rest } = e;
+      return real == null ? { ...rest, verified: true } : { ...rest, affinity: Number(real.toFixed(3)), verified: true };
+    });
+  }
+  return plan;
+}
+
 const NEEDS_EVIDENCE = { status: "needs_evidence", message: "Run gather_taste_evidence for this restaurant first." };
 
 async function runTool(name, args, onEvent, ctx) {
@@ -238,6 +262,7 @@ async function runTool(name, args, onEvent, ctx) {
   if (RAW_TOOLS.includes(name)) {
     const env = await callQloo(name, args);
     const results = Array.isArray(env.results) ? env.results.slice(0, 8).map((r) => ({ name: r.name, id: r.entity_id ?? r.id, affinity: r.affinity, popularity: r.popularity })) : env.results;
+    if (Array.isArray(results)) (ctx.qlooSeen ??= []).push(...results);
     return { status: env.status, summary: env.summary, results };
   }
   return { error: `Unknown tool ${name}` };
@@ -324,7 +349,7 @@ export async function runAgent(history, { onEvent, ctx = {} } = {}) {
           try { args = JSON.parse(call.function.arguments || "{}"); } catch {}
           let result;
           if (call.function.name === "publish_taste_plan") {
-            plan = args;
+            plan = verifyPlan(args, ctx);
             onEvent?.({ type: "plan", plan });
             result = { status: "published", next: "Now call publish_action_kit." };
           } else if (call.function.name === "publish_action_kit") {
@@ -347,4 +372,28 @@ export async function runAgent(history, { onEvent, ctx = {} } = {}) {
     }
   }
   throw lastError;
+}
+
+// The "without Qloo" baseline: the same model, same request, no tools and no data. Shown
+// next to the Qloo-grounded plan so the difference cultural data makes is visible.
+export async function genericPlan(request) {
+  const m = MODELS.find((x) => x.key());
+  if (!m) return null;
+  const r = await fetch(m.url, {
+    method: "POST",
+    headers: { Authorization: `Bearer ${m.key()}`, "Content-Type": "application/json" },
+    body: JSON.stringify({
+      model: m.model,
+      temperature: 0.4,
+      ...(m.url === GEMINI_URL ? { reasoning_effort: "low" } : {}),
+      messages: [
+        { role: "system", content: 'You are a helpful assistant. Reply with JSON only: {"cards":[{"kind":"menu|music|event|partners","title":"...","action":"one sentence"}]} with exactly four cards, one of each kind.' },
+        { role: "user", content: `Give me a marketing plan for this month for my restaurant: ${request}` },
+      ],
+    }),
+    signal: AbortSignal.timeout(60000),
+  });
+  if (!r.ok) return null;
+  const text = (await r.json()).choices?.[0]?.message?.content ?? "";
+  try { return JSON.parse(text.slice(text.indexOf("{"), text.lastIndexOf("}") + 1)); } catch { return null; }
 }
