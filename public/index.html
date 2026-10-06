@@ -59,7 +59,12 @@ svg.i { width: 20px; height: 20px; flex: none; }
 .topbar .place { margin-left: auto; font-size: 12.5px; font-weight: 600; color: var(--ink2); background: var(--surface); border: 1px solid var(--line); border-radius: 999px; padding: 6px 11px; max-width: 58%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .screen { padding: 4px 16px 112px; }
 .tabbar { position: fixed; left: 50%; transform: translateX(-50%); bottom: 0; width: 100%; max-width: 480px; z-index: 30; display: grid; grid-template-columns: repeat(4, 1fr); background: color-mix(in srgb, var(--surface) 94%, transparent); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border-top: 1px solid var(--line); padding: 6px 8px calc(8px + env(safe-area-inset-bottom)); }
-@media (min-width: 980px) { .tabbar { position: absolute; left: 0; transform: none; padding-bottom: 16px; } }
+@media (min-width: 980px) {
+  .tabbar { position: absolute; left: 0; transform: none; padding-bottom: 16px; }
+  /* Inside the phone frame on desktop */
+  .scrim, .sheet, .toast { position: absolute; }
+  .sheet { max-height: 85%; }
+}
 .tabbar button { border: 0; background: none; display: grid; justify-items: center; gap: 3px; padding: 7px 0 4px; color: var(--mute); font-size: 11.5px; font-weight: 700; border-radius: 14px; }
 .tabbar button svg { width: 23px; height: 23px; }
 .tabbar button.on { color: var(--brand); }
@@ -397,12 +402,12 @@ svg.i { width: 20px; height: 20px; flex: none; }
       <button type="button" data-go="menu"><svg class="i" viewBox="0 0 24 24"><use href="#i-bowl"/></svg>Menu</button>
       <button type="button" data-go="ask"><svg class="i" viewBox="0 0 24 24"><use href="#i-bulb"/></svg>Ideas</button>
     </nav>
+    <div class="scrim" id="scrim"></div>
+    <div class="sheet" id="sheet" role="dialog" aria-modal="true"><div class="grab"></div><div id="sheetBody"></div></div>
+    <div class="toast" id="toast" role="status"></div>
   </main>
 </div>
 
-<div class="scrim" id="scrim"></div>
-<div class="sheet" id="sheet" role="dialog" aria-modal="true"><div class="grab"></div><div id="sheetBody"></div></div>
-<div class="toast" id="toast" role="status"></div>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
   <defs><style>.st{fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}</style></defs>
