@@ -278,7 +278,7 @@ details.kit[open] > summary::after { content: "Close"; }
 <script>
 const $ = (id) => document.getElementById(id);
 const LABEL = { menu: "Menu", music: "Music", event: "Event", partners: "Partners" };
-let sessionId = null, busy = false, plan = null, evidence = null;
+let sessionId = null, busy = false, plan = null, evidence = null, pending = null;
 
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 const pct = (a) => (typeof a === "number" ? Math.round(a * 100) : null);
@@ -396,6 +396,11 @@ function renderSales(r) {
   $("menuBlock").classList.remove("hidden");
   if (r.status !== "ok") { $("salesOut").innerHTML = `<p class="err">${esc(r.message || r.question || "Couldn't analyse the sales.")}</p>`; return; }
   const total = r.revenue_total || 1;
+  // Qloo affinities for one crowd sit close together (0.95–0.99), so bars are scaled from
+  // the lowest to the highest score on this menu to make the differences visible.
+  const fits = [...(r.rows || []).map((x) => x.crowd_fit), ...(r.new_ideas || []).map((x) => x.fit)].filter((x) => typeof x === "number");
+  const lo = Math.min(...fits), hi = Math.max(...fits);
+  const w = (x) => (typeof x !== "number" ? 0 : hi > lo ? Math.round(12 + 88 * ((x - lo) / (hi - lo))) : 100);
   const head = `<p class="note">${r.sample ? `<span class="badge">Sample data</span> ` : ""}${esc(r.source)} · ${r.items_total} items · ₹${Math.round(total).toLocaleString("en-IN")} · crowd fit for people who love places like yours in ${esc(r.city)}</p>`;
   const groups = VERDICTS.map(([v, hint]) => {
     const rows = (r.rows || []).filter((x) => x.verdict === v);
@@ -403,10 +408,10 @@ function renderSales(r) {
     return `<div class="verdict"><h3>${esc(v)} <small>${esc(hint)}</small></h3>${rows.map((x) => `
       <div class="dish"><span>${esc(x.item)}<small>${x.qloo_tag ? `Qloo: ${esc(x.qloo_tag)}` : "no Qloo match"}${x.fit_examples?.length ? ` · e.g. ${esc(x.fit_examples.join(", "))}` : ""}</small></span>
       <span class="sh">${(x.share * 100).toFixed(1)}%</span>
-      <span title="Crowd fit ${pct(x.crowd_fit) ?? "–"}"><span class="bar"><i style="width:${x.crowd_fit != null ? Math.round(x.crowd_fit * 100) : 0}%"></i></span></span></div>`).join("")}</div>`;
+      <span title="Crowd fit ${pct(x.crowd_fit) ?? "–"}"><span class="bar"><i style="width:${w(x.crowd_fit)}%"></i></span></span></div>`).join("")}</div>`;
   }).join("");
-  const ideas = (r.new_ideas || []).length ? `<div class="verdict"><h3>Worth adding <small>Your crowd's favourite places are known for these, and your menu doesn't have them.</small></h3>${r.new_ideas.map((x) => `<div class="dish"><span>${esc(x.name)}<small>${x.examples?.length ? `e.g. ${esc(x.examples.join(", "))}` : ""}</small></span><span class="sh"></span><span><span class="bar"><i style="width:${Math.round(x.fit * 100)}%"></i></span></span></div>`).join("")}</div>` : "";
-  $("salesOut").innerHTML = head + `<div class="dish" style="border:0;padding-bottom:0"><span></span><span class="sh">Sales</span><span class="sh" style="text-align:left">Crowd fit</span></div>` + `<div class="verdicts">${groups}${ideas}</div>`;
+  const ideas = (r.new_ideas || []).length ? `<div class="verdict"><h3>Worth adding <small>Your crowd's favourite places are known for these, and your menu doesn't have them.</small></h3>${r.new_ideas.map((x) => `<div class="dish"><span>${esc(x.name)}<small>${x.examples?.length ? `e.g. ${esc(x.examples.join(", "))}` : ""}</small></span><span class="sh"></span><span><span class="bar"><i style="width:${w(x.fit)}%"></i></span></span></div>`).join("")}</div>` : "";
+  $("salesOut").innerHTML = head + `<div class="dish" style="border:0;padding-bottom:0"><span></span><span class="sh">Sales</span><span class="sh" style="text-align:left">Crowd fit (relative)</span></div>` + `<div class="verdicts">${groups}${ideas}</div>`;
 }
 
 let generic = null;
@@ -478,6 +483,8 @@ async function run(text, { onReply, isFollow, box, onProgress }) {
   } finally {
     busy = false; $("go").disabled = false; $("send").disabled = false;
     document.querySelectorAll(".kitwait").forEach((x) => x.remove());
+    // A request made while the agent was busy runs next instead of being dropped.
+    if (pending) { const next = pending; pending = null; setTimeout(next, 0); }
   }
 }
 
@@ -493,7 +500,8 @@ $("start").addEventListener("submit", (e) => {
   run(t, { onReply: (txt) => { if (!plan && txt) { $("err").innerHTML = md(txt); $("err").style.color = "var(--ink)"; $("err").classList.remove("hidden"); $("start").classList.remove("hidden"); } } });
 });
 function ask(q) {
-  if (busy) return;
+  if (busy) { pending = () => ask(q); $("qa").insertAdjacentHTML("afterbegin", `<p class="note queued">Queued: “${esc(q)}”. It starts as soon as the current step finishes.</p>`); return; }
+  document.querySelectorAll(".queued").forEach((x) => x.remove());
   const box = document.createElement("div");
   box.innerHTML = `<div class="q">${esc(q)}</div><div class="extra"></div><div class="a pending">Checking with Qloo…</div>`;
   $("qa").prepend(box);
@@ -501,7 +509,7 @@ function ask(q) {
   run(q, { isFollow: true, box, onProgress: (t) => { if (t && a.classList.contains("pending")) a.textContent = t; }, onReply: (txt) => { a.classList.remove("pending"); a.innerHTML = md(txt); } });
 }
 function checkMenu(message) {
-  if (busy) return;
+  if (busy) { pending = () => checkMenu(message); $("salesStatus").textContent = "Queued. It starts as soon as the current step finishes…"; return; }
   $("salesStatus").textContent = "Matching every dish to what your crowd loves. This takes about a minute…";
   $("salesSum").innerHTML = "";
   run(message, { isFollow: true, onProgress: (t) => { if (t) $("salesStatus").textContent = t; }, onReply: (txt) => { $("salesStatus").textContent = ""; $("salesSum").innerHTML = md(txt); } });
