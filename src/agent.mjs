@@ -24,7 +24,7 @@ How you work:
 5. Later questions:
    - "Check my menu / my sales": call analyze_sales, then explain in a few bullets which dishes to double down on, reposition or rethink, and which new dish idea fits the crowd best. Say clearly when it ran on the built-in sample month.
    - "What if I add X?" or "X or Y?": call rank_ideas with the owner's ideas (add one or two sensible alternatives if only one was given), then recommend one and say why.
-   - "How am I different from <restaurant>?": call compare_competitor, then give two or three differences and one positioning idea.
+   - "How am I different from <restaurant>?": call compare_competitor, then give two or three differences taken only from its tag lists, and one positioning idea that follows from them.
    - Use the raw qloo_* tools only when they add something specific (for example qloo_describe for one entity).
 
 Rules:
@@ -158,7 +158,7 @@ const COMPARE_TOOL = {
   type: "function",
   function: {
     name: "compare_competitor",
-    description: "Competitor lens: compare the audience of a named competitor restaurant in the same city with the audience of places like the owner's (films, music, brands). Needs gather_taste_evidence first.",
+    description: "Competitor lens: compare a named competitor restaurant in the same city with places like the owner's, by Qloo taste tags (offerings, occasions, flavours, vibe): what only one side has and what both share. Needs gather_taste_evidence first.",
     parameters: {
       type: "object",
       properties: { competitor: { type: "string", description: "The competitor's name as people know it." } },
@@ -260,7 +260,11 @@ async function callModel(m, messages, toolList) {
   const r = await fetch(m.url, {
     method: "POST",
     headers: { Authorization: `Bearer ${m.key()}`, "Content-Type": "application/json" },
-    body: JSON.stringify({ model: m.model, messages: clean(messages), tools: toolList, tool_choice: "auto", temperature: 0.4 }),
+    body: JSON.stringify({
+      model: m.model, messages: clean(messages), tools: toolList, tool_choice: "auto", temperature: 0.4,
+      // Gemini thinks before every step; "low" keeps tool-calling quality while cutting most of the wait.
+      ...(m.url === GEMINI_URL && process.env.TASTEMENU_REASONING !== "default" ? { reasoning_effort: process.env.TASTEMENU_REASONING || "low" } : {}),
+    }),
     signal: AbortSignal.timeout(120000),
   });
   const j = await r.json().catch(() => ({}));

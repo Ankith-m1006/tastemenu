@@ -398,9 +398,8 @@ function renderIdeas(r, box) {
 function renderCompare(r, box) {
   if (!box) return;
   if (r.status !== "ok") { box.querySelector(".extra").innerHTML += `<p class="note">${esc(r.question || "Couldn't compare.")}</p>`; return; }
-  const LBL = { movie: "Films", artist: "Music", brand: "Brands" };
-  const cols = Object.entries(r.comparisons || {}).filter(([, v]) => v.results?.length).map(([k, v]) => `<div><h4>${LBL[k] || k}</h4><ol style="margin:0;padding-left:18px">${v.results.slice(0, 5).map((x) => `<li>${esc(x.name)}</li>`).join("")}</ol></div>`).join("");
-  box.querySelector(".extra").innerHTML += `<p class="note">Your crowd vs ${esc(r.competitor?.name)}${r.competitor?.address ? ` (${esc(r.competitor.address)})` : ""}, by Qloo:</p><div class="vs">${cols}</div>`;
+  const col = (title, xs) => xs?.length ? `<div><h4>${title}</h4><ol style="margin:0;padding-left:18px">${xs.slice(0, 6).map((x) => `<li>${esc(x)}</li>`).join("")}</ol></div>` : "";
+  box.querySelector(".extra").innerHTML += `<p class="note">Places like yours vs ${esc(r.competitor?.name)}${r.competitor?.address ? ` (${esc(r.competitor.address)})` : ""}, by Qloo taste tags:</p><div class="vs">${col("Only places like yours", r.only_places_like_yours)}${col(`Only ${esc(r.competitor?.name)}`, r.only_competitor)}${col("Both", r.shared)}</div>`;
 }
 
 function renderTrace(t) {
