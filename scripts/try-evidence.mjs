@@ -1,5 +1,5 @@
-import { gatherEvidence } from "./evidence.mjs";
-import { closeQloo } from "./qloo.mjs";
+import { gatherEvidence } from "../src/evidence.mjs";
+import { closeQloo } from "../src/qloo.mjs";
 import { writeFile } from "node:fs/promises";
 try {
   const ev = await gatherEvidence({ area: "Jayanagar, Bengaluru", cuisine: "Udupi" });
