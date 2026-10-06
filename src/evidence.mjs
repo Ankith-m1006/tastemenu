@@ -43,6 +43,63 @@ function splitArea(area) {
   return { neighbourhood: parts.length > 1 ? parts[0] : null, city: parts[parts.length - 1] ?? area };
 }
 
+
+// --- What's rising with this crowd ---------------------------------------------------
+
+// Qloo trends returns a popularity time series per entity. The envelope shape is read
+// defensively: every object with a date and a number is a point, grouped by entity.
+function seriesOf(env, names) {
+  const groups = new Map();
+  const walk = (node, owner) => {
+    if (Array.isArray(node)) return node.forEach((x) => walk(x, owner));
+    if (!node || typeof node !== "object") return;
+    const id = node.entity_id ?? node.id ?? owner;
+    const date = node.date ?? node.day ?? node.timestamp ?? node.period ?? node.start_date;
+    const value = [node.popularity, node.value, node.score, node.population_percentile, node.rank_delta].find((v) => typeof v === "number");
+    if (date && value != null && id) {
+      const g = groups.get(id) ?? { id, name: names.get(id) ?? node.name ?? null, points: [] };
+      g.points.push({ date: String(date).slice(0, 10), value });
+      groups.set(id, g);
+    }
+    for (const v of Object.values(node)) if (v && typeof v === "object") walk(v, id);
+  };
+  walk(env.results ?? env, null);
+  return [...groups.values()].filter((g) => g.points.length >= 6);
+}
+
+// Change in average popularity over the last 14 days against the weeks before.
+function momentum(points) {
+  const sorted = [...points].sort((a, b) => a.date.localeCompare(b.date));
+  const recent = sorted.slice(-14), before = sorted.slice(0, -14);
+  if (!before.length) return null;
+  const avg = (xs) => xs.reduce((a, p) => a + p.value, 0) / xs.length;
+  const b = avg(before), r = avg(recent);
+  return b > 0 ? (r - b) / b : null;
+}
+
+async function crowdTrends({ movies, tvShows, artists }, trace) {
+  const end = new Date(Date.now() - 2 * 864e5), start = new Date(end.getTime() - 56 * 864e5);
+  const day = (d) => d.toISOString().slice(0, 10);
+  const rising = [];
+  for (const [type, label, xs] of [["movie", "Film", movies], ["tv_show", "Show", tvShows], ["artist", "Artist", artists]]) {
+    const top = (xs ?? []).slice(0, 5).filter((x) => x.id);
+    if (!top.length) continue;
+    const names = new Map(top.map((x) => [x.id, x.name]));
+    const args = { entities: top.map((x) => x.id), entity_type: type, start_date: day(start), end_date: day(end) };
+    const env = await callQloo("trends", args);
+    trace.push(step(`What's rising with this crowd: ${label.toLowerCase()}s`, "trends", args, env));
+    if (!ok(env)) continue;
+    const series = seriesOf(env, names);
+    if (!series.length) console.log("[trends] unreadable envelope", JSON.stringify(env).slice(0, 1200));
+    for (const g of series) {
+      const change = momentum(g.points);
+      const x = top.find((t) => t.id === g.id);
+      if (change != null && x) rising.push({ name: x.name, type: label, affinity: x.affinity, change: Number(change.toFixed(3)) });
+    }
+  }
+  return rising.filter((x) => x.change >= 0.05).sort((a, b) => b.change - a.change).slice(0, 5);
+}
+
 export async function gatherEvidence({ area, cuisine, limit = 8 }) {
   const trace = [];
   const { neighbourhood, city } = splitArea(area);
@@ -101,6 +158,7 @@ export async function gatherEvidence({ area, cuisine, limit = 8 }) {
     cuisine: { input: cuisine, tag: cuisineTag.chosen, alternatives: cuisineTag.candidates.slice(0, 5) },
     peers,
     audience: { artists, movies, tvShows, brands, demographics: ok(demoEnv) ? demoEnv.results ?? null : null },
+    trending: await crowdTrends({ movies, tvShows, artists }, trace).catch((e) => { console.error("[trends]", e.message); return []; }),
     knownFor,
     partners,
     trace,

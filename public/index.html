@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#ffffff">
 <title>TasteMenu</title>
 <meta name="description" content="Grow your restaurant with what your diners love. Four things to do this week, the messages to send, and which dishes to push, built on Qloo's taste data.">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='16' fill='%23E8501F'/><path d='M14 30h36a18 18 0 0 1-36 0z' fill='white'/><path d='M24 22c0-3 2-3 2-6M32 22c0-3 2-3 2-6M40 22c0-3 2-3 2-6' stroke='white' stroke-width='3' stroke-linecap='round' fill='none'/></svg>">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='9' fill='%230e1116'/><circle cx='15.5' cy='16.5' r='8.6' fill='none' stroke='white' stroke-width='2.6'/><circle cx='20' cy='12' r='3.3' fill='%23f0532a'/></svg>"><rect width='64' height='64' rx='16' fill='%23E8501F'/><path d='M14 30h36a18 18 0 0 1-36 0z' fill='white'/><path d='M24 22c0-3 2-3 2-6M32 22c0-3 2-3 2-6M40 22c0-3 2-3 2-6' stroke='white' stroke-width='3' stroke-linecap='round' fill='none'/></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
@@ -42,7 +42,9 @@ svg.i { width: 20px; height: 20px; flex: none; }
   .scroller { height: 100%; overflow-y: auto; scrollbar-width: none; }
   .scroller::-webkit-scrollbar { display: none; }
 }
-.pitch .logo { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 20px; }
+.pitch .logo { display: flex; align-items: center; gap: 10px; }
+.pitch .logo .logo-mark { width: 36px; height: 36px; }
+.pitch .logo .word { font-size: 22px; }
 .pitch h1 { font-size: 42px; line-height: 1.06; letter-spacing: -0.035em; margin: 26px 0 14px; }
 .pitch p { color: var(--ink2); font-size: 16.5px; margin: 0 0 24px; }
 .pitch ol { list-style: none; padding: 0; margin: 0 0 26px; display: grid; gap: 14px; }
@@ -54,8 +56,19 @@ svg.i { width: 20px; height: 20px; flex: none; }
 .mark svg { width: 21px; height: 21px; }
 
 /* App chrome */
-.topbar { position: sticky; top: 0; z-index: 20; display: flex; align-items: center; gap: 10px; padding: 14px 18px 10px; background: color-mix(in srgb, var(--bg) 88%, transparent); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); }
-.topbar .name { font-weight: 800; font-size: 17px; letter-spacing: -0.015em; }
+.topbar { position: sticky; top: 0; z-index: 20; display: flex; align-items: center; gap: 10px; padding: 14px 16px 12px; min-height: 64px; border-bottom: 1px solid transparent; background: color-mix(in srgb, var(--bg) 88%, transparent); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); }
+.logo-mark { width: 30px; height: 30px; flex: none; display: block; }
+.logo-mark svg { width: 100%; height: 100%; display: block; }
+.word { font-weight: 800; font-size: 18px; letter-spacing: -0.04em; color: var(--ink); }
+.word b { font-weight: 800; color: var(--brand); }
+.brandrow { display: flex; align-items: center; gap: 9px; width: 100%; }
+.brandrow .by { margin-left: auto; font-size: 11.5px; font-weight: 700; color: var(--mute); border: 1px solid var(--line); border-radius: 999px; padding: 4px 9px; background: var(--surface); }
+.store { display: flex; align-items: center; gap: 10px; width: 100%; border: 0; background: none; padding: 0; text-align: left; }
+.store .avatar { width: 38px; height: 38px; border-radius: 12px; background: var(--ink); color: #fff; display: grid; place-items: center; font-weight: 800; font-size: 14px; letter-spacing: -0.02em; flex: none; }
+.store-txt { display: grid; line-height: 1.2; min-width: 0; }
+.store-txt b { font-size: 16px; letter-spacing: -0.015em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.store-txt small { color: var(--mute); font-size: 12.5px; font-weight: 600; }
+.store svg { color: var(--mute); width: 18px; height: 18px; }
 .topbar .place { margin-left: auto; font-size: 12.5px; font-weight: 600; color: var(--ink2); background: var(--surface); border: 1px solid var(--line); border-radius: 999px; padding: 6px 11px; max-width: 58%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .screen { padding: 4px 16px 112px; }
 .tabbar { position: fixed; left: 50%; transform: translateX(-50%); bottom: 0; width: 100%; max-width: 480px; z-index: 30; display: grid; grid-template-columns: repeat(4, 1fr); background: color-mix(in srgb, var(--surface) 94%, transparent); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border-top: 1px solid var(--line); padding: 6px 8px calc(8px + env(safe-area-inset-bottom)); }
@@ -165,6 +178,17 @@ svg.i { width: 20px; height: 20px; flex: none; }
 .vsbanner { display: flex; align-items: center; gap: 14px; text-align: left; width: 100%; border: 0; }
 .vsbanner .big { width: 50px; height: 50px; border-radius: 16px; background: var(--good-soft); color: var(--good); display: grid; place-items: center; font-size: 21px; font-weight: 800; flex: none; }
 
+/* Trending */
+.trend-head { display: flex; gap: 11px; align-items: center; margin-bottom: 8px; }
+.trow { display: grid; grid-template-columns: 1fr auto; gap: 2px 10px; padding: 10px 0; border-top: 1px solid var(--line); align-items: center; }
+.trow b { font-size: 14.5px; }
+.trow small { grid-column: 1; color: var(--mute); font-size: 12px; }
+.up { grid-row: 1 / span 2; grid-column: 2; display: inline-flex; align-items: center; gap: 4px; background: var(--good-soft); color: var(--good); font-weight: 800; font-size: 13px; border-radius: 999px; padding: 5px 10px; }
+.up svg { width: 15px; height: 15px; }
+.tile .rise { margin-top: 6px; font-size: 11.5px; font-weight: 800; color: var(--good); display: inline-flex; gap: 3px; align-items: center; }
+.tile .rise svg { width: 13px; height: 13px; }
+.poster-img { width: 100%; border-radius: 16px; border: 1px solid var(--line); display: block; }
+
 /* Crowd */
 .lean .r { display: grid; grid-template-columns: 70px 1fr 40px; gap: 10px; align-items: center; font-size: 13px; margin: 7px 0; }
 .lean .tr { position: relative; height: 8px; background: var(--chip); border-radius: 4px; }
@@ -252,7 +276,7 @@ svg.i { width: 20px; height: 20px; flex: none; }
 <body>
 <div class="page">
   <aside class="pitch">
-    <div class="logo"><span class="mark"><svg viewBox="0 0 24 24"><use href="#i-bowl"/></svg></span>TasteMenu</div>
+    <div class="logo"><span class="logo-mark"><svg viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="9" fill="#0e1116"/><circle cx="15.5" cy="16.5" r="8.6" fill="none" stroke="#fff" stroke-width="2.6"/><circle cx="20" cy="12" r="3.3" fill="#f0532a"/></svg></span><span class="word">taste<b>menu</b></span></div>
     <h1>Grow your restaurant with what your diners love.</h1>
     <p>A weekly growth coach for independent restaurants. It reads what people who eat at places like yours also love, from Qloo's taste graph, and tells you exactly what to do this week.</p>
     <ol>
@@ -267,9 +291,12 @@ svg.i { width: 20px; height: 20px; flex: none; }
   <main class="app">
     <div class="scroller" id="scroller">
       <header class="topbar">
-        <span class="mark"><svg viewBox="0 0 24 24"><use href="#i-bowl"/></svg></span>
-        <span class="name">TasteMenu</span>
-        <span class="place hidden" id="placeChip"></span>
+        <div class="brandrow" id="brandRow"><span class="logo-mark"><svg viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="9" fill="#0e1116"/><circle cx="15.5" cy="16.5" r="8.6" fill="none" stroke="#fff" stroke-width="2.6"/><circle cx="20" cy="12" r="3.3" fill="#f0532a"/></svg></span><span class="word">taste<b>menu</b></span><span class="by">Taste data by Qloo</span></div>
+        <button class="store hidden" id="storeBtn" type="button" aria-label="Switch restaurant">
+          <span class="avatar" id="storeAvatar"></span>
+          <span class="store-txt"><b id="storeName"></b><small id="storeArea"></small></span>
+          <svg class="i" viewBox="0 0 24 24"><use href="#i-down2"/></svg>
+        </button>
       </header>
 
       <!-- Onboarding -->
@@ -337,6 +364,10 @@ svg.i { width: 20px; height: 20px; flex: none; }
           <div><div class="muted">This week</div><b id="weekCount">0 of 4 done</b></div>
         </div>
         <p class="muted" id="headline" style="margin:0 4px 12px"></p>
+        <div class="card hidden" id="trendCard">
+          <div class="trend-head"><span class="kind event"><svg class="i" viewBox="0 0 24 24"><use href="#i-trend"/></svg></span><div><div class="h2">Rising with your crowd right now</div><div class="muted">Popularity over the last 2 weeks vs the weeks before, from Qloo</div></div></div>
+          <div id="trendList"></div>
+        </div>
         <div id="actions"></div>
         <button class="card vsbanner hidden noprint" id="vsBanner" type="button">
           <span class="big" id="vsNum">0</span>
@@ -426,6 +457,10 @@ svg.i { width: 20px; height: 20px; flex: none; }
   <symbol id="i-msg" viewBox="0 0 24 24"><path class="st" d="M21 12a8 8 0 0 1-11.6 7.1L4 20.5l1.4-4.9A8 8 0 1 1 21 12z"/></symbol>
   <symbol id="i-down" viewBox="0 0 24 24"><path class="st" d="M12 4v11m-5-5 5 5 5-5M5 20h14"/></symbol>
   <symbol id="i-up" viewBox="0 0 24 24"><path class="st" d="M12 20V9m-5 5 5-5 5 5M5 4h14"/></symbol>
+  <symbol id="i-down2" viewBox="0 0 24 24"><path class="st" d="m6 9 6 6 6-6"/></symbol>
+  <symbol id="i-trend" viewBox="0 0 24 24"><path class="st" d="M3 17l6-6 4 4 8-8M15 7h6v6"/></symbol>
+  <symbol id="i-img" viewBox="0 0 24 24"><rect class="st" x="3.5" y="3.5" width="17" height="17" rx="4"/><circle class="st" cx="9" cy="9" r="1.8"/><path class="st" d="m20.5 15-5-5-10 10"/></symbol>
+  <symbol id="i-share" viewBox="0 0 24 24"><path class="st" d="M12 15V3m-4 4 4-4 4 4M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></symbol>
   <symbol id="i-x" viewBox="0 0 24 24"><path class="st" d="M6 6l12 12M18 6 6 18"/></symbol>
   <symbol id="i-alert" viewBox="0 0 24 24"><path class="st" d="M12 3 2 20h20zM12 10v4M12 17h.01"/></symbol>
   <symbol id="i-copy" viewBox="0 0 24 24"><rect class="st" x="8" y="8" width="12" height="12" rx="3"/><path class="st" d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/></symbol>
@@ -505,8 +540,12 @@ $("fType").addEventListener("click", (e) => {
 function begin(r) {
   restaurant = r;
   const message = `${r.name ? `${r.name}: ` : ""}${r.type} restaurant in ${r.area}.${r.crowd ? ` ${r.crowd}` : ""}`;
-  $("placeChip").textContent = `${r.name || r.type} · ${r.area.split(",")[0]}`;
-  $("placeChip").classList.remove("hidden");
+  const title = r.name || `${r.type} place`;
+  $("storeName").textContent = title;
+  $("storeArea").textContent = r.area;
+  $("storeAvatar").textContent = title.replace(/[^A-Za-z ]/g, "").split(/\s+/).filter(Boolean).slice(0, 2).map((w) => w[0].toUpperCase()).join("") || "TM";
+  $("brandRow").classList.add("hidden");
+  $("storeBtn").classList.remove("hidden");
   $("bTitle").textContent = r.name ? `Building the plan for ${r.name}` : "Building your plan";
   show("building");
   setStep("places");
@@ -531,6 +570,8 @@ $("start").addEventListener("submit", (e) => {
   begin({ name: $("fName").value.trim(), type, area, crowd: $("fCrowd").value.trim() });
 });
 $("restart").addEventListener("click", () => location.reload());
+$("storeBtn").addEventListener("click", () => openSheet(`<div class="head"><div><div class="muted">Your restaurant</div><b>${esc($("storeName").textContent)}</b></div><button class="x" type="button" data-close aria-label="Close">${icon("i-x")}</button></div>
+  <p class="muted" style="margin-top:0">${esc(restaurant?.type || "")} · ${esc(restaurant?.area || "")}</p><button class="btn block" type="button" onclick="location.reload()">Switch to another restaurant</button>`));
 
 // ---------- Building progress ----------
 const STEP_PROGRESS = { places: 18, crowd: 42, plan: 68, kit: 90 };
@@ -545,12 +586,21 @@ function setStep(k) {
   $("prog").style.width = `${STEP_PROGRESS[k] ?? 10}%`;
 }
 
+// ---------- Rising with the crowd ----------
+let trending = [];
+function renderTrending(list) {
+  trending = list || [];
+  $("trendCard").classList.toggle("hidden", !trending.length);
+  $("trendList").innerHTML = trending.map((x) => `<div class="trow"><b>${esc(x.name)}</b><span class="up">${icon("i-trend")}+${esc(x.rising_pct)}%</span><small>${esc(x.type)} · crowd match ${pct(x.affinity) ?? "–"}</small></div>`).join("");
+}
+
 // ---------- Crowd ----------
 function renderCrowd(ev) {
+  renderTrending(ev.trending_now);
   $("crowdSub").textContent = `People who eat at places like yours in ${ev.city}${ev.neighbourhood ? ` (near ${ev.neighbourhood})` : ""}, according to Qloo.`;
   $("places").innerHTML = (ev.similar_places || []).slice(0, 8).map((p) => `<span>${esc(p.name)}</span>`).join("");
   const a = ev.audience || {};
-  const row = (title, xs, kind) => xs?.length ? `<div class="label">${title}</div><div class="hscroll">${xs.slice(0, 8).map((x) => `<div class="tile"><div class="t">${esc(x.name)}</div><div class="muted" style="font-size:12px;margin-top:4px">${kind}</div><div class="match"><span class="bar"><i style="width:${pct(x.affinity) ?? 0}%"></i></span>${pct(x.affinity) ?? ""}</div></div>`).join("")}</div>` : "";
+  const row = (title, xs, kind) => xs?.length ? `<div class="label">${title}</div><div class="hscroll">${xs.slice(0, 8).map((x) => `<div class="tile"><div class="t">${esc(x.name)}</div><div class="muted" style="font-size:12px;margin-top:4px">${kind}</div><div class="match"><span class="bar"><i style="width:${pct(x.affinity) ?? 0}%"></i></span>${pct(x.affinity) ?? ""}</div>${(() => { const t = (ev.trending_now || []).find((r) => r.name === x.name); return t ? `<span class="rise">${icon("i-trend")}Rising +${t.rising_pct}%</span>` : ""; })()}</div>`).join("")}</div>` : "";
   $("loves").innerHTML = row("Films they love", a.films, "Film") + row("Shows they watch", a.shows, "TV show") + row("Music they play", a.music_artists, "Artist") + row("Brands they buy", a.brands, "Brand");
   const d = a.demographics_over_index || {};
   const AGE = { "24_and_younger": "Under 25", "25_to_29": "25–29", "30_to_34": "30–34", "35_to_44": "35–44", "45_to_54": "45–54", "55_and_older": "55+" };
@@ -615,13 +665,15 @@ function openKit(i) {
   const k = (kit.items || []).find((x) => x.kind === c.kind) || (kit.items || [])[i];
   if (!k) return;
   const lang = kit.local_language || "Local";
-  const tabs = [["WhatsApp", k.whatsapp, true], [lang, k.whatsapp_local, true], ["Instagram", k.instagram], ["Specials board", k.board], ["Staff", k.staff], ["To partner", k.outreach, true]].filter((t) => t[1]);
+  const tabs = [["WhatsApp", k.whatsapp, true], [lang, k.whatsapp_local, true], ...(k.poster_title ? [["Poster", "poster", "poster"]] : []), ["Instagram", k.instagram], ["Specials board", k.board], ["Staff", k.staff], ["To partner", k.outreach, true]].filter((t) => t[1]);
   openSheet(`<div class="head"><span class="kind ${esc(c.kind)}">${icon(ICON[c.kind])}</span><div><div class="muted">Ready to send</div><b>${esc(c.title)}</b></div><button class="x" type="button" data-close aria-label="Close">${icon("i-x")}</button></div>
     <div class="seg" id="seg">${tabs.map((t, j) => `<button type="button" data-j="${j}" class="${j ? "" : "on"}">${esc(t[0])}</button>`).join("")}</div>
     <div id="segBody"></div>
     ${(k.checklist || []).length ? `<div class="label" style="margin-left:0">This week's to-do</div><ul class="checklist">${k.checklist.map((x) => `<li>${esc(x)}</li>`).join("")}</ul>` : ""}`);
   const showTab = (j) => {
     const [, text, wa] = tabs[j];
+    document.querySelectorAll("#seg button").forEach((b) => b.classList.toggle("on", Number(b.dataset.j) === j));
+    if (wa === "poster") return showPoster(c, k, lang);
     $("segBody").innerHTML = `<div class="msg ${wa ? "" : "plain"}">${esc(text)}</div><div class="row"><button class="btn soft" type="button" id="cp">${icon("i-copy")}Copy</button>${wa ? `<a class="btn" target="_blank" rel="noopener" href="https://wa.me/?text=${encodeURIComponent(text)}">${icon("i-msg")}WhatsApp</a>` : ""}</div>`;
     $("cp").onclick = () => copy(text);
     document.querySelectorAll("#seg button").forEach((b) => b.classList.toggle("on", Number(b.dataset.j) === j));
@@ -632,6 +684,75 @@ function openKit(i) {
 function renderKit(k) {
   kit = k;
   document.querySelectorAll("[data-kit]").forEach((b) => { b.disabled = false; b.querySelector("span").textContent = "Get the messages"; });
+}
+
+// ---------- Poster: a ready-to-post image for the specials board, Instagram or WhatsApp ----------
+const SCRIPT_FONT = { Kannada: "Noto Sans Kannada", Tamil: "Noto Sans Tamil", Telugu: "Noto Sans Telugu", Malayalam: "Noto Sans Malayalam", Bengali: "Noto Sans Bengali", Gujarati: "Noto Sans Gujarati", Marathi: "Noto Sans Devanagari", Hindi: "Noto Sans Devanagari", Punjabi: "Noto Sans Gurmukhi", Odia: "Noto Sans Oriya" };
+async function loadFonts(lang, sample) {
+  const fam = SCRIPT_FONT[lang];
+  if (fam && !document.querySelector(`link[data-font="${fam}"]`)) {
+    const l = document.createElement("link");
+    l.rel = "stylesheet"; l.dataset.font = fam;
+    l.href = `https://fonts.googleapis.com/css2?family=${fam.replace(/ /g, "+")}:wght@700&display=swap`;
+    document.head.appendChild(l);
+    await new Promise((r) => { l.onload = r; l.onerror = r; setTimeout(r, 3000); });
+  }
+  await Promise.all([
+    document.fonts.load('800 90px "Plus Jakarta Sans"'), document.fonts.load('600 40px "Plus Jakarta Sans"'),
+    fam ? document.fonts.load(`700 64px "${fam}"`, sample) : null,
+  ].filter(Boolean)).catch(() => {});
+  return fam;
+}
+function wrap(ctx, text, x, y, maxW, lineH, maxLines = 4) {
+  const words = String(text || "").split(/\s+/);
+  let line = "", lines = [];
+  for (const w of words) {
+    const test = line ? `${line} ${w}` : w;
+    if (ctx.measureText(test).width > maxW && line) { lines.push(line); line = w; } else line = test;
+  }
+  if (line) lines.push(line);
+  lines = lines.slice(0, maxLines);
+  lines.forEach((l, i) => ctx.fillText(l, x, y + i * lineH));
+  return y + lines.length * lineH;
+}
+async function makePoster(c, k, lang) {
+  const fam = await loadFonts(lang, k.poster_local);
+  const W = 1080, H = 1350, cv = document.createElement("canvas");
+  cv.width = W; cv.height = H;
+  const g = cv.getContext("2d");
+  const F = (w, s, f = '"Plus Jakarta Sans"') => `${w} ${s}px ${f}, system-ui, sans-serif`;
+  g.fillStyle = "#ffffff"; g.fillRect(0, 0, W, H);
+  g.fillStyle = "#fff1ec"; g.beginPath(); g.arc(1010, 70, 430, 0, Math.PI * 2); g.fill();
+  g.strokeStyle = "#ffffff"; g.lineWidth = 34; g.beginPath(); g.arc(1010, 70, 300, 0, Math.PI * 2); g.stroke();
+  g.fillStyle = "#f0532a"; g.beginPath(); g.arc(860, 300, 64, 0, Math.PI * 2); g.fill();
+  g.fillStyle = "#0e1116"; g.font = F(800, 46); g.fillText(restaurant?.name || "This week", 80, 140);
+  g.fillStyle = "#8a8f98"; g.font = F(600, 30); g.fillText(restaurant?.area || "", 80, 186);
+  g.fillStyle = "#f0532a"; g.font = F(800, 30);
+  const kicker = c.kind === "event" ? "THIS WEEKEND" : c.kind === "menu" ? "THIS WEEK'S SPECIAL" : "NEW THIS WEEK";
+  g.fillText(kicker.split("").join(String.fromCharCode(8202)), 80, 470);
+  g.fillStyle = "#0e1116"; g.font = F(800, 98);
+  let y = wrap(g, k.poster_title || c.title, 80, 585, 920, 108, 3);
+  if (k.poster_local) { g.fillStyle = "#f0532a"; g.font = fam ? F(700, 62, `"${fam}"`) : F(800, 62); y = wrap(g, k.poster_local, 80, y + 40, 920, 82, 2); }
+  if (k.poster_line) { g.fillStyle = "#464b55"; g.font = F(600, 40); y = wrap(g, k.poster_line, 80, y + 50, 900, 56, 3); }
+  g.fillStyle = "#0e1116"; g.fillRect(0, H - 150, W, 150);
+  g.fillStyle = "#ffffff"; g.font = F(700, 34); g.fillText("Ask for it at the counter", 80, H - 64);
+  g.fillStyle = "#f0532a"; g.beginPath(); g.arc(W - 96, H - 75, 14, 0, Math.PI * 2); g.fill();
+  return cv;
+}
+async function showPoster(c, k, lang) {
+  $("segBody").innerHTML = `<div class="skel" style="aspect-ratio:4/5"></div>`;
+  const cv = await makePoster(c, k, lang);
+  const url = cv.toDataURL("image/png");
+  const file = `${(restaurant?.name || "tastemenu").replace(/[^A-Za-z0-9]+/g, "-").toLowerCase()}-${c.kind}-poster.png`;
+  $("segBody").innerHTML = `<img class="poster-img" alt="Poster: ${esc(k.poster_title || c.title)}" src="${url}"><div class="row"><a class="btn soft" download="${esc(file)}" href="${url}">${icon("i-down")}Download</a><button class="btn" type="button" id="sharePoster">${icon("i-share")}Share</button></div><p class="muted" style="margin:10px 2px 0">Instagram portrait size (1080 × 1350). Print it for the counter or post it as is.</p>`;
+  $("sharePoster").onclick = async () => {
+    try {
+      const blob = await new Promise((r) => cv.toBlob(r, "image/png"));
+      const f = new File([blob], file, { type: "image/png" });
+      if (navigator.canShare?.({ files: [f] })) await navigator.share({ files: [f], title: k.poster_title || c.title });
+      else { const a = document.createElement("a"); a.href = url; a.download = file; a.click(); toast("Downloaded"); }
+    } catch {}
+  };
 }
 
 // ---------- Plain chatbot vs TasteMenu ----------
