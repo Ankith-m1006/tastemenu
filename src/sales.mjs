@@ -200,8 +200,9 @@ export async function rankIdeas(options, evidence) {
 
 // --- Competitor lens ------------------------------------------------------------------
 
-// How the crowd of a named competitor differs from this restaurant's crowd
-// (its peer places), across films, music and brands.
+// How a named competitor differs from places like this restaurant, using Qloo's audience
+// comparison: it returns the taste tags of each group (a = places like yours, b = the
+// competitor) and the tags they share. Tags on one side only are the real differences.
 export async function compareCompetitor(competitor, evidence) {
   if (!evidence?.peers?.length) return { status: "needs_evidence" };
   const desc = await callQloo("describe", { entity: `${competitor}, ${evidence.city}`, type: "place" });
@@ -209,25 +210,18 @@ export async function compareCompetitor(competitor, evidence) {
   const theirs = found?.entity_id ?? found?.id;
   if (!theirs) return { status: "not_found", question: `I couldn't find "${competitor}" in ${evidence.city} on Qloo. Could you give the exact name?` };
   const ours = evidence.peers.slice(0, 5).map((p) => p.id).filter((id) => id && id !== theirs);
-  const pick = (r) => {
-    const o = { name: r.name };
-    for (const [k, v] of Object.entries(r)) if (typeof v === "number") o[k] = Number(v.toFixed(3));
-    return o;
-  };
-  const sides = {};
-  for (const target_type of ["movie", "artist", "brand"]) {
-    const env = await callQloo("compare_audiences", { group_a: ours, group_b: [theirs], target_type, limit: 8 });
-    // The comparison envelope may hold its rows under results directly or in named groups.
-    const rows = Array.isArray(env.results) ? env.results
-      : env.results && typeof env.results === "object" ? Object.values(env.results).filter(Array.isArray).flat() : [];
-    if (!rows.length) console.log("[compare] envelope", JSON.stringify(env).slice(0, 1500));
-    sides[target_type] = ok(env) ? { summary: env.summary ?? null, results: rows.slice(0, 8).map(pick), raw: Array.isArray(env.results) ? undefined : env.results } : { status: env.status, summary: env.summary ?? null };
-  }
+  const env = await callQloo("compare_audiences", { group_a: ours, group_b: [theirs], limit: 20 });
+  const r = env.results && !Array.isArray(env.results) ? env.results : {};
+  const names = (xs) => [...new Set((Array.isArray(xs) ? xs : []).map((t) => t.name).filter(Boolean))];
+  const a = names(r.a), b = names(r.b), shared = names(r.tags);
+  const aSet = new Set(a.map((x) => x.toLowerCase())), bSet = new Set(b.map((x) => x.toLowerCase()));
+  if (!ok(env) || (!a.length && !b.length)) return { status: "empty", question: `Qloo has no comparison data for ${found.name} yet.` };
   return {
     status: "ok",
     competitor: { name: found.name, address: found.properties?.address ?? null },
-    group_a: "places like the owner's restaurant",
-    group_b: found.name,
-    comparisons: sides,
+    only_places_like_yours: a.filter((x) => !bSet.has(x.toLowerCase())).slice(0, 8),
+    only_competitor: b.filter((x) => !aSet.has(x.toLowerCase())).slice(0, 8),
+    shared: shared.slice(0, 8),
+    method: "Qloo compare_audiences over taste tags: group A = the top places like the owner's restaurant, group B = the competitor. Tags are traits of the places and their audiences (offerings, occasions, flavours, vibe).",
   };
 }
