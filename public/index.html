@@ -267,13 +267,87 @@ svg.i { width: 20px; height: 20px; flex: none; }
 .cmp .pair div:last-child small { color: var(--good); }
 .err { background: var(--bad-soft); color: var(--bad); border-radius: 16px; padding: 14px; font-weight: 600; margin-top: 12px; }
 .err .btn { margin-top: 10px; }
+/* ---------- Taste report (the PDF): a separate A4 document, only visible when printing ---------- */
+.report { display: none; }
+@page { size: A4; margin: 16mm 15mm 18mm; @bottom-left { content: "tastemenu  ·  Taste report  ·  taste data by Qloo"; font: 600 8pt "Plus Jakarta Sans", sans-serif; color: #8a8f98; } @bottom-right { content: "Page " counter(page) " of " counter(pages); font: 600 8pt "Plus Jakarta Sans", sans-serif; color: #8a8f98; } }
+@page :first { @bottom-left { content: none; } @bottom-right { content: none; } }
 @media print {
-  .tabbar, .topbar, .sheet, .scrim, .pitch, .noprint, .why summary svg { display: none !important; }
-  body, .app { background: #fff !important; box-shadow: none !important; height: auto !important; }
-  .scroller { height: auto !important; overflow: visible !important; }
-  .card { box-shadow: none; border: 1px solid #ddd; break-inside: avoid; }
-  .why { display: block; } .why > *:not(summary) { display: block !important; }
+  body { background: #fff !important; }
+  .page, .sheet, .scrim, .toast { display: none !important; }
+  .report { display: block; color: #0e1116; font: 10pt/1.5 var(--font); -webkit-print-color-adjust: exact; print-color-adjust: exact; }
 }
+.report h1, .report h2, .report h3, .report h4 { letter-spacing: -0.02em; margin: 0; }
+.r-cover { height: 255mm; display: flex; flex-direction: column; break-after: page; }
+.r-brand { display: flex; align-items: center; gap: 8px; font-weight: 800; font-size: 13pt; letter-spacing: -0.03em; }
+.r-brand svg { width: 26px; height: 26px; }
+.r-brand b { color: #f0532a; }
+.r-cover .kick { margin-top: 38mm; font-size: 10pt; font-weight: 800; letter-spacing: .14em; color: #f0532a; text-transform: uppercase; }
+.r-cover h1 { font-size: 40pt; line-height: 1.02; letter-spacing: -0.04em; margin: 6px 0 10px; }
+.r-cover .meta { font-size: 12pt; color: #464b55; font-weight: 600; }
+.r-cover blockquote { margin: 14mm 0 0; padding: 0 0 0 14px; border-left: 4px solid #f0532a; font-size: 14pt; line-height: 1.4; font-weight: 600; color: #0e1116; }
+.r-stats { margin-top: auto; display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.r-stats div { border: 1px solid #ececef; border-radius: 10px; padding: 10px 12px; }
+.r-stats b { display: block; font-size: 22pt; font-weight: 800; letter-spacing: -0.03em; line-height: 1; }
+.r-stats span { font-size: 8.5pt; color: #464b55; font-weight: 600; }
+.r-toc { margin-top: 10mm; columns: 2; font-size: 9.5pt; color: #464b55; }
+.r-toc div { break-inside: avoid; padding: 2px 0; }
+.r-toc b { color: #f0532a; margin-right: 6px; }
+.r-sec { break-before: page; }
+.r-sec.cont { break-before: auto; margin-top: 9mm; }
+.r-h { display: flex; align-items: baseline; gap: 10px; border-bottom: 2px solid #0e1116; padding-bottom: 6px; margin-bottom: 10px; }
+.r-h .n { font-size: 10pt; font-weight: 800; color: #f0532a; }
+.r-h h2 { font-size: 18pt; }
+.r-lead { color: #464b55; margin: 0 0 10px; }
+.r-table { width: 100%; border-collapse: collapse; font-size: 9pt; margin: 4px 0 10px; }
+.r-table th { text-align: left; font-size: 7.5pt; text-transform: uppercase; letter-spacing: .08em; color: #8a8f98; border-bottom: 1px solid #0e1116; padding: 5px 6px 5px 0; }
+.r-table td { border-bottom: 1px solid #ececef; padding: 6px 6px 6px 0; vertical-align: top; }
+.r-table td.n { text-align: right; font-weight: 700; white-space: nowrap; }
+.r-table tr { break-inside: avoid; }
+.r-grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 16px; }
+.r-grid4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+.r-box { border: 1px solid #ececef; border-radius: 10px; padding: 10px 12px; break-inside: avoid; }
+.r-box h4 { font-size: 8pt; text-transform: uppercase; letter-spacing: .08em; color: #8a8f98; margin-bottom: 6px; }
+.r-mini { display: grid; grid-template-columns: 1fr 34px; gap: 2px 8px; font-size: 9pt; }
+.r-mini span:nth-child(2n) { text-align: right; font-weight: 800; color: #0f9d63; }
+.r-bar { height: 5px; background: #e7f7ef; border-radius: 3px; overflow: hidden; margin-top: 3px; }
+.r-bar i { display: block; height: 100%; background: #0f9d63; }
+.r-lean { display: grid; grid-template-columns: 60px 1fr 34px; gap: 8px; align-items: center; font-size: 9pt; margin: 3px 0; }
+.r-lean .tr { position: relative; height: 7px; background: #f3f3f5; border-radius: 4px; }
+.r-lean .tr::after { content: ""; position: absolute; left: 50%; top: -2px; bottom: -2px; width: 1px; background: #8a8f98; }
+.r-lean .f { position: absolute; top: 0; bottom: 0; background: #0f9d63; border-radius: 4px; }
+.r-lean .f.neg { background: #d63c3c; }
+.r-action { break-inside: auto; }
+.r-action .top { display: flex; gap: 10px; align-items: baseline; }
+.r-action .no { font-size: 26pt; font-weight: 800; color: #f0532a; line-height: 1; }
+.r-action h3 { font-size: 15pt; }
+.r-tag { display: inline-block; font-size: 7.5pt; font-weight: 800; text-transform: uppercase; letter-spacing: .08em; color: #8a8f98; }
+.r-tag.occ { color: #f0532a; background: #fff1ec; border-radius: 99px; padding: 1px 7px; margin-left: 6px; letter-spacing: .02em; text-transform: none; }
+.r-do { font-size: 11pt; font-weight: 600; margin: 8px 0 6px; }
+.r-why { color: #464b55; margin: 0 0 8px; }
+.r-chips { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 8px; }
+.r-chips span { border: 1px solid #ececef; border-radius: 99px; padding: 2px 8px; font-size: 8.5pt; font-weight: 600; }
+.r-chips b { color: #0f9d63; margin-left: 4px; }
+.r-watch { background: #fff6e6; border-radius: 8px; padding: 7px 10px; font-size: 9pt; margin-bottom: 8px; break-inside: avoid; }
+.r-watch b { color: #b26b00; }
+.r-kit { display: grid; grid-template-columns: 1fr 58mm; gap: 12px; align-items: start; }
+.r-kit.noposter { grid-template-columns: 1fr; }
+.r-msg { border: 1px solid #ececef; border-radius: 8px; padding: 7px 10px; margin-bottom: 6px; break-inside: avoid; }
+.r-msg h4 { font-size: 7.5pt; text-transform: uppercase; letter-spacing: .08em; color: #8a8f98; margin-bottom: 3px; }
+.r-msg p { margin: 0; white-space: pre-wrap; font-size: 9pt; }
+.r-msg.wa { background: #effbe7; border-color: #d4f0c2; }
+.r-poster { width: 100%; border: 1px solid #ececef; border-radius: 8px; display: block; }
+.r-check { margin: 4px 0 0; padding-left: 0; list-style: none; font-size: 9pt; }
+.r-check li { padding-left: 18px; position: relative; margin-bottom: 3px; }
+.r-check li::before { content: ""; position: absolute; left: 0; top: 3px; width: 10px; height: 10px; border: 1.5px solid #8a8f98; border-radius: 3px; }
+.r-sep { border: 0; border-top: 1px dashed #d9d9de; margin: 8mm 0; }
+.r-sum3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 6px 0 10px; }
+.r-sum3 div { border-radius: 10px; padding: 8px 12px; }
+.r-sum3 b { font-size: 20pt; font-weight: 800; display: block; line-height: 1.1; }
+.r-v { font-size: 8pt; font-weight: 800; border-radius: 99px; padding: 1px 7px; white-space: nowrap; }
+.r-prose p { margin: 0 0 6px; } .r-prose ul { margin: 2px 0 6px; padding-left: 16px; }
+.r-note { font-size: 8.5pt; color: #8a8f98; }
+.r-qa { break-inside: avoid; margin-bottom: 8px; }
+.r-qa h4 { font-size: 11pt; margin-bottom: 4px; }
 </style>
 </head>
 <body>
@@ -442,6 +516,8 @@ svg.i { width: 20px; height: 20px; flex: none; }
   </main>
 </div>
 
+
+<div class="report" id="report" aria-hidden="true"></div>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
   <defs><style>.st{fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}</style></defs>
@@ -786,7 +862,10 @@ $("vsBanner").addEventListener("click", () => {
 
 // ---------- Menu vs crowd ----------
 const VERDICTS = { "Double down": "Push", Reposition: "Fix", Rethink: "Drop?", "Core staple": "Staple", Keep: "Keep", "No Qloo signal": "No data" };
+let lastSales = null, salesSummary = "", lastTrace = [];
+const qaLog = [];
 function renderSales(r) {
+  lastSales = r;
   $("salesWait").classList.add("hidden");
   if (r.status !== "ok") { $("salesOut").innerHTML = `<div class="err">${esc(r.message || r.question || "Couldn't analyse the sales.")}</div>`; return; }
   const rows = r.rows || [];
@@ -814,7 +893,7 @@ function checkMenu(message) {
   run(message, {
     isFollow: true,
     onProgress: (t) => { if (t) $("salesStatus").textContent = t; },
-    onReply: (txt) => { $("salesWait").classList.add("hidden"); const s = $("salesSum"); if (s) s.innerHTML = md(txt); else $("salesOut").insertAdjacentHTML("beforeend", `<div class="card">${md(txt)}</div>`); },
+    onReply: (txt) => { salesSummary = txt; $("salesWait").classList.add("hidden"); const s = $("salesSum"); if (s) s.innerHTML = md(txt); else $("salesOut").insertAdjacentHTML("beforeend", `<div class="card">${md(txt)}</div>`); },
   });
 }
 $("sampleBtn").addEventListener("click", () => checkMenu("Check my menu against my crowd. I haven't uploaded sales, so use the sample month."));
@@ -834,10 +913,12 @@ $("csv").addEventListener("change", async (e) => {
 // ---------- Ideas and competitor ----------
 function renderIdeas(r, box) {
   if (r.status !== "ok" || !box) return;
+  if (box.entry) box.entry.ideas = r;
   box.querySelector(".extra").innerHTML += `<div class="rank">${r.ranking.map((x, i) => `<div><i>${i + 1}</i><span>${esc(x.option)}<br><small class="muted">${esc(x.qloo_tag ? `Qloo: ${x.qloo_tag}${x.examples?.length ? ` · e.g. ${x.examples.join(", ")}` : ""}` : "no Qloo match")}</small></span><em>${x.crowd_fit != null ? pct(x.crowd_fit) : "–"}</em></div>`).join("")}</div>`;
 }
 function renderCompare(r, box) {
   if (!box) return;
+  if (box.entry) box.entry.compare = r;
   if (r.status !== "ok") { box.querySelector(".extra").innerHTML += `<p class="muted">${esc(r.question || "Couldn't compare.")}</p>`; return; }
   const col = (t, xs) => xs?.length ? `<div><b>${t}</b>${xs.slice(0, 6).map(esc).join(" · ")}</div>` : "";
   box.querySelector(".extra").innerHTML += `<div class="vs3">${col("Only places like yours", r.only_places_like_yours)}${col(`Only ${esc(r.competitor?.name)}`, r.only_competitor)}${col("Both", r.shared)}</div>`;
@@ -849,14 +930,167 @@ function ask(q) {
   box.innerHTML = `<div class="q">${icon("i-bulb")}<span>${esc(q)}</span></div><div class="extra"></div><div class="a pending">Checking with Qloo…</div>`;
   $("qa").prepend(box);
   const a = box.querySelector(".a");
-  run(q, { isFollow: true, box, onProgress: (t) => { if (t && a.classList.contains("pending")) a.textContent = t; }, onReply: (txt) => { a.classList.remove("pending"); a.innerHTML = md(txt); } });
+  box.entry = { q, answer: "" };
+  qaLog.push(box.entry);
+  run(q, { isFollow: true, box, onProgress: (t) => { if (t && a.classList.contains("pending")) a.textContent = t; }, onReply: (txt) => { a.classList.remove("pending"); a.innerHTML = md(txt); box.entry.answer = txt; } });
 }
 $("follow").addEventListener("submit", (e) => { e.preventDefault(); const q = $("followInput").value.trim(); if (q) { $("followInput").value = ""; ask(q); } });
 $("ideas").addEventListener("click", (e) => { const b = e.target.closest(".chip"); if (b) ask(b.textContent); });
 $("compete").addEventListener("submit", (e) => { e.preventDefault(); const r = $("rival").value.trim(); if (r) { $("rival").value = ""; ask(`How is my crowd different from the crowd at ${r}?`); } });
-$("pdf").addEventListener("click", () => window.print());
+// ---------- Taste report (PDF) ----------
+// A proper multi-page A4 document built from everything this session produced, not a
+// screenshot of the app. Printed with the browser's "Save as PDF".
+function rpMini(xs) {
+  return (xs || []).slice(0, 8).map((x) => `<span>${esc(x.name)}<div class="r-bar"><i style="width:${pct(x.affinity) ?? 0}%"></i></div></span><span>${pct(x.affinity) ?? "–"}</span>`).join("");
+}
+function rpDate(d, opts = { weekday: "short", day: "numeric", month: "short" }) { return new Date(`${d}T00:00:00`).toLocaleDateString("en-GB", opts); }
+async function buildReport() {
+  const r = restaurant || {}, ev = crowd || {}, a = ev.audience || {};
+  const cards = plan?.cards || [];
+  const name = r.name || `${r.type || "Your"} restaurant`;
+  const today = new Date().toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" });
+  const verified = cards.flatMap((c) => c.evidence || []).filter((e) => e.verified);
+  const coming = ev.coming_up || [];
+  const lang = kit?.local_language || "Local language";
+  const kitFor = (c, i) => (kit?.items || []).find((x) => x.kind === c.kind) || (kit?.items || [])[i];
+  // Posters are drawn in the browser, the same as in the app.
+  const posters = {};
+  for (const [i, c] of cards.entries()) {
+    const k = kitFor(c, i);
+    if (k?.poster_title && c.kind !== "music") posters[i] = (await makePoster(c, k, lang)).toDataURL("image/png");
+  }
+  const sections = [];
+  const toc = [];
+  let n = 0;
+  const section = (title, body, cont = false) => { n += 1; toc.push(`<div><b>${String(n).padStart(2, "0")}</b>${esc(title)}</div>`); sections.push(`<section class="r-sec${cont ? " cont" : ""}"><div class="r-h"><span class="n">${String(n).padStart(2, "0")}</span><h2>${esc(title)}</h2></div>${body}</section>`); };
+
+  // 1. At a glance
+  section("This week at a glance", `
+    <p class="r-lead">${esc(plan?.headline || "")}</p>
+    <table class="r-table"><thead><tr><th style="width:12%">Area</th><th>What to do</th><th style="width:22%">Timed to</th><th style="width:26%">Backed by (Qloo match)</th></tr></thead><tbody>
+    ${cards.map((c) => `<tr><td><b>${esc(LABEL[c.kind] || c.kind)}</b></td><td><b>${esc(c.title)}</b><br>${esc(c.action)}</td><td>${c.occasion ? esc(c.occasion) + ((coming.find((o) => o.name === c.occasion) || {}).date ? `<br><span class="r-note">${rpDate(coming.find((o) => o.name === c.occasion).date)}</span>` : "") : "<span class='r-note'>Any week</span>"}</td><td>${(c.evidence || []).filter((e) => e.verified).slice(0, 3).map((e) => `${esc(e.name)}${typeof e.affinity === "number" ? ` <b style="color:#0f9d63">${pct(e.affinity)}</b>` : ""}`).join("<br>") || "<span class='r-note'>Qloo tags</span>"}</td></tr>`).join("")}
+    </tbody></table>
+    ${coming.length ? `<div class="r-box"><h4>Coming up in ${esc(ev.city || "your city")}</h4><table class="r-table" style="margin:0"><tbody>${coming.map((o) => `<tr><td style="width:34%"><b>${esc(o.name)}</b></td><td style="width:26%">${rpDate(o.date)}${o.end ? ` – ${rpDate(o.end)}` : ""}</td><td>${esc(o.note || "")}</td><td class="n">${o.ongoing ? "On now" : `in ${o.days_away} days`}</td></tr>`).join("")}</tbody></table></div>` : ""}`);
+
+  // 2. Your crowd
+  const AGE = { "24_and_younger": "Under 25", "25_to_29": "25–29", "30_to_34": "30–34", "35_to_44": "35–44", "45_to_54": "45–54", "55_and_older": "55+" };
+  const d = a.demographics_over_index || {};
+  const lean = [...Object.entries(d.age || {}).map(([k, v]) => [AGE[k] || k, v]), ...Object.entries(d.gender || {}).map(([k, v]) => [k[0].toUpperCase() + k.slice(1), v])];
+  section("Who eats at places like yours", `
+    <p class="r-lead">People who eat at the restaurants most like yours in ${esc(ev.city || "your city")}${ev.neighbourhood ? ` (near ${esc(ev.neighbourhood)})` : ""}, according to Qloo. Match is Qloo's affinity score (0–100): how much more this crowd likes something than people in general.</p>
+    <div class="r-box" style="margin-bottom:10px"><h4>Restaurants like yours (the peer set)</h4>${(ev.similar_places || []).slice(0, 8).map((p) => `${esc(p.name)} <b style="color:#0f9d63">${pct(p.affinity) ?? ""}</b>`).join(" &nbsp;·&nbsp; ")}</div>
+    <div class="r-grid2">
+      <div class="r-box"><h4>Films they love</h4><div class="r-mini">${rpMini(a.films)}</div></div>
+      <div class="r-box"><h4>Shows they watch</h4><div class="r-mini">${rpMini(a.shows)}</div></div>
+      <div class="r-box"><h4>Music they play</h4><div class="r-mini">${rpMini(a.music_artists)}</div></div>
+      <div class="r-box"><h4>Brands they buy</h4><div class="r-mini">${rpMini(a.brands)}</div></div>
+    </div>
+    ${(ev.partner_places || []).length ? `<div class="r-box" style="margin-top:10px"><h4>Nearby places with the same crowd (partner ideas)</h4><div class="r-mini" style="grid-template-columns:1fr 34px 1fr 34px">${rpMini(ev.partner_places)}</div></div>` : ""}
+    ${lean.length ? `<div class="r-box" style="margin-top:10px"><h4>Who leans in (more likely in green, less likely in red, than average)</h4>${lean.map(([l, v]) => { const w = Math.min(50, Math.abs(v) * 100); return `<div class="r-lean"><span>${esc(l)}</span><span class="tr"><span class="f ${v < 0 ? "neg" : ""}" style="${v >= 0 ? `left:50%;width:${w}%` : `right:50%;width:${w}%`}"></span></span><span style="text-align:right;font-weight:800">${v > 0 ? "+" : ""}${Math.round(v * 100)}</span></div>`; }).join("")}</div>` : ""}
+    <p class="r-note" style="margin-top:8px">These are patterns across an audience, not facts about individual customers.</p>`);
+
+  // 3–6. One section per action
+  cards.forEach((c, i) => {
+    const k = kitFor(c, i) || {};
+    const ev2 = (c.evidence || []).filter((e) => e.verified !== false);
+    const msgs = [["WhatsApp (English)", k.whatsapp, "wa"], [`WhatsApp (${lang})`, k.whatsapp_local, "wa"], ["Instagram caption", k.instagram], ["Specials board", k.board], ["Staff briefing", k.staff], ["Message to the partner", k.outreach]].filter((m) => m[1]);
+    const playlist = c.kind === "music" && (a.music_artists || []).length ? `<div class="r-msg"><h4>Crowd playlist (Qloo match)</h4><p>${a.music_artists.slice(0, 8).map((x) => `${esc(x.name)} (${pct(x.affinity)})`).join(" · ")}</p></div>` : "";
+    section(`${LABEL[c.kind] || c.kind}: ${c.title}`, `
+      <div class="r-action">
+        <div class="top"><span class="no">${String(i + 1).padStart(2, "0")}</span><div><span class="r-tag">${esc(LABEL[c.kind] || c.kind)}</span>${c.occasion ? `<span class="r-tag occ">${esc(c.occasion)}</span>` : ""}<div class="r-note">Action ${i + 1} of ${cards.length}</div></div></div>
+        <p class="r-do">${esc(c.action)}</p>
+        <p class="r-why"><b>Why it will work:</b> ${esc(c.why)}</p>
+        ${ev2.length ? `<div class="r-chips">${ev2.map((e) => `<span>${esc(e.name)}${e.type ? ` <span class="r-note">${esc(e.type)}</span>` : ""}${typeof e.affinity === "number" ? `<b>${pct(e.affinity)}</b>` : ""}</span>`).join("")}</div>` : ""}
+        ${c.caveat ? `<div class="r-watch"><b>Watch out:</b> ${esc(c.caveat)}</div>` : ""}
+        <div class="r-kit ${posters[i] ? "" : "noposter"}">
+          <div>${playlist}${msgs.map(([t, m, cls]) => `<div class="r-msg ${cls || ""}"><h4>${esc(t)}</h4><p>${esc(m)}</p></div>`).join("")}
+            ${(k.checklist || []).length ? `<div class="r-box"><h4>To do this week</h4><ul class="r-check">${k.checklist.map((x) => `<li>${esc(x)}</li>`).join("")}</ul></div>` : ""}</div>
+          ${posters[i] ? `<div><img class="r-poster" src="${posters[i]}" alt="Poster"><p class="r-note" style="margin-top:4px">Poster, 1080 × 1350. Download it from the app to post or print.</p></div>` : ""}
+        </div>
+      </div>`);
+  });
+
+  // Menu vs crowd
+  if (lastSales?.status === "ok") {
+    const rows = lastSales.rows || [];
+    const cnt = (v) => rows.filter((x) => x.verdict === v).length;
+    const order = Object.keys(VERDICTS);
+    const vcls = { "Double down": "background:#e7f7ef;color:#0f9d63", Reposition: "background:#fff6e6;color:#b26b00", Rethink: "background:#fdeeee;color:#d63c3c" };
+    section("Your menu vs your crowd", `
+      <p class="r-lead">${lastSales.sample ? "<b>Sample month (fictional data).</b> " : `Source: ${esc(lastSales.source)}. `}${lastSales.items_total} dishes, ₹${Math.round(lastSales.revenue_total).toLocaleString("en-IN")} in sales. Each dish is matched to a Qloo dish tag; crowd fit is how strongly people who love places like yours go for places known for that dish in ${esc(lastSales.city)}, relative within this menu.</p>
+      <div class="r-sum3"><div style="background:#e7f7ef;color:#0f9d63"><b>${cnt("Double down")}</b>Push: sells well and the crowd loves it</div><div style="background:#fff6e6;color:#b26b00"><b>${cnt("Reposition")}</b>Fix: the crowd loves it, sales lag</div><div style="background:#fdeeee;color:#d63c3c"><b>${cnt("Rethink")}</b>Drop?: low sales and lower fit</div></div>
+      <table class="r-table"><thead><tr><th>Dish</th><th style="text-align:right">Sales share</th><th style="text-align:right">Rank</th><th>Qloo match</th><th style="text-align:right">Crowd fit</th><th>Verdict</th></tr></thead><tbody>
+      ${[...rows].sort((x, y) => order.indexOf(x.verdict) - order.indexOf(y.verdict) || x.sales_rank - y.sales_rank).map((x) => `<tr><td><b>${esc(x.item)}</b></td><td class="n">${(x.share * 100).toFixed(1)}%</td><td class="n">${x.sales_rank}</td><td>${esc(x.qloo_tag || "–")}${x.fit_examples?.length ? `<br><span class="r-note">e.g. ${esc(x.fit_examples.join(", "))}</span>` : ""}</td><td class="n">${x.crowd_fit != null ? pct(x.crowd_fit) : "–"}</td><td><span class="r-v" style="${vcls[x.verdict] || "background:#f3f3f5;color:#464b55"}">${esc(VERDICTS[x.verdict] || x.verdict)}</span></td></tr>`).join("")}
+      </tbody></table>
+      ${(lastSales.new_ideas || []).length ? `<div class="r-box" style="margin-bottom:10px"><h4>Worth adding: your crowd's favourite places are known for these</h4>${lastSales.new_ideas.map((x) => `<b>${esc(x.name)}</b> <span class="r-note">(e.g. ${esc((x.examples || []).join(", "))})</span>`).join(" &nbsp;·&nbsp; ")}</div>` : ""}
+      ${salesSummary ? `<div class="r-box r-prose"><h4>What to do about it</h4>${md(salesSummary)}</div>` : ""}`);
+  }
+
+  // Ideas and competitor questions
+  const answered = qaLog.filter((x) => x.answer);
+  if (answered.length) {
+    section("Ideas you tested", answered.map((x) => `<div class="r-qa"><h4>${esc(x.q)}</h4>
+      ${x.ideas?.ranking ? `<table class="r-table"><thead><tr><th>Idea</th><th>Qloo match</th><th style="text-align:right">Crowd fit</th></tr></thead><tbody>${x.ideas.ranking.map((o) => `<tr><td><b>${esc(o.option)}</b></td><td>${esc(o.qloo_tag || "no Qloo match")}${o.examples?.length ? ` <span class="r-note">e.g. ${esc(o.examples.join(", "))}</span>` : ""}</td><td class="n">${o.crowd_fit != null ? pct(o.crowd_fit) : "–"}</td></tr>`).join("")}</tbody></table>` : ""}
+      ${x.compare?.status === "ok" ? `<div class="r-grid2" style="grid-template-columns:1fr 1fr 1fr;margin-bottom:6px"><div class="r-box"><h4>Only places like yours</h4>${(x.compare.only_places_like_yours || []).map(esc).join(", ") || "–"}</div><div class="r-box"><h4>Only ${esc(x.compare.competitor?.name)}</h4>${(x.compare.only_competitor || []).map(esc).join(", ") || "–"}</div><div class="r-box"><h4>Both</h4>${(x.compare.shared || []).map(esc).join(", ") || "–"}</div></div>` : ""}
+      <div class="r-prose">${md(x.answer)}</div></div>`).join('<hr class="r-sep">'));
+  }
+
+  // Without Qloo vs with Qloo
+  if (generic?.cards) {
+    section("Why not just ask a chatbot?", `
+      <p class="r-lead">The same model answered the same question with no Qloo data. The plain answer is reasonable but could be for any restaurant; the TasteMenu plan rests on ${verified.length} verified taste signals about your crowd.</p>
+      <table class="r-table"><thead><tr><th style="width:12%">Area</th><th>Plain chatbot (no data)</th><th>TasteMenu (with Qloo)</th></tr></thead><tbody>
+      ${cards.map((c) => { const g = generic.cards.find((x) => x.kind === c.kind); return g ? `<tr><td><b>${esc(LABEL[c.kind])}</b></td><td>${esc(g.title)}: ${esc(g.action)}</td><td><b>${esc(c.title)}</b>: ${esc(c.action)}<br><span class="r-note">Based on ${(c.evidence || []).filter((e) => e.verified).slice(0, 3).map((e) => `${esc(e.name)}${typeof e.affinity === "number" ? ` (${pct(e.affinity)})` : ""}`).join(", ") || "Qloo tags"}</span></td></tr>` : ""; }).join("")}
+      </tbody></table>`, true);
+  }
+
+  // Method and sources
+  section("How this report was made", `
+    <p class="r-lead">TasteMenu sent only the type of restaurant and the area to Qloo. No customer data was used. Uploaded sales stay in the session and are never saved.</p>
+    <table class="r-table"><thead><tr><th>Step</th><th>Qloo tool</th><th>Result</th></tr></thead><tbody>${lastTrace.map((t) => `<tr><td>${esc(t.label)}</td><td>${esc(t.tool)}</td><td>${esc(t.status)}${t.cached ? " (cached)" : ""}</td></tr>`).join("")}</tbody></table>
+    <div class="r-grid2">
+      <div class="r-box"><h4>How to read the scores</h4>Match is Qloo's affinity (0–100) for the audience of the restaurants most like yours. Crowd fit for dishes and ideas compares places known for each dish in your city, relative within one list.</div>
+      <div class="r-box"><h4>What we check</h4>Every number in this report comes from a Qloo response in this session; anything the model could not back with Qloo data was removed. Occasion dates come from a verified calendar. Prices and hours are left as [placeholders] for you to fill.</div>
+    </div>`, true);
+
+  const LOGO = `<svg viewBox="0 0 32 32"><rect width="32" height="32" rx="9" fill="#0e1116"/><circle cx="15.5" cy="16.5" r="8.6" fill="none" stroke="#fff" stroke-width="2.6"/><circle cx="20" cy="12" r="3.3" fill="#f0532a"/></svg>`;
+  return `<div class="r-cover">
+      <div class="r-brand">${LOGO}<span>taste<b>menu</b></span></div>
+      <div class="kick">Taste report</div>
+      <h1>${esc(name)}</h1>
+      <div class="meta">${esc(r.type || "")}${r.area ? ` · ${esc(r.area)}` : ""} · ${today}</div>
+      ${plan?.headline ? `<blockquote>${esc(plan.headline)}</blockquote>` : ""}
+      <div class="r-toc">${toc.join("")}</div>
+      <div class="r-stats">
+        <div><b>${(ev.similar_places || []).length}</b><span>restaurants like yours analysed</span></div>
+        <div><b>${verified.length}</b><span>verified taste signals behind the plan</span></div>
+        <div><b>${coming.length}</b><span>occasions in the next 6 weeks</span></div>
+        <div><b>${lastTrace.length}</b><span>Qloo queries</span></div>
+      </div>
+    </div>${sections.join("")}`;
+}
+async function printReport() {
+  if (!plan) return toast("Build a plan first");
+  const btn = $("pdf");
+  btn.disabled = true;
+  const label = btn.lastChild.textContent;
+  btn.lastChild.textContent = "Preparing report…";
+  try {
+    $("report").innerHTML = await buildReport();
+    await Promise.all([...$("report").querySelectorAll("img")].map((img) => (img.complete ? null : new Promise((r) => { img.onload = img.onerror = r; }))));
+    const title = document.title;
+    document.title = `${restaurant?.name || "TasteMenu"} - Taste report - ${new Date().toISOString().slice(0, 10)}`;
+    window.print();
+    document.title = title;
+  } finally {
+    btn.disabled = false;
+    btn.lastChild.textContent = label;
+  }
+}
+$("pdf").addEventListener("click", printReport);
 
 function renderTrace(t) {
+  lastTrace = t.trace || [];
   $("trace").innerHTML = (t.trace || []).map((s) => `<li>${esc(s.label)} <span>(${esc(s.tool)}: ${esc(s.status)})</span></li>`).join("");
 }
 
