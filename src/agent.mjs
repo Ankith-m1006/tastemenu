@@ -176,7 +176,7 @@ async function callModel(m, messages, toolList) {
 async function chat(messages, toolList, state) {
   const usable = MODELS.map((m, i) => ({ ...m, i })).filter((m) => m.key());
   if (!usable.length) throw new Error("No model key configured (GEMINI_API_KEY or OPENROUTER_API_KEY).");
-  const candidates = state.pinned != null ? usable.filter((m) => m.i === state.pinned) : usable;
+  const candidates = state.pinned != null ? usable.filter((m) => m.i === state.pinned) : usable.filter((m) => !state.excluded?.has(m.i));
   let lastError;
   for (const m of candidates) {
     for (let attempt = 0; attempt < 3; attempt++) {
@@ -196,29 +196,45 @@ async function chat(messages, toolList, state) {
 }
 
 // Runs the agent until it replies to the owner. Returns the new messages and any plan published.
+// If the model a turn started on keeps failing (for example Gemini "high demand" 503s), the
+// whole turn is restarted on the next model. Qloo results are cached, so the restart is quick.
 export async function runAgent(history, { onEvent } = {}) {
   const toolList = await tools();
-  const messages = history[0]?.role === "system" ? [...history] : [{ role: "system", content: SYSTEM_PROMPT }, ...history];
-  let plan = null;
-  const state = { pinned: null };
-  for (let i = 0; i < MAX_STEPS; i++) {
-    const { message, model } = await chat(messages, toolList, state);
-    messages.push(message);
-    const calls = message.tool_calls ?? [];
-    if (!calls.length) return { messages, reply: message.content ?? "", plan, model };
-    for (const call of calls) {
-      let args = {};
-      try { args = JSON.parse(call.function.arguments || "{}"); } catch {}
-      let result;
-      if (call.function.name === "publish_taste_plan") {
-        plan = args;
-        onEvent?.({ type: "plan", plan });
-        result = { status: "published" };
-      } else {
-        try { result = await runTool(call.function.name, args, onEvent); } catch (e) { result = { status: "error", error: String(e.message ?? e) }; }
+  const start = history[0]?.role === "system" ? [...history] : [{ role: "system", content: SYSTEM_PROMPT }, ...history];
+  const excluded = new Set();
+  let lastError;
+  for (let round = 0; round < MODELS.length; round++) {
+    const messages = [...start];
+    let plan = null;
+    const state = { pinned: null, excluded };
+    try {
+      for (let i = 0; i < MAX_STEPS; i++) {
+        const { message, model } = await chat(messages, toolList, state);
+        messages.push(message);
+        const calls = message.tool_calls ?? [];
+        if (!calls.length) return { messages, reply: message.content ?? "", plan, model };
+        for (const call of calls) {
+          let args = {};
+          try { args = JSON.parse(call.function.arguments || "{}"); } catch {}
+          let result;
+          if (call.function.name === "publish_taste_plan") {
+            plan = args;
+            onEvent?.({ type: "plan", plan });
+            result = { status: "published" };
+          } else {
+            try { result = await runTool(call.function.name, args, onEvent); } catch (e) { result = { status: "error", error: String(e.message ?? e) }; }
+          }
+          messages.push({ role: "tool", tool_call_id: call.id, content: JSON.stringify(result).slice(0, 12000) });
+        }
       }
-      messages.push({ role: "tool", tool_call_id: call.id, content: JSON.stringify(result).slice(0, 12000) });
+      return { messages, reply: "I ran out of steps. Could you rephrase?", plan, model: null };
+    } catch (e) {
+      lastError = e;
+      if (state.pinned == null) throw e;
+      excluded.add(state.pinned);
+      console.error(`[agent] restarting the turn without ${MODELS[state.pinned].model}`);
+      onEvent?.({ type: "retry" });
     }
   }
-  return { messages, reply: "I ran out of steps. Could you rephrase?", plan, model: null };
+  throw lastError;
 }
