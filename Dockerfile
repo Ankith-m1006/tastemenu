@@ -6,6 +6,7 @@ COPY package.json package-lock.json ./
 RUN npm ci --omit=dev && npm cache clean --force
 COPY src ./src
 COPY public ./public
+COPY data ./data
 ENV NODE_ENV=production \
     PORT=8080 \
     QLOO_BASE_URL=https://hackathon.api.qloo.com \

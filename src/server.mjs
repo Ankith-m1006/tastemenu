@@ -4,6 +4,7 @@ import { readFile } from "node:fs/promises";
 import { randomUUID } from "node:crypto";
 import path from "node:path";
 import { compactEvidence, runAgent } from "./agent.mjs";
+import { parseSales } from "./sales.mjs";
 
 try { process.loadEnvFile(".env"); } catch {}
 
@@ -19,16 +20,16 @@ function session(id) {
   for (const [k, s] of sessions) if (now - s.updated > SESSION_TTL_MS) sessions.delete(k);
   if (id && sessions.has(id)) return { id, s: sessions.get(id) };
   const nid = randomUUID();
-  const s = { history: [], plan: null, busy: false, updated: now };
+  const s = { history: [], plan: null, busy: false, updated: now, ctx: {} };
   sessions.set(nid, s);
   return { id: nid, s };
 }
 
-async function body(req) {
+async function body(req, max = 20000) {
   let data = "";
   for await (const chunk of req) {
     data += chunk;
-    if (data.length > 20000) throw new Error("Request too large");
+    if (data.length > max) throw new Error("Request too large");
   }
   return JSON.parse(data || "{}");
 }
@@ -43,6 +44,10 @@ function progressLine(e) {
     case "qloo_rank": return "Comparing your options for this audience…";
     case "qloo_describe": return `Looking up ${a.entity ?? "an entity"}…`;
     case "qloo_find_tags": return `Matching "${a.query ?? ""}" to Qloo tags…`;
+    case "analyze_sales": return "Matching every dish on your menu to what your crowd loves…";
+    case "rank_ideas": return `Scoring ${(a.options ?? []).length} ideas for your crowd…`;
+    case "compare_competitor": return `Comparing your crowd with the crowd at ${a.competitor ?? "that restaurant"}…`;
+    case "publish_action_kit": return "Writing your messages and posts…";
     default: return `Running ${e.name}…`;
   }
 }
@@ -64,6 +69,7 @@ async function chat(req, res) {
   try {
     s.history.push({ role: "user", content: message });
     const out = await runAgent(s.history, {
+      ctx: s.ctx,
       onEvent: (e) => {
         const line = progressLine(e);
         if (line) send("progress", { text: line, tool: e.name });
@@ -72,6 +78,10 @@ async function chat(req, res) {
           if (e.evidence.status === "ok") send("evidence", compactEvidence(e.evidence));
         }
         if (e.type === "plan") send("plan", e.plan);
+        if (e.type === "kit") send("kit", e.kit);
+        if (e.type === "sales") send("sales", e.sales);
+        if (e.type === "ideas") send("ideas", e.ideas);
+        if (e.type === "compare") send("compare", e.compare);
         if (e.type === "retry") send("progress", { text: "The AI was busy, switching to a backup model…" });
       },
     });
@@ -85,6 +95,21 @@ async function chat(req, res) {
     clearInterval(ping);
     s.busy = false;
     res.end();
+  }
+}
+
+// Sales upload: parsed and kept in the session's memory only (never written to disk).
+async function uploadSales(req, res) {
+  const input = await body(req, 600000);
+  const { id, s } = session(input.sessionId);
+  try {
+    const items = parseSales(String(input.csv ?? ""));
+    s.ctx.sales = items;
+    s.ctx.salesName = String(input.name ?? "your sales file").slice(0, 80);
+    const top = [...items].sort((a, b) => (b.amount || b.qty) - (a.amount || a.qty)).slice(0, 3).map((x) => x.name);
+    json(res, 200, { sessionId: id, items: items.length, top });
+  } catch (e) {
+    json(res, 400, { sessionId: id, error: e.message });
   }
 }
 
@@ -110,6 +135,7 @@ async function serveStatic(req, res) {
 createServer(async (req, res) => {
   try {
     if (req.method === "POST" && req.url === "/api/chat") return await chat(req, res);
+    if (req.method === "POST" && req.url === "/api/sales") return await uploadSales(req, res);
     if (req.method === "GET" && req.url === "/api/health") return json(res, 200, { ok: true });
     if (req.method === "GET") return await serveStatic(req, res);
     json(res, 405, { error: "Method not allowed" });

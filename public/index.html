@@ -121,9 +121,50 @@ footer { margin-top: 34px; padding-top: 14px; border-top: 1px solid var(--rule);
 .err { color: var(--tamarind); margin-top: 12px; }
 @media print {
   body { background: #fff; color: #000; }
-  .brief, .ask, .actions, details.how, #working, footer { display: none !important; }
+  .brief, .ask, .actions, details.how, #working, footer, .tabs, .panel .row, #menuTools { display: none !important; }
+  details.kit { border: 0; } details.kit > summary::after { content: ""; }
   .item { break-inside: avoid; }
 }
+
+/* Action kit */
+details.kit { margin-top: 12px; border: 1px solid var(--rule); border-radius: 6px; background: var(--card); }
+details.kit > summary { cursor: pointer; padding: 10px 12px; font-weight: 600; font-size: 14.5px; list-style: none; display: flex; justify-content: space-between; }
+details.kit > summary::after { content: "Open"; color: var(--leaf); font-weight: 600; }
+details.kit[open] > summary::after { content: "Close"; }
+.tabs { display: flex; flex-wrap: wrap; gap: 6px; padding: 0 12px; }
+.tabs button { border: 1px solid var(--rule); background: transparent; border-radius: 999px; padding: 4px 11px; font-size: 13px; cursor: pointer; }
+.tabs button.on { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+.panel { padding: 10px 12px 12px; }
+.panel .txt { white-space: pre-wrap; font-size: 15px; background: var(--tint); border-radius: 4px; padding: 10px 12px; margin: 0 0 8px; }
+.panel .row { display: flex; gap: 8px; flex-wrap: wrap; }
+.mini { border: 1.5px solid var(--ink); background: transparent; border-radius: 6px; padding: 6px 12px; font-size: 13.5px; font-weight: 600; cursor: pointer; text-decoration: none; }
+.check { margin: 10px 12px 12px; padding-left: 18px; font-size: 14px; }
+.kitwait { font-size: 13.5px; color: var(--soft); font-style: italic; margin-top: 10px; }
+
+/* Menu vs crowd */
+.verdicts { display: grid; gap: 18px; margin-top: 14px; }
+.verdict h3 { font-size: 1.05rem; display: flex; gap: 8px; align-items: baseline; }
+.verdict h3 small { font: 500 12.5px var(--sans); color: var(--soft); }
+.dish { display: grid; grid-template-columns: 1fr 58px 96px; gap: 10px; align-items: center; padding: 7px 0; border-bottom: 1px dotted var(--rule); font-size: 15px; }
+.dish .sh { font: 500 12.5px var(--mono); color: var(--soft); text-align: right; }
+.bar { height: 7px; background: var(--tint); border-radius: 2px; position: relative; }
+.bar i { position: absolute; left: 0; top: 0; bottom: 0; background: var(--leaf); border-radius: 2px; }
+.dish small { display: block; color: var(--soft); font-size: 12.5px; }
+.badge { display: inline-block; font-size: 11.5px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--turmeric); border: 1px solid var(--turmeric); border-radius: 3px; padding: 1px 6px; }
+.salesSum { margin-top: 14px; }
+.salesSum p { margin: 0 0 6px; } .salesSum ul { margin: 4px 0 0; padding-left: 20px; }
+
+/* What-if and competitor tables */
+.tbl { width: 100%; border-collapse: collapse; margin: 10px 0 4px; font-size: 14.5px; }
+.tbl th { text-align: left; font-size: 11.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--soft); border-bottom: 1px solid var(--ink); padding: 4px 6px 4px 0; }
+.tbl td { border-bottom: 1px dotted var(--rule); padding: 6px 6px 6px 0; vertical-align: top; }
+.tbl td.n { font: 500 13px var(--mono); text-align: right; white-space: nowrap; }
+.tbl tr.top td:first-child { font-weight: 700; }
+.vs { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; }
+.vs h4 { margin: 8px 0 2px; font-size: 12px; letter-spacing: .09em; text-transform: uppercase; color: var(--soft); }
+.compete { display: flex; gap: 8px; margin-top: 16px; }
+.compete input { flex: 1; min-width: 0; border: 1.5px solid var(--rule); border-radius: 6px; background: var(--card); padding: 10px 12px; }
+.progressline { font-size: 13.5px; color: var(--soft); font-style: italic; }
 </style>
 </head>
 <body>
@@ -177,6 +218,20 @@ footer { margin-top: 34px; padding-top: 14px; border-top: 1px solid var(--rule);
     </div>
   </section>
 
+  <section class="block hidden" id="menuBlock">
+    <p class="kicker">Your menu vs your crowd</p>
+    <h2>Which dishes to push, fix or drop</h2>
+    <p class="note" style="margin:-8px 0 12px">Upload last month's item-wise sales (an export from Petpooja or any POS, as CSV), or try it on a sample month. Your file stays in this session and isn't saved.</p>
+    <div class="actions" id="menuTools" style="margin-top:0">
+      <label class="ghost" for="csv" style="cursor:pointer">Upload sales CSV</label>
+      <input type="file" id="csv" accept=".csv,text/csv" hidden>
+      <button class="ghost" id="sampleBtn" type="button">Try the sample month</button>
+    </div>
+    <p class="progressline" id="salesStatus"></p>
+    <div id="salesOut"></div>
+    <div class="salesSum" id="salesSum"></div>
+  </section>
+
   <section class="block ask hidden" id="ask">
     <p class="kicker">Thinking of a change?</p>
     <form id="follow">
@@ -184,10 +239,14 @@ footer { margin-top: 34px; padding-top: 14px; border-top: 1px solid var(--rule);
       <button class="primary" id="send" type="submit">Ask</button>
     </form>
     <div class="ideas">
-      <button type="button">What if I add a weekend biryani counter?</button>
-      <button type="button">Should I start a breakfast menu?</button>
+      <button type="button">Weekend biryani counter or a breakfast menu?</button>
       <button type="button">Would a live music night work here?</button>
+      <button type="button">Should I add filter coffee and snacks in the evening?</button>
     </div>
+    <form class="compete" id="compete">
+      <input type="text" id="rival" placeholder="Compare with a restaurant nearby, e.g. Brahmin's Coffee Bar" aria-label="Competitor restaurant">
+      <button class="ghost" type="submit">Compare</button>
+    </form>
     <div class="qa" id="qa"></div>
     <details class="how">
       <summary>How this plan was made</summary>
@@ -253,27 +312,102 @@ function renderPlan(p) {
   $("crowd").classList.remove("hidden");
   $("planBlock").classList.remove("hidden");
   $("ask").classList.remove("hidden");
+  $("menuBlock").classList.remove("hidden");
   $("plan").innerHTML = (p.cards || []).map((c, i) => `
     <article class="item">
       <div class="num">${String(i + 1).padStart(2, "0")}</div>
-      <div>
+      <div class="body">
         <div class="cat">${esc(LABEL[c.kind] || c.kind)}</div>
         <h3>${esc(c.title)}</h3>
         <p class="act">${esc(c.action)}</p>
         <p class="why">${esc(c.why)}</p>
         ${(c.evidence || []).length ? `<p class="ev">Taste match: ${(c.evidence || []).map((e) => `<b>${esc(e.name)}</b>${pct(e.affinity) != null && e.affinity <= 1 ? ` <span class="mono">${pct(e.affinity)}</span>` : ""}`).join(" · ")}</p>` : ""}
         ${c.caveat ? `<p class="warn">${esc(c.caveat)}</p>` : ""}
+        <p class="kitwait">Writing the messages and posts for this…</p>
       </div>
     </article>`).join("");
   const text = [`*TasteMenu: this month's plan*`, p.headline, "", ...(p.cards || []).flatMap((c, i) => [`${i + 1}. *${c.title}*`, c.action, ""]), "Made with TasteMenu, audience data by Qloo"].join("\n");
   $("wa").href = `https://wa.me/?text=${encodeURIComponent(text)}`;
 }
 
+async function copy(text, btn) {
+  try { await navigator.clipboard.writeText(text); }
+  catch { const t = document.createElement("textarea"); t.value = text; document.body.appendChild(t); t.select(); document.execCommand("copy"); t.remove(); }
+  const old = btn.textContent; btn.textContent = "Copied"; setTimeout(() => (btn.textContent = old), 1400);
+}
+
+// The Action Kit: ready-to-send material for each card, in English and the local language.
+function renderKit(kit) {
+  const lang = kit.local_language || "Local language";
+  const items = $("plan").querySelectorAll(".item");
+  (plan?.cards || []).forEach((c, i) => {
+    const k = (kit.items || []).find((x) => x.kind === c.kind) || (kit.items || [])[i];
+    const host = items[i]?.querySelector(".body");
+    if (!k || !host) return;
+    host.querySelector(".kitwait")?.remove();
+    const tabs = [
+      ["WhatsApp", k.whatsapp, true], [lang, k.whatsapp_local, true], ["Instagram", k.instagram], ["Specials board", k.board], ["Staff briefing", k.staff],
+      ...(k.outreach ? [["Message to partner", k.outreach, true]] : []),
+    ].filter((t) => t[1]);
+    const det = document.createElement("details");
+    det.className = "kit";
+    det.innerHTML = `<summary>Ready-to-send kit</summary><div class="tabs">${tabs.map((t, j) => `<button type="button" class="${j ? "" : "on"}" data-j="${j}">${esc(t[0])}</button>`).join("")}</div><div class="panel"></div>${(k.checklist || []).length ? `<ol class="check">${k.checklist.map((x) => `<li>${esc(x)}</li>`).join("")}</ol>` : ""}`;
+    const show = (j) => {
+      const [, text, wa] = tabs[j];
+      det.querySelector(".panel").innerHTML = `<p class="txt">${esc(text)}</p><div class="row"><button class="mini" type="button" data-copy>Copy</button>${wa ? `<a class="mini" target="_blank" rel="noopener" href="https://wa.me/?text=${encodeURIComponent(text)}">Send on WhatsApp</a>` : ""}</div>`;
+      det.querySelector("[data-copy]").onclick = (e) => copy(text, e.target);
+      det.querySelectorAll(".tabs button").forEach((b) => b.classList.toggle("on", Number(b.dataset.j) === j));
+    };
+    det.querySelector(".tabs").onclick = (e) => { if (e.target.dataset.j != null) show(Number(e.target.dataset.j)); };
+    show(0);
+    host.appendChild(det);
+  });
+}
+
+const VERDICTS = [
+  ["Double down", "Sells well and your crowd loves it. Feature it."],
+  ["Reposition", "Your crowd loves it but it sells less. Fix the name, price, photo or menu spot."],
+  ["Rethink", "Sells little and fits your crowd less. Replace or drop."],
+  ["Core staple", "Sells well even though the crowd signal is weaker. Keep it, don't promote it."],
+  ["Keep", "Steady. No change needed."],
+  ["No Qloo signal", "Qloo has no clear data for this dish."],
+];
+
+function renderSales(r) {
+  $("menuBlock").classList.remove("hidden");
+  if (r.status !== "ok") { $("salesOut").innerHTML = `<p class="err">${esc(r.message || r.question || "Couldn't analyse the sales.")}</p>`; return; }
+  const total = r.revenue_total || 1;
+  const head = `<p class="note">${r.sample ? `<span class="badge">Sample data</span> ` : ""}${esc(r.source)} · ${r.items_total} items · ₹${Math.round(total).toLocaleString("en-IN")} · crowd fit for people who love places like yours in ${esc(r.city)}</p>`;
+  const groups = VERDICTS.map(([v, hint]) => {
+    const rows = (r.rows || []).filter((x) => x.verdict === v);
+    if (!rows.length) return "";
+    return `<div class="verdict"><h3>${esc(v)} <small>${esc(hint)}</small></h3>${rows.map((x) => `
+      <div class="dish"><span>${esc(x.item)}<small>${x.qloo_tag ? `Qloo: ${esc(x.qloo_tag)}` : "no Qloo match"}${x.fit_examples?.length ? ` · e.g. ${esc(x.fit_examples.join(", "))}` : ""}</small></span>
+      <span class="sh">${(x.share * 100).toFixed(1)}%</span>
+      <span title="Crowd fit ${pct(x.crowd_fit) ?? "–"}"><span class="bar"><i style="width:${x.crowd_fit != null ? Math.round(x.crowd_fit * 100) : 0}%"></i></span></span></div>`).join("")}</div>`;
+  }).join("");
+  const ideas = (r.new_ideas || []).length ? `<div class="verdict"><h3>Worth adding <small>Your crowd's favourite places are known for these, and your menu doesn't have them.</small></h3>${r.new_ideas.map((x) => `<div class="dish"><span>${esc(x.name)}<small>${x.examples?.length ? `e.g. ${esc(x.examples.join(", "))}` : ""}</small></span><span class="sh"></span><span><span class="bar"><i style="width:${Math.round(x.fit * 100)}%"></i></span></span></div>`).join("")}</div>` : "";
+  $("salesOut").innerHTML = head + `<div class="dish" style="border:0;padding-bottom:0"><span></span><span class="sh">Sales</span><span class="sh" style="text-align:left">Crowd fit</span></div>` + `<div class="verdicts">${groups}${ideas}</div>`;
+}
+
+function renderIdeas(r, box) {
+  if (r.status !== "ok" || !box) return;
+  box.querySelector(".extra").innerHTML += `<table class="tbl"><thead><tr><th>Idea</th><th>Qloo match</th><th style="text-align:right">Crowd fit</th></tr></thead><tbody>${r.ranking.map((x, i) => `<tr class="${i ? "" : "top"}"><td>${esc(x.option)}</td><td>${esc(x.qloo_tag ?? "no match")}</td><td class="n">${x.crowd_fit != null ? pct(x.crowd_fit) : "–"}</td></tr>`).join("")}</tbody></table><p class="note">Scores are comparable only within this table.</p>`;
+}
+
+function renderCompare(r, box) {
+  if (!box) return;
+  if (r.status !== "ok") { box.querySelector(".extra").innerHTML += `<p class="note">${esc(r.question || "Couldn't compare.")}</p>`; return; }
+  const LBL = { movie: "Films", artist: "Music", brand: "Brands" };
+  const cols = Object.entries(r.comparisons || {}).filter(([, v]) => v.results?.length).map(([k, v]) => `<div><h4>${LBL[k] || k}</h4><ol style="margin:0;padding-left:18px">${v.results.slice(0, 5).map((x) => `<li>${esc(x.name)}</li>`).join("")}</ol></div>`).join("");
+  box.querySelector(".extra").innerHTML += `<p class="note">Your crowd vs ${esc(r.competitor?.name)}${r.competitor?.address ? ` (${esc(r.competitor.address)})` : ""}, by Qloo:</p><div class="vs">${cols}</div>`;
+}
+
 function renderTrace(t) {
   $("trace").innerHTML = (t.trace || []).map((s) => `<li>${esc(s.label)} <span class="mono">(${esc(s.tool)}: ${esc(s.status)})</span></li>`).join("");
 }
 
-async function run(text, { onReply, isFollow }) {
+async function run(text, { onReply, isFollow, box, onProgress }) {
   if (busy || !text.trim()) return;
   busy = true; $("go").disabled = true; $("send").disabled = true; $("err").classList.add("hidden");
   try {
@@ -292,6 +426,11 @@ async function run(text, { onReply, isFollow }) {
         if (!ev || !data) continue;
         const d = JSON.parse(data);
         if (ev === "session") sessionId = d.sessionId;
+        if (ev === "progress" && isFollow) onProgress?.(d.text);
+        if (ev === "kit") renderKit(d);
+        if (ev === "sales") { renderSales(d); onProgress?.(""); }
+        if (ev === "ideas") renderIdeas(d, box);
+        if (ev === "compare") renderCompare(d, box);
         if (ev === "progress" && !isFollow) { setStep(/Reading the taste/.test(d.text) ? "places" : "crowd"); $("who").textContent = d.text; }
         if (ev === "trace") { renderTrace(d); if (!isFollow) setStep("crowd"); }
         if (ev === "evidence") { renderCrowd(d); if (!isFollow) setStep("plan"); }
@@ -305,6 +444,7 @@ async function run(text, { onReply, isFollow }) {
     else { $("err").textContent = `Sorry, that didn't work: ${e.message}`; $("err").classList.remove("hidden"); $("start").classList.remove("hidden"); }
   } finally {
     busy = false; $("go").disabled = false; $("send").disabled = false;
+    document.querySelectorAll(".kitwait").forEach((x) => x.remove());
   }
 }
 
@@ -320,11 +460,32 @@ $("start").addEventListener("submit", (e) => {
   run(t, { onReply: (txt) => { if (!plan && txt) { $("err").innerHTML = md(txt); $("err").style.color = "var(--ink)"; $("err").classList.remove("hidden"); $("start").classList.remove("hidden"); } } });
 });
 function ask(q) {
+  if (busy) return;
   const box = document.createElement("div");
-  box.innerHTML = `<div class="q">${esc(q)}</div><div class="a pending">Checking with Qloo…</div>`;
+  box.innerHTML = `<div class="q">${esc(q)}</div><div class="extra"></div><div class="a pending">Checking with Qloo…</div>`;
   $("qa").prepend(box);
-  run(q, { isFollow: true, onReply: (txt) => { const a = box.querySelector(".a"); a.classList.remove("pending"); a.innerHTML = md(txt); } });
+  const a = box.querySelector(".a");
+  run(q, { isFollow: true, box, onProgress: (t) => { if (t && a.classList.contains("pending")) a.textContent = t; }, onReply: (txt) => { a.classList.remove("pending"); a.innerHTML = md(txt); } });
 }
+function checkMenu(message) {
+  if (busy) return;
+  $("salesStatus").textContent = "Matching every dish to what your crowd loves. This takes about a minute…";
+  $("salesSum").innerHTML = "";
+  run(message, { isFollow: true, onProgress: (t) => { if (t) $("salesStatus").textContent = t; }, onReply: (txt) => { $("salesStatus").textContent = ""; $("salesSum").innerHTML = md(txt); } });
+}
+$("sampleBtn").addEventListener("click", () => checkMenu("Check my menu against my crowd. I haven't uploaded sales, so use the sample month."));
+$("csv").addEventListener("change", async (e) => {
+  const f = e.target.files?.[0];
+  if (!f || busy) return;
+  if (f.size > 500000) { $("salesStatus").textContent = "That file is too big. Export one month of item-wise sales."; return; }
+  const res = await fetch("/api/sales", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ sessionId, csv: await f.text(), name: f.name }) });
+  const j = await res.json().catch(() => ({}));
+  if (j.sessionId) sessionId = j.sessionId;
+  if (!res.ok) { $("salesStatus").textContent = `Couldn't read that file: ${j.error || res.status}`; return; }
+  checkMenu(`Check my menu against my crowd using my uploaded sales (${j.items} items; top sellers ${j.top.join(", ")}).`);
+  e.target.value = "";
+});
+$("compete").addEventListener("submit", (e) => { e.preventDefault(); const r = $("rival").value.trim(); if (r) { $("rival").value = ""; ask(`How is my crowd different from the crowd at ${r}?`); } });
 $("follow").addEventListener("submit", (e) => { e.preventDefault(); const q = $("followInput").value.trim(); if (q) { $("followInput").value = ""; ask(q); } });
 document.querySelector(".ideas").addEventListener("click", (e) => { if (e.target.tagName === "BUTTON") ask(e.target.textContent); });
 $("pdf").addEventListener("click", () => window.print());
