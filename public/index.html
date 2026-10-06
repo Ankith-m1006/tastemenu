@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#ffffff">
 <title>TasteMenu</title>
 <meta name="description" content="Grow your restaurant with what your diners love. Four things to do this week, the messages to send, and which dishes to push, built on Qloo's taste data.">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='9' fill='%230e1116'/><circle cx='15.5' cy='16.5' r='8.6' fill='none' stroke='white' stroke-width='2.6'/><circle cx='20' cy='12' r='3.3' fill='%23f0532a'/></svg>"><rect width='64' height='64' rx='16' fill='%23E8501F'/><path d='M14 30h36a18 18 0 0 1-36 0z' fill='white'/><path d='M24 22c0-3 2-3 2-6M32 22c0-3 2-3 2-6M40 22c0-3 2-3 2-6' stroke='white' stroke-width='3' stroke-linecap='round' fill='none'/></svg>">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='9' fill='%230e1116'/><circle cx='15.5' cy='16.5' r='8.6' fill='none' stroke='white' stroke-width='2.6'/><circle cx='20' cy='12' r='3.3' fill='%23f0532a'/></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
@@ -75,8 +75,8 @@ svg.i { width: 20px; height: 20px; flex: none; }
 @media (min-width: 980px) {
   .tabbar { position: absolute; left: 0; transform: none; padding-bottom: 16px; }
   /* Inside the phone frame on desktop */
-  .scrim, .sheet, .toast { position: absolute; }
-  .sheet { max-height: 85%; }
+  .app > .scrim, .app > .sheet, .app > .toast { position: absolute; }
+  .app > .sheet { max-height: 85%; }
 }
 .tabbar button { border: 0; background: none; display: grid; justify-items: center; gap: 3px; padding: 7px 0 4px; color: var(--mute); font-size: 11.5px; font-weight: 700; border-radius: 14px; }
 .tabbar button svg { width: 23px; height: 23px; }
@@ -178,15 +178,10 @@ svg.i { width: 20px; height: 20px; flex: none; }
 .vsbanner { display: flex; align-items: center; gap: 14px; text-align: left; width: 100%; border: 0; }
 .vsbanner .big { width: 50px; height: 50px; border-radius: 16px; background: var(--good-soft); color: var(--good); display: grid; place-items: center; font-size: 21px; font-weight: 800; flex: none; }
 
-/* Trending */
-.trend-head { display: flex; gap: 11px; align-items: center; margin-bottom: 8px; }
+/* Rows (playlist) */
 .trow { display: grid; grid-template-columns: 1fr auto; gap: 2px 10px; padding: 10px 0; border-top: 1px solid var(--line); align-items: center; }
 .trow b { font-size: 14.5px; }
 .trow small { grid-column: 1; color: var(--mute); font-size: 12px; }
-.up { grid-row: 1 / span 2; grid-column: 2; display: inline-flex; align-items: center; gap: 4px; background: var(--good-soft); color: var(--good); font-weight: 800; font-size: 13px; border-radius: 999px; padding: 5px 10px; }
-.up svg { width: 15px; height: 15px; }
-.tile .rise { margin-top: 6px; font-size: 11.5px; font-weight: 800; color: var(--good); display: inline-flex; gap: 3px; align-items: center; }
-.tile .rise svg { width: 13px; height: 13px; }
 .poster-img { width: 100%; border-radius: 16px; border: 1px solid var(--line); display: block; }
 
 /* Crowd */
@@ -364,10 +359,6 @@ svg.i { width: 20px; height: 20px; flex: none; }
           <div><div class="muted">This week</div><b id="weekCount">0 of 4 done</b></div>
         </div>
         <p class="muted" id="headline" style="margin:0 4px 12px"></p>
-        <div class="card hidden" id="trendCard">
-          <div class="trend-head"><span class="kind event"><svg class="i" viewBox="0 0 24 24"><use href="#i-trend"/></svg></span><div><div class="h2">Rising with your crowd right now</div><div class="muted">Popularity over the last 2 weeks vs the weeks before, from Qloo</div></div></div>
-          <div id="trendList"></div>
-        </div>
         <div id="actions"></div>
         <button class="card vsbanner hidden noprint" id="vsBanner" type="button">
           <span class="big" id="vsNum">0</span>
@@ -458,7 +449,6 @@ svg.i { width: 20px; height: 20px; flex: none; }
   <symbol id="i-down" viewBox="0 0 24 24"><path class="st" d="M12 4v11m-5-5 5 5 5-5M5 20h14"/></symbol>
   <symbol id="i-up" viewBox="0 0 24 24"><path class="st" d="M12 20V9m-5 5 5-5 5 5M5 4h14"/></symbol>
   <symbol id="i-down2" viewBox="0 0 24 24"><path class="st" d="m6 9 6 6 6-6"/></symbol>
-  <symbol id="i-trend" viewBox="0 0 24 24"><path class="st" d="M3 17l6-6 4 4 8-8M15 7h6v6"/></symbol>
   <symbol id="i-img" viewBox="0 0 24 24"><rect class="st" x="3.5" y="3.5" width="17" height="17" rx="4"/><circle class="st" cx="9" cy="9" r="1.8"/><path class="st" d="m20.5 15-5-5-10 10"/></symbol>
   <symbol id="i-share" viewBox="0 0 24 24"><path class="st" d="M12 15V3m-4 4 4-4 4 4M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></symbol>
   <symbol id="i-x" viewBox="0 0 24 24"><path class="st" d="M6 6l12 12M18 6 6 18"/></symbol>
@@ -586,21 +576,14 @@ function setStep(k) {
   $("prog").style.width = `${STEP_PROGRESS[k] ?? 10}%`;
 }
 
-// ---------- Rising with the crowd ----------
-let trending = [];
-function renderTrending(list) {
-  trending = list || [];
-  $("trendCard").classList.toggle("hidden", !trending.length);
-  $("trendList").innerHTML = trending.map((x) => `<div class="trow"><b>${esc(x.name)}</b><span class="up">${icon("i-trend")}+${esc(x.rising_pct)}%</span><small>${esc(x.type)} · crowd match ${pct(x.affinity) ?? "–"}</small></div>`).join("");
-}
-
 // ---------- Crowd ----------
+let crowd = null;
 function renderCrowd(ev) {
-  renderTrending(ev.trending_now);
+  crowd = ev;
   $("crowdSub").textContent = `People who eat at places like yours in ${ev.city}${ev.neighbourhood ? ` (near ${ev.neighbourhood})` : ""}, according to Qloo.`;
   $("places").innerHTML = (ev.similar_places || []).slice(0, 8).map((p) => `<span>${esc(p.name)}</span>`).join("");
   const a = ev.audience || {};
-  const row = (title, xs, kind) => xs?.length ? `<div class="label">${title}</div><div class="hscroll">${xs.slice(0, 8).map((x) => `<div class="tile"><div class="t">${esc(x.name)}</div><div class="muted" style="font-size:12px;margin-top:4px">${kind}</div><div class="match"><span class="bar"><i style="width:${pct(x.affinity) ?? 0}%"></i></span>${pct(x.affinity) ?? ""}</div>${(() => { const t = (ev.trending_now || []).find((r) => r.name === x.name); return t ? `<span class="rise">${icon("i-trend")}Rising +${t.rising_pct}%</span>` : ""; })()}</div>`).join("")}</div>` : "";
+  const row = (title, xs, kind) => xs?.length ? `<div class="label">${title}</div><div class="hscroll">${xs.slice(0, 8).map((x) => `<div class="tile"><div class="t">${esc(x.name)}</div><div class="muted" style="font-size:12px;margin-top:4px">${kind}</div><div class="match"><span class="bar"><i style="width:${pct(x.affinity) ?? 0}%"></i></span>${pct(x.affinity) ?? ""}</div></div>`).join("")}</div>` : "";
   $("loves").innerHTML = row("Films they love", a.films, "Film") + row("Shows they watch", a.shows, "TV show") + row("Music they play", a.music_artists, "Artist") + row("Brands they buy", a.brands, "Brand");
   const d = a.demographics_over_index || {};
   const AGE = { "24_and_younger": "Under 25", "25_to_29": "25–29", "30_to_34": "30–34", "35_to_44": "35–44", "45_to_54": "45–54", "55_and_older": "55+" };
@@ -665,7 +648,7 @@ function openKit(i) {
   const k = (kit.items || []).find((x) => x.kind === c.kind) || (kit.items || [])[i];
   if (!k) return;
   const lang = kit.local_language || "Local";
-  const tabs = [["WhatsApp", k.whatsapp, true], [lang, k.whatsapp_local, true], ...(k.poster_title ? [["Poster", "poster", "poster"]] : []), ["Instagram", k.instagram], ["Specials board", k.board], ["Staff", k.staff], ["To partner", k.outreach, true]].filter((t) => t[1]);
+  const tabs = [...(c.kind === "music" && crowd?.audience?.music_artists?.length ? [["Playlist", "playlist", "playlist"]] : []), ["WhatsApp", k.whatsapp, true], [lang, k.whatsapp_local, true], ...(k.poster_title && c.kind !== "music" ? [["Poster", "poster", "poster"]] : []), ["Instagram", k.instagram], ["Specials board", k.board], ["Staff", k.staff], ["To partner", k.outreach, true]].filter((t) => t[1]);
   openSheet(`<div class="head"><span class="kind ${esc(c.kind)}">${icon(ICON[c.kind])}</span><div><div class="muted">Ready to send</div><b>${esc(c.title)}</b></div><button class="x" type="button" data-close aria-label="Close">${icon("i-x")}</button></div>
     <div class="seg" id="seg">${tabs.map((t, j) => `<button type="button" data-j="${j}" class="${j ? "" : "on"}">${esc(t[0])}</button>`).join("")}</div>
     <div id="segBody"></div>
@@ -674,6 +657,7 @@ function openKit(i) {
     const [, text, wa] = tabs[j];
     document.querySelectorAll("#seg button").forEach((b) => b.classList.toggle("on", Number(b.dataset.j) === j));
     if (wa === "poster") return showPoster(c, k, lang);
+    if (wa === "playlist") return showPlaylist(c);
     $("segBody").innerHTML = `<div class="msg ${wa ? "" : "plain"}">${esc(text)}</div><div class="row"><button class="btn soft" type="button" id="cp">${icon("i-copy")}Copy</button>${wa ? `<a class="btn" target="_blank" rel="noopener" href="https://wa.me/?text=${encodeURIComponent(text)}">${icon("i-msg")}WhatsApp</a>` : ""}</div>`;
     $("cp").onclick = () => copy(text);
     document.querySelectorAll("#seg button").forEach((b) => b.classList.toggle("on", Number(b.dataset.j) === j));
@@ -753,6 +737,16 @@ async function showPoster(c, k, lang) {
       else { const a = document.createElement("a"); a.href = url; a.download = file; a.click(); toast("Downloaded"); }
     } catch {}
   };
+}
+
+// ---------- Crowd playlist: the artists this crowd loves, one tap to play ----------
+function showPlaylist(c) {
+  const artists = (crowd?.audience?.music_artists || []).slice(0, 8);
+  const q = (name) => encodeURIComponent(name);
+  $("segBody").innerHTML = `<p class="muted" style="margin:0 2px 10px">Artists people who eat at places like yours love, by Qloo match. Tap to play, and follow the tip on the card for the right volume and mood.</p>
+    <div class="card" style="padding:4px 14px;box-shadow:none">${artists.map((a, i) => `<div class="trow" style="${i ? "" : "border-top:0"}"><b>${esc(a.name)}</b><span style="grid-row:1 / span 2;grid-column:2;display:flex;gap:6px"><a class="btn soft sm" target="_blank" rel="noopener" href="https://music.youtube.com/search?q=${q(a.name)}" aria-label="Play ${esc(a.name)} on YouTube Music">YouTube</a><a class="btn soft sm" target="_blank" rel="noopener" href="https://open.spotify.com/search/${q(a.name)}" aria-label="Play ${esc(a.name)} on Spotify">Spotify</a></span><small>Crowd match ${pct(a.affinity) ?? "–"}</small></div>`).join("")}</div>
+    <div class="row"><button class="btn soft" type="button" id="cpList">${icon("i-copy")}Copy the list</button></div>`;
+  $("cpList").onclick = () => copy([`Playlist for ${restaurant?.name || "the restaurant"} (${c.title}):`, ...artists.map((a) => `- ${a.name}`)].join("\n"));
 }
 
 // ---------- Plain chatbot vs TasteMenu ----------
