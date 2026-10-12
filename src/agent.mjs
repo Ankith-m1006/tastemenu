@@ -34,7 +34,7 @@ Rules:
 - Qloo results describe aggregate taste affinities of an audience, not facts about individual customers. Phrase them that way ("people who love places like yours over-index on ...").
 - Make the actions concrete, cheap and doable this month by a small restaurant in that city. Mention prices in rupees only if the owner gave them.
 - If a Qloo signal looks off for the context (for example an unexpected music genre), say so honestly in the card's caveat instead of hiding it.
-- Action kit language: write every piece in simple English, and the WhatsApp message also in the main local language of the city, in its own script (India: Bengaluru Kannada, Chennai Tamil, Hyderabad Telugu, Mumbai/Pune Marathi, Kolkata Bengali, Kochi Malayalam, Ahmedabad Gujarati, other Indian cities Hindi. Outside India: the city's main language, or if that is English, its most common second language, e.g. Spanish for US cities). Keep messages short and warm, like a real owner would send. Never invent prices, discounts, opening hours or dates: use placeholders like [price] or [time] instead.
+- Action kit language: write every piece in simple English, and the WhatsApp message also in the main local language of the city, in its own script (India: Bengaluru Kannada, Chennai Tamil, Hyderabad Telugu, Mumbai/Pune Marathi, Kolkata Bengali, Kochi Malayalam, Ahmedabad Gujarati, other Indian cities Hindi. Outside India: the city's main language when it is not English, e.g. French for Paris; Spanish for US cities. Other English-speaking cities such as London, Dublin, Sydney or Toronto: English only, so set local_language to "English" and leave whatsapp_local and poster_local empty). Keep messages short and warm, like a real owner would send. Never invent prices, discounts, opening hours or dates: use placeholders like [price] or [time] instead.
 - When a tool returns no data (no Qloo signal, not found, empty comparison), say so plainly. Never fill the gap from general knowledge: do not describe a competitor, a dish or an audience that Qloo did not return.
 - Sales tiers and crowd fit are relative within the menu. Never claim Qloo knows this restaurant's own customers.
 - Chat replies are plain text for a phone screen: no headings, no tables, no markdown symbols except **bold** and "- " bullets.
@@ -129,7 +129,7 @@ const KIT_TOOL = {
               poster_local: { type: "string", description: "The same headline in the local language and its own script, at most 8 words. No placeholders." },
               poster_line: { type: "string", description: "One line under the headline, at most 14 words, e.g. when and what is included. Use [price] if a price is needed." },
             },
-            required: ["kind", "whatsapp", "whatsapp_local", "instagram", "board", "staff", "checklist"],
+            required: ["kind", "whatsapp", "instagram", "board", "staff", "checklist"],
           },
         },
       },
@@ -212,6 +212,16 @@ export function compactEvidence(ev) {
     today: new Date().toISOString().slice(0, 10),
     note: "Affinity is 0-1 (higher = this audience over-indexes more). Demographics are relative over/under-index, not shares.",
   };
+}
+
+// English-speaking cities outside the US get no second-language message: the model once wrote
+// Spanish for a London restaurant by copying the rule for US cities.
+const ENGLISH_ONLY = /\b(london|manchester|birmingham|leeds|glasgow|edinburgh|united kingdom|england|scotland|wales|dublin|ireland|sydney|melbourne|brisbane|perth|australia|auckland|wellington|new zealand|toronto|vancouver|calgary|ottawa)\b/i;
+
+export function englishOnlyKit(kit, evidence) {
+  const where = [evidence?.city, ...(evidence?.peers ?? []).slice(0, 5).map((p) => p.address)].filter(Boolean).join(" | ");
+  if (!kit || !ENGLISH_ONLY.test(where)) return kit;
+  return { ...kit, local_language: "English", items: (kit.items ?? []).map(({ whatsapp_local, poster_local, ...item }) => item) };
 }
 
 // Every number on the owner's board must come from a Qloo response. Evidence items are
@@ -361,8 +371,8 @@ export async function runAgent(history, { onEvent, ctx = {} } = {}) {
             onEvent?.({ type: "plan", plan });
             result = { status: "published", next: "Now call publish_action_kit." };
           } else if (call.function.name === "publish_action_kit") {
-            ctx.kit = args;
-            onEvent?.({ type: "kit", kit: args });
+            ctx.kit = englishOnlyKit(args, ctx.evidence);
+            onEvent?.({ type: "kit", kit: ctx.kit });
             result = { status: "published" };
           } else {
             try { result = await runTool(call.function.name, args, onEvent, ctx); } catch (e) { result = { status: "error", error: String(e.message ?? e) }; }
