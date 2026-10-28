@@ -109,7 +109,7 @@ const KIT_TOOL = {
     parameters: {
       type: "object",
       properties: {
-        local_language: { type: "string", description: "The local language used for whatsapp_local, e.g. Kannada." },
+        local_language: { type: "string", description: "The local language used for whatsapp_local: use kit_language from the evidence when it is given." },
         items: {
           type: "array",
           minItems: 4,
@@ -196,6 +196,7 @@ export function compactEvidence(ev) {
     status: "ok",
     area: ev.area,
     city: ev.city,
+    kit_language: kitLanguageFor(ev.city),
     neighbourhood: ev.neighbourhood,
     cuisine_tag: ev.cuisine.tag,
     similar_places: top(ev.peers, 8),
@@ -217,6 +218,22 @@ export function compactEvidence(ev) {
 // English-speaking cities outside the US get no second-language message: the model once wrote
 // Spanish for a London restaurant by copying the rule for US cities.
 const ENGLISH_ONLY = /\b(london|manchester|birmingham|leeds|glasgow|edinburgh|united kingdom|england|scotland|wales|dublin|ireland|sydney|melbourne|brisbane|perth|australia|auckland|wellington|new zealand|toronto|vancouver|calgary|ottawa)\b/i;
+
+// Indian cities get their language from code, not from the model: it once wrote Kannada for a
+// Chennai restaurant by copying the example in the tool description.
+const CITY_LANGUAGE = [
+  [/bengaluru|bangalore|mysuru|mysore|mangaluru|hubballi/i, "Kannada"],
+  [/chennai|coimbatore|madurai|tiruchirappalli|salem/i, "Tamil"],
+  [/hyderabad|secunderabad|visakhapatnam|vijayawada|warangal/i, "Telugu"],
+  [/mumbai|pune|nagpur|nashik|thane/i, "Marathi"],
+  [/kolkata|howrah|siliguri/i, "Bengali"],
+  [/kochi|thiruvananthapuram|kozhikode|thrissur/i, "Malayalam"],
+  [/ahmedabad|surat|vadodara|rajkot/i, "Gujarati"],
+];
+
+export function kitLanguageFor(city) {
+  return CITY_LANGUAGE.find(([re]) => re.test(city ?? ""))?.[1] ?? null;
+}
 
 export function englishOnlyKit(kit, evidence) {
   const where = [evidence?.city, ...(evidence?.peers ?? []).slice(0, 5).map((p) => p.address)].filter(Boolean).join(" | ");
@@ -370,6 +387,9 @@ export async function runAgent(history, { onEvent, ctx = {} } = {}) {
             plan = verifyPlan(args, ctx);
             onEvent?.({ type: "plan", plan });
             result = { status: "published", next: "Now call publish_action_kit." };
+          } else if (call.function.name === "publish_action_kit" && !ctx.kitRetried && kitLanguageFor(ctx.evidence?.city) && args.local_language !== kitLanguageFor(ctx.evidence?.city)) {
+            ctx.kitRetried = true;
+            result = { status: "rejected", error: `whatsapp_local must be in ${kitLanguageFor(ctx.evidence.city)} for ${ctx.evidence.city}. Call publish_action_kit again with local_language "${kitLanguageFor(ctx.evidence.city)}".` };
           } else if (call.function.name === "publish_action_kit") {
             ctx.kit = englishOnlyKit(args, ctx.evidence);
             onEvent?.({ type: "kit", kit: ctx.kit });
